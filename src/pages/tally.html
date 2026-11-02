@@ -1,0 +1,179 @@
+<!--{"title":"Live Tally Ledger: every race, live · Binchika","description":"Live Tally Ledger for Nigeria 2027: Presidential, Senate, House, Governorship, State Assembly and Local Government. Citizen-reported tallies from high-agreement polling units, shown beside the constitutional rules. Only INEC declares results.","nav":"monitor","path":"/tally/","scripts":["/assets/js/race-dash.js","/assets/js/monitor.js"],"head":"<link rel=\"stylesheet\" href=\"/assets/vendor/maplibre-gl.css\"><link rel=\"stylesheet\" href=\"/assets/css/race-dash.css?v=85\">"}-->
+<section class="page-head" style="padding-bottom:0">
+  <div class="wrap">
+    <p class="eyebrow">Live Tally Ledger · citizen-verified · not official results</p>
+    <h1>Every race. <span class="grad-text">In public.</span></h1>
+    <p class="lede">{{PIPELINE}} Pick a race to see the citizen-reported tallies beside the rules in the Constitution. Binchika does not apply those rules or say who has won.</p>
+    <label class="sr-only" for="race-pick">Choose a race</label>
+    <select class="pick" id="race-pick" style="max-width:420px;margin-top:1rem"></select>
+    <ul class="race-tiles" id="race-tiles" aria-label="Races"></ul>
+  </div>
+</section>
+
+<!-- Session 53: race dashboard (President, Senate, House) above the existing monitor, which is unchanged below it. -->
+<section class="rd-section" aria-labelledby="rd-h">
+  <div class="wrap">
+    <div class="rd-intro">
+      <h2 id="rd-h">Citizen-reported tallies: President, Senate and House</h2>
+      <p class="muted">Reported votes and shares from polling units whose citizen reports agree (at least 85% of at least 3 independent reports). No leader, no projection and no seat count: only INEC declares results.</p>
+      <p class="muted">Governorship, State Houses of Assembly and Local Government each have their own view below. Local government elections are run by SIECs.</p>
+    </div>
+    <p id="rd-selection" class="rd-selection" role="status" hidden></p>
+    <div class="rd-nav">
+      <div class="rd-seg" role="tablist" aria-label="Choose a race for the dashboard">
+        <button type="button" id="rd-tab-president" role="tab" data-rd="president" aria-controls="rd-panel" aria-selected="true" aria-pressed="true">President</button>
+        <button type="button" id="rd-tab-senate" role="tab" data-rd="senate" aria-controls="rd-panel" aria-selected="false" aria-pressed="false" tabindex="-1">Senate</button>
+        <button type="button" id="rd-tab-house" role="tab" data-rd="house" aria-controls="rd-panel" aria-selected="false" aria-pressed="false" tabindex="-1">House</button>
+        <button type="button" id="rd-tab-governor" role="tab" data-rd="governor" aria-controls="rd-panel" aria-selected="false" aria-pressed="false" tabindex="-1">Governorship</button>
+        <button type="button" id="rd-tab-state-assembly" role="tab" data-rd="state-assembly" aria-controls="rd-panel" aria-selected="false" aria-pressed="false" tabindex="-1">State Houses of Assembly</button>
+        <button type="button" id="rd-tab-local-government" role="tab" data-rd="local-government" aria-controls="rd-panel" aria-selected="false" aria-pressed="false" tabindex="-1">Local Government</button>
+      </div>
+      <span class="rd-sync" id="rd-sync" role="status">Connecting to the public ledger…</span>
+    </div>
+    <article class="rd-card rd-president" id="rd-panel" role="tabpanel" tabindex="0" aria-labelledby="rd-tab-president" aria-busy="true">
+      <div class="rd-wm" id="rd-wm" hidden aria-hidden="true">DEMO</div>
+      <header class="rd-top">
+        <img src="/assets/img/dashboard/binchika-transparent.png" alt="Binchika" width="72" height="72">
+        <div class="rd-heading"><span id="rd-race">Presidential election</span><h3 id="rd-phrase">Every report. A clearer picture.</h3></div>
+        <span class="rd-seal" id="rd-icon" aria-hidden="true"></span>
+      </header>
+      <div class="rd-board">
+        <div class="rd-stats">
+          <div><b id="rd-units">—</b><span id="rd-units-of">polling-unit coverage is loading</span></div>
+          <div><b id="rd-votes">—</b><span>votes in those reports</span></div>
+          <div class="rd-coverage"><b id="rd-coverage">—</b><span id="rd-coverage-label">of polling units reporting</span><div class="rd-meter"><span id="rd-meter-fill"></span></div></div>
+        </div>
+        <div class="rd-rules"><h4>Election rule and reporting scope</h4><p id="rd-rule-text"></p><p id="rd-rule-note"></p><a id="rd-rule-source" href="https://justice.gov.ng/wp-content/uploads/2020/09/Nigerian-Constitution.pdf" rel="noopener">Read the primary source</a></div>
+        <div class="rd-main">
+          <div class="rd-chart">
+            <div class="rd-chart-head"><label class="sr-only" for="rd-measure">Choose the reporting view</label><select id="rd-measure" class="pick" aria-controls="rd-bars"><option value="votes">Reported votes by party</option><option value="states">Reported states by party</option></select><button type="button" id="rd-more" class="rd-text-btn" aria-expanded="false">Show all parties</button></div>
+            <ol class="rd-bars" id="rd-bars" aria-label="Reported votes by party"></ol>
+            <p class="rd-note" id="rd-note">Waiting for the ledger. Figures appear after a successful connection.</p>
+            <label class="rd-toggle"><input type="checkbox" id="rd-hide"> Hide parties under 5% of reported votes</label>
+          </div>
+          <figure class="rd-scene">
+            <div class="rd-art" id="rd-art" aria-hidden="true"></div>
+            <figcaption><strong id="rd-art-title">Aso Rock Villa</strong><span id="rd-art-note">An architectural illustration; not a result.</span></figcaption>
+          </figure>
+        </div>
+        <details class="rd-geography" id="rd-state-details"><summary>Explore citizen reports by state</summary><p id="rd-state-scope"></p><label for="rd-state">Choose a state or area</label><select class="pick" id="rd-state"><option value="">Choose an area…</option></select><p id="rd-state-status" role="status"></p><div class="table-scroll"><table class="data" id="rd-state-table"><caption>Reported party votes in the selected area</caption><thead><tr><th scope="col">Party</th><th scope="col" class="num">Reported votes</th><th scope="col" class="num">Share</th><th scope="col">Reporting reference</th></tr></thead><tbody></tbody></table></div><details><summary>Show every eligible state and its largest reported share</summary><div class="table-scroll"><table class="data" id="rd-states-table"><caption>State-by-state citizen reports, not declared results</caption><thead><tr><th scope="col">Area</th><th scope="col">Largest reported share</th><th scope="col" class="num">Votes for that party</th><th scope="col" class="num">Reported units</th></tr></thead><tbody></tbody></table></div></details></details>
+        <div class="rd-roster-head"><h4>Full party line-up</h4><button class="rd-text-btn" type="button" id="rd-order" aria-pressed="false">Order A–Z</button><button class="rd-text-btn" type="button" id="rd-reset">Show every party</button></div>
+        <p class="rd-roster-help" id="rd-roster-help">Tap a party to show or hide it. Percentages always use all reported votes.</p>
+        <div class="rd-lineup" id="rd-lineup" role="group" aria-labelledby="rd-roster-help"></div>
+        <details class="rd-details" id="rd-details"><summary>More info: complete party list and figures</summary><div class="table-scroll"><table class="data" id="rd-table"><caption>All parties, reported votes and shares</caption><thead><tr><th scope="col">Party</th><th scope="col">Name</th><th scope="col" class="num">Votes</th><th scope="col" class="num">Share</th></tr></thead><tbody></tbody></table></div></details>
+      </div>
+      <footer class="rd-foot"><p class="rd-disc">This is a public ledger of citizen-reported tallies. Only INEC declares results.</p><time id="rd-time">Awaiting the first successful refresh</time></footer>
+    </article>
+    <div class="rd-tools">
+      <button class="btn btn-solid btn-sm" type="button" id="rd-snap">Save snapshot</button>
+      <button class="btn btn-sm" type="button" id="rd-share">Post / Share</button>
+      <button class="btn btn-sm" type="button" id="rd-refresh">Refresh now</button>
+      <p class="form-status" id="rd-status" role="status"></p>
+    </div>
+    <p class="source-note">Same data as the tallies below (<a href="/ledger/">public ledger</a>). Party colours are alphabetical slots and mean nothing. Illustrations are drawn by Binchika: Aso Rock Villa for the presidency, the Red Chamber for the Senate and the Green Chamber for the House. Civic artwork is AI-generated decorative illustration, not documentary photography. Chamber dots show the structural 109 Senate or 360 House seats; all remain unassigned until sourced constituency allocations are connected. The dashboard and map share one results snapshot, refreshed every 30 seconds while visible. State counts mean the unique largest citizen-reported share; ties and unreported areas are separate. They never imply constituency wins. <a href="/parties/">Party sources and complete profiles</a>.</p>
+  </div>
+</section>
+
+<section style="padding-top:1rem">
+  <div class="wrap">
+    <div id="demo-banner" class="demo-banner" hidden role="alert">DEMO: FICTIONAL PARTIES AND NUMBERS. A design preview, not results of any kind.</div>
+    <h2 id="race-title" style="font-size:clamp(1.8rem,4vw,3rem);margin:1rem 0 .2rem">Presidential</h2>
+    <p id="race-rule" class="muted" style="margin:0"></p>
+    <div id="tally" aria-live="polite"></div>
+
+    <div class="mon-layout">
+      <div>
+        <div class="mon-map" id="mon-map">
+          <div class="hover-card" id="hover-card" aria-hidden="true"></div>
+          <div class="demo-watermark" id="demo-wm" hidden aria-hidden="true">DEMO</div>
+        </div>
+        <div class="lgl" id="mon-legend"></div>
+      </div>
+      <aside class="side">
+        <div class="panel" id="mon-state" aria-live="polite"><h3>Choose a state</h3><p class="muted" style="margin:0">Tap the map or use the list below.</p></div>
+        <div class="panel" id="mon-road" aria-live="polite"></div>
+        <div class="panel">
+          <label class="sr-only" for="mon-state-pick">Choose a state</label>
+          <select class="pick" id="mon-state-pick"><option value="">All states…</option></select>
+        </div>
+      </aside>
+    </div>
+
+    <details class="table-alt">
+      <summary>Show this race as a table</summary>
+      <div class="table-scroll" style="max-height:none">
+        <table class="data" id="mon-table"><caption class="sr-only">Race results by state</caption><thead><tr><th scope="col">State</th><th scope="col">Largest reported share</th><th scope="col" class="num">Share</th><th scope="col" class="num">Votes counted</th><th scope="col" class="num">Units reported</th></tr></thead><tbody></tbody></table>
+      </div>
+    </details>
+    <p class="source-note">Citizen-verified counts include only high-confidence polling units (≥85% of ≥3 independent reports). Colour shows the party with the largest share of the citizen-reported tallies; it is not a result. A solid fill will mean INEC has declared the result. Party colours are alphabetical slots and mean nothing.</p>
+  </div>
+</section>
+
+<!-- Session 44: INEC register analysis (2023 and the 2027 preliminary register) and open questions for INEC. Figures come from
+     data/register-2026/aggregates.json through the register placeholders filled in by scripts/build-site.mjs; every statement below is linked to its source. -->
+<section aria-labelledby="reg-h" style="padding-top:2.5rem">
+  <div class="wrap" style="max-width:960px">
+    <p class="eyebrow">Voter register · 2023 and 2027 · published figures</p>
+    <h2 id="reg-h">The register behind the count</h2>
+    <p>Every result on this page will be read against INEC's register of voters. This section compares the preliminary register for the 2027 elections with the 2023 register, using published figures only, and lists the questions those figures raise.</p>
+    <div class="callout"><strong>Figures from published sources, not an official INEC table.</strong> The 2027 figures are INEC's announcement of 6 October 2026 as reported by the press. They are <strong>preliminary</strong> and can change before the final register, due on <strong>15 December 2026</strong>. No names or individual records are shown. To check your own entry with INEC, see <a href="/vote/#check-your-name">how to check your name</a>; the zone totals also have <a href="/register/">their own page</a>.</div>
+
+    <h3>National totals</h3>
+    <div class="table-scroll" style="max-height:none"><table class="data"><caption class="sr-only">INEC register of voters, national totals, 2023 and the 2027 preliminary register</caption>
+      <thead><tr><th scope="col" style="white-space:normal">Measure</th><th scope="col" class="num">Figure</th><th scope="col" style="white-space:normal">Source</th></tr></thead>
+      <tbody>
+        <tr><th scope="row" style="white-space:normal">Register for the 2023 general election</th><td class="num">93,469,008</td><td style="white-space:normal">INEC's 2023 table</td></tr>
+        <tr><th scope="row" style="white-space:normal">Preliminary register for 2027</th><td class="num">103,428,715</td><td style="white-space:normal">INEC, 6 Oct 2026, as reported</td></tr>
+        <tr><th scope="row" style="white-space:normal">Net growth</th><td class="num">+9,959,707 (+10.7%)</td><td style="white-space:normal">Binchika's arithmetic</td></tr>
+        <tr><th scope="row" style="white-space:normal">New registrations in the three-phase Continuous Voter Registration, before the final biometric clean-up</th><td class="num">10,772,421</td><td style="white-space:normal">INEC, 6 Oct 2026, as reported</td></tr>
+        <tr><th scope="row" style="white-space:normal">New registrations minus net growth</th><td class="num">812,714</td><td style="white-space:normal">Binchika's arithmetic</td></tr>
+      </tbody></table></div>
+    <p class="source-note">The register grew by 812,714 fewer than the number of new registrations. That gap is consistent with entries removed by the clean-up, for example duplicates or deceased voters, or with new registrations that did not pass the final biometric checks. INEC has not published a breakdown, so this is arithmetic, not an INEC figure.</p>
+
+    <h3>By geopolitical zone</h3>
+    {{REGISTER_ZONE_TABLE}}
+    <p class="source-note">Every zone grew. The North-West grew most, by 2,827,849 (+12.7%), and remains the largest zone. The South-West grew least in percentage terms (+9.2%), and the South-East least in numbers (+1,068,612). The six zones add up exactly to the national total; this page is not built if they do not.</p>
+
+    <h3>States: what has been published</h3>
+    <p>INEC has not published its state-by-state table online. At its briefing on 6 October 2026, INEC's chairman named the ten states with the most registered voters:</p>
+    {{REGISTER_TOP_STATES}}
+    <ul class="source-note" style="padding-left:1.2rem;display:grid;gap:.3rem">
+      <li>Lagos remains the largest state but grew 6.1%, below the national 10.7%. Among these ten, Ogun grew fastest (+13.0%) and Rivers slowest (+5.6%).</li>
+      <li>The 2023 figures are INEC's own, and are checked against INEC's 2023 document every time this page is built.</li>
+      <li>Reports differ on Benue: 3,057,225 in most, 3,052,225 in one. One outlet printed several clearly mistyped figures and is not used.</li>
+      <li>A full 37-state table has circulated in the press. It is not shown here because it is not an INEC document. Binchika will show every state from INEC's own figures, for example the final register.</li>
+      <li>Sources for the ten states: {{REGISTER_TOP_SOURCES}}.</li>
+    </ul>
+
+    <h3>Who is on the register (as reported)</h3>
+    <ul class="tick-list">
+      <li><strong>Sex:</strong> 51.75% men (53,528,218) and 48.25% women (49,900,497).</li>
+      <li><strong>Age:</strong> 18–34: 28.79% (29,777,576); 35–49: 41.83% (43,265,946); 50–69: 22.22%; 70 and over: 7.16%. The share of 18–34-year-olds was reported as 39.65% in 2023.</li>
+    </ul>
+    <p class="source-note">Reported by <a href="https://chronicle.ng/2027-lagos-kano-states-voters-inec/" rel="noopener">chronicle.ng</a>, <a href="https://businessday.ng/politics/article/youth-voice-missing-in-inecs-103-million-voters-register/" rel="noopener">businessday.ng</a> and <a href="https://sbmintelligence.substack.com/p/voter-register-hits-103-million-and" rel="noopener">SBM Intelligence</a>. Counts for the two older age bands were reported as percentages only.</p>
+
+    <h3 id="inec-questions">Open questions for INEC</h3>
+    <p>Binchika is non-partisan. These questions are about the process, not about any party or candidate. Each rests on a published statement, linked beneath it. INEC's answers will be added here, with their source, when they are published.</p>
+    <ol class="inec-q">
+      <li><strong>Online publication.</strong> Section 19(1) of the Electoral Act 2026 requires the register to be displayed at every registration area <em>and</em> on INEC's website. INEC displayed it at registration areas from 9 to 15 October 2026. FIJ found INEC's register portal still showing "There are currently no preliminary registers to display" on 18 October. INEC says the same register was published online on 26 October. A presidential campaign has also asked INEC to explain conflicting statements about the display dates.
+        <p class="q"><strong>Questions:</strong> When exactly was the register first available online? Does the 14-day period for claims and objections in Section 19(2) run from the online publication? Will INEC publish the dates and access records for its portal?</p>
+        <p class="source-note">Sources: <a href="https://leadership.ng/2027-lagos-kano-lead-as-inec-releases-states-with-highest-registered-voters/" rel="noopener">Leadership</a> (6 Oct), <a href="https://fij.ng/article/no-voters-register-online-from-inec-at-deadline-90-days-to-election/" rel="noopener">FIJ</a> (18 Oct), <a href="https://www.legit.ng/politics/1737455-atiku-demands-inec-publish-103-million-voters-register-2027-election/" rel="noopener">Legit.ng</a> (22 Oct), <a href="https://www.vanguardngr.com/2026/10/2027-inec-flags-questionable-voter-registration-probes-ai-generated-photo-claims/" rel="noopener">Vanguard</a> (27 Oct), <a href="https://www.thisdaylive.com/2026/10/28/inec-preliminary-voters-register-not-final-suspicious-photos-under-review/" rel="noopener">ThisDay</a> (28 Oct).</p></li>
+      <li><strong>Questionable records and suspected AI-generated photographs.</strong> INEC says "a number of questionable registration records" were flagged during the physical display and are being reviewed. It says it is examining the suspicious photographs in the register published online, "including possible technical or procedural lapses", and that the online register "does not reflect all ongoing data-cleanup activities".
+        <p class="q"><strong>Questions:</strong> How many records were flagged, and in which states? How did such photographs pass photo capture and biometric checks? Will INEC publish what it found, and how many records it removed, before the final register?</p>
+        <p class="source-note">Sources: <a href="https://www.vanguardngr.com/2026/10/2027-inec-flags-questionable-voter-registration-probes-ai-generated-photo-claims/" rel="noopener">Vanguard</a> (27 Oct), <a href="https://www.thisdaylive.com/2026/10/28/inec-preliminary-voters-register-not-final-suspicious-photos-under-review/" rel="noopener">ThisDay</a> (28 Oct).</p></li>
+      <li><strong>Deceased and ineligible voters.</strong> In December 2025, INEC's chairman described the register as "unclean" and asked civil society and community leaders to help clean it. In June 2026, an INEC official told Vanguard that there are thousands of deceased people on the register, and that they can be removed only through claims and objections with supporting evidence.
+        <p class="q"><strong>Questions:</strong> How many entries did the final biometric clean-up remove, and for which reasons (duplicates, deaths, under-age registration)? How many claims and objections were received and upheld, nationally and by state? What explains the 812,714 gap between new registrations and net growth?</p>
+        <p class="source-note">Sources: <a href="https://businessday.ng/news/article/inec-warns-of-unclean-voter-register-urges-nationwide-mobilisation-ahead-of-dec-15-review-window/" rel="noopener">BusinessDay</a> (12 Dec 2025), <a href="https://www.vanguardngr.com/2026/06/cvr-we-dont-issue-death-certificates-inec/" rel="noopener">Vanguard</a> (June 2026).</p></li>
+      <li><strong>State figures.</strong> State totals were announced at a press briefing but are not on INEC's website, and press versions differ (Benue; a misprinted FCT figure in one report).
+        <p class="q"><strong>Question:</strong> Will INEC publish its own state, local government and ward totals now, rather than only with the final register?</p></li>
+      <li><strong>Age profile.</strong> Reported figures put 18–34-year-olds at 28.79% of the preliminary register, against 39.65% reported for 2023.
+        <p class="q"><strong>Question:</strong> Can INEC publish the age breakdown of both registers on the same basis, so the change can be checked?</p></li>
+      <li><strong>Readiness for 2027.</strong> INEC began collection of newly issued voter cards (PVCs) on 9 October 2026. The final register is due on 15 December 2026. FIJ described 18 October as 90 days before the election, which puts polling about a month after the final register.
+        <p class="q"><strong>Questions:</strong> How will voters and parties inspect the final register before polling day? How many new PVCs have been collected so far? Will INEC publish collection figures by state?</p>
+        <p class="source-note">Sources: <a href="https://leadership.ng/2027-lagos-kano-lead-as-inec-releases-states-with-highest-registered-voters/" rel="noopener">Leadership</a> (6 Oct), <a href="https://fij.ng/article/no-voters-register-online-from-inec-at-deadline-90-days-to-election/" rel="noopener">FIJ</a> (18 Oct).</p></li>
+    </ol>
+
+    <h3>Sources for the totals</h3>
+    {{REGISTER_SOURCES}}
+  </div>
+</section>

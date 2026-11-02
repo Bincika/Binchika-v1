@@ -1,0 +1,28 @@
+name = "binchika"
+pages_build_output_dir = "site"
+compatibility_date = "2026-09-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "binchika-db"
+database_id = "00000000-0000-0000-0000-000000000000   # REPLACE: your D1 database id (wrangler d1 create)"
+migrations_dir = "db/d1"
+
+# Evidence photos (private bucket; no public r2.dev access). Native binding: no keys needed inside Pages Functions.
+# S3-API access (signed upload URLs, scripts) uses R2_* secrets, never committed: docs/R2-WIRING.md
+[[r2_buckets]]
+binding = "EVIDENCE"
+bucket_name = "binchika-evidence"
+
+# Automatic reply to contact-form senders (session 77; /api/contact uses the mailbox Worker's autoReply()). The same switch
+# as in workers/mailbox/wrangler.toml: "off" stops it. Delivery to EMAIL_FORWARD_TO and the Inbox copy are not affected.
+[vars]
+AUTO_REPLY = "on"
+# Contained OCR for Form EC8A photos (session 88; docs/protocol/OCR.md). "off" is the kill switch and the default:
+# set "workers-ai" only after the owner decides (privacy notice covers AI reading of sheets). Even when on, a reading is
+# only a proposal that a verifier must confirm, and photos not cleared by the people check are never read.
+OCR_ENGINE = "off"
+
+# Workers AI binding used only by the OCR path above (and only when OCR_ENGINE = "workers-ai").
+[ai]
+binding = "AI"

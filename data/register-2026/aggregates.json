@@ -1,0 +1,439 @@
+{
+  "about": "Published AGGREGATE figures for INEC's register ahead of the 2027 general election. No individual records, names, VINs or photographs. 2026 figures as announced by INEC on 6 Oct 2026 and reported by the press (INEC's own state-by-state document was not found online; a full 37-state table reported by the press on 26 Oct 2026 adds up exactly to INEC's zone totals and is included, marked verified: false); 2023 figures from INEC's official PDF (site/data/baselines/registered-voters.json, sha256 recorded there).",
+  "compiled": "2026-10-28",
+  "status": "Preliminary. INEC says the figure remains subject to clean-up; the final register is due 15 Dec 2026.",
+  "national": {
+    "2023": 93469008,
+    "2026": 103428715,
+    "newRegistrationsCVR": 10772421,
+    "sources2026": [
+      "https://dailytrust.com/2027-lagos-kano-dominate-voters-register-inec/",
+      "https://thewillnews.com/2027-lagos-tops-nigerias-103-4m-voter-register-as-inec-unveils-states-with-biggest-electoral-weight/"
+    ],
+    "source2023": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+    "note": "One report quotes INEC's chairman as saying 110 million; the zone and gender totals both sum to 103,428,715, so that figure is used."
+  },
+  "gender2026": {
+    "male": 53528218,
+    "female": 49900497,
+    "malePct": 51.75,
+    "femalePct": 48.25,
+    "sources": [
+      "https://chronicle.ng/2027-lagos-kano-states-voters-inec/",
+      "https://businessday.ng/politics/article/youth-voice-missing-in-inecs-103-million-voters-register/"
+    ]
+  },
+  "age2026": {
+    "bands": [
+      {
+        "band": "18–34",
+        "count": 29777576,
+        "pct": 28.79
+      },
+      {
+        "band": "35–49",
+        "count": 43265946,
+        "pct": 41.83
+      },
+      {
+        "band": "50–69",
+        "count": null,
+        "pct": 22.22
+      },
+      {
+        "band": "70+",
+        "count": null,
+        "pct": 7.16
+      }
+    ],
+    "youthShare2023Pct": 39.65,
+    "sources": [
+      "https://businessday.ng/politics/article/youth-voice-missing-in-inecs-103-million-voters-register/",
+      "https://sbmintelligence.substack.com/p/voter-register-hits-103-million-and"
+    ],
+    "note": "Counts for 50–69 and 70+ were reported as percentages only."
+  },
+  "zones": {
+    "2023": {
+      "NW": 22255562,
+      "SW": 17958966,
+      "NC": 15363731,
+      "SS": 14440714,
+      "NE": 12542429,
+      "SE": 10907606
+    },
+    "2026": {
+      "NW": 25083411,
+      "SW": 19614274,
+      "NC": 16965787,
+      "SS": 15823550,
+      "NE": 13965475,
+      "SE": 11976218
+    },
+    "order": [
+      "NW",
+      "SW",
+      "NC",
+      "SS",
+      "NE",
+      "SE"
+    ],
+    "names": {
+      "NW": "North-West",
+      "SW": "South-West",
+      "NC": "North-Central (incl. FCT)",
+      "SS": "South-South",
+      "NE": "North-East",
+      "SE": "South-East"
+    },
+    "sources2026": [
+      "https://thewillnews.com/2027-lagos-tops-nigerias-103-4m-voter-register-as-inec-unveils-states-with-biggest-electoral-weight/",
+      "https://ng.headtopics.com/news/inec-releases-103-4-million-voter-register-for-2026-88511412"
+    ],
+    "note": "2026 zone totals sum exactly to 103,428,715. 2023 zone totals are summed from INEC's 2023 state table using Binchika's zone mapping (site/data/states.json)."
+  },
+  "topStates": {
+    "rows": [
+      {
+        "2023": 7060195,
+        "2026": 7488633,
+        "state": "Lagos"
+      },
+      {
+        "2023": 5921370,
+        "2026": 6570276,
+        "state": "Kano"
+      },
+      {
+        "2023": 4335208,
+        "2026": 4662640,
+        "state": "Kaduna"
+      },
+      {
+        "2023": 3516719,
+        "2026": 3876051,
+        "state": "Katsina"
+      },
+      {
+        "2023": 3537190,
+        "2026": 3736434,
+        "state": "Rivers"
+      },
+      {
+        "2023": 3276675,
+        "2026": 3588111,
+        "state": "Oyo"
+      },
+      {
+        "2023": 3221697,
+        "2026": 3525988,
+        "state": "Delta"
+      },
+      {
+        "2023": 2777727,
+        "2026": 3057225,
+        "state": "Benue"
+      },
+      {
+        "2023": 2688305,
+        "2026": 3037981,
+        "state": "Ogun"
+      },
+      {
+        "2023": 2749268,
+        "2026": 3012547,
+        "state": "Bauchi"
+      }
+    ],
+    "sources2026": [
+      "https://dailytrust.com/2027-lagos-kano-dominate-voters-register-inec/",
+      "https://leadership.ng/full-list-inec-releases-10-states-with-highest-registered-voters-ahead-of-2027/",
+      "https://ripr.trade/news/the-punch/2027-inec-lists-states-with-most-registered-voters"
+    ],
+    "note": "Benue appears as 3,057,225 in most reports and 3,052,225 in one. One outlet printed several clearly mistyped figures (for example Kano 6,000,570) and is not used."
+  },
+  "allStates2026": {
+    "verified": false,
+    "status": "Press-reported full table, not an INEC document. Each state was checked to add up exactly to INEC's six announced zone totals and to the national total (scripts/build-register-report.mjs refuses to build otherwise). Use INEC's final register (15 Dec 2026) for any baseline.",
+    "sources2026": [
+      "https://www.ndr.org.ng/2027-elections-inec-should-build-trust-by-publishing-the-voter-register-online/"
+    ],
+    "corroboratedBy": [
+      "https://thewillnews.com/2027-lagos-tops-nigerias-103-4m-voter-register-as-inec-unveils-states-with-biggest-electoral-weight/"
+    ],
+    "fetched": "2026-10-28",
+    "notes": [
+      "Nigerian Democratic Report (26 Oct 2026) published all 37 figures; TheWill gives the same FCT, Ekiti, Bayelsa and zone figures; the top ten match the sources in topStates.",
+      "TheWill printed Gombe as 1,768,560 and a figure of 1,733,641 for Ondo (NDR: Gombe 1,768,566, Yobe 1,733,671, Ondo 2,116,057). The NDR figures are used because only they add up to the zone totals.",
+      "Correction (28 Oct 2026): FCT is 1,732,043. Channels TV (14 Oct 2026, https://www.channelstv.com/2026/10/14/inec-commences-pvc-collection-display-of-voter-register-in-fct/) printed 1,772,043, which Binchika used from 28 Oct until this correction; with that figure the North-Central states would be 40,000 over INEC's zone total."
+    ],
+    "rows": [
+      {
+        "2023": 7060195,
+        "2026": 7488633,
+        "state": "Lagos",
+        "iso": "NG-LA",
+        "zone": "SW"
+      },
+      {
+        "2023": 5921370,
+        "2026": 6570276,
+        "state": "Kano",
+        "iso": "NG-KN",
+        "zone": "NW"
+      },
+      {
+        "2023": 4335208,
+        "2026": 4662640,
+        "state": "Kaduna",
+        "iso": "NG-KD",
+        "zone": "NW"
+      },
+      {
+        "2023": 3516719,
+        "2026": 3876051,
+        "state": "Katsina",
+        "iso": "NG-KT",
+        "zone": "NW"
+      },
+      {
+        "2023": 3537190,
+        "2026": 3736434,
+        "state": "Rivers",
+        "iso": "NG-RI",
+        "zone": "SS"
+      },
+      {
+        "2023": 3276675,
+        "2026": 3588111,
+        "state": "Oyo",
+        "iso": "NG-OY",
+        "zone": "SW"
+      },
+      {
+        "2023": 3221697,
+        "2026": 3525988,
+        "state": "Delta",
+        "iso": "NG-DE",
+        "zone": "SS"
+      },
+      {
+        "2023": 2777727,
+        "2026": 3057225,
+        "state": "Benue",
+        "iso": "NG-BE",
+        "zone": "NC"
+      },
+      {
+        "2023": 2688305,
+        "2026": 3037981,
+        "state": "Ogun",
+        "iso": "NG-OG",
+        "zone": "SW"
+      },
+      {
+        "2023": 2749268,
+        "2026": 3012547,
+        "state": "Bauchi",
+        "iso": "NG-BA",
+        "zone": "NE"
+      },
+      {
+        "2023": 2698344,
+        "2026": 2983476,
+        "state": "Niger",
+        "iso": "NG-NI",
+        "zone": "NC"
+      },
+      {
+        "2023": 2656437,
+        "2026": 2917728,
+        "state": "Anambra",
+        "iso": "NG-AN",
+        "zone": "SE"
+      },
+      {
+        "2023": 2789528,
+        "2026": 2906570,
+        "state": "Plateau",
+        "iso": "NG-PL",
+        "zone": "NC"
+      },
+      {
+        "2023": 2501081,
+        "2026": 2865263,
+        "state": "Edo",
+        "iso": "NG-ED",
+        "zone": "SS"
+      },
+      {
+        "2023": 2351298,
+        "2026": 2807811,
+        "state": "Jigawa",
+        "iso": "NG-JI",
+        "zone": "NW"
+      },
+      {
+        "2023": 2513281,
+        "2026": 2765165,
+        "state": "Borno",
+        "iso": "NG-BO",
+        "zone": "NE"
+      },
+      {
+        "2023": 2419922,
+        "2026": 2706052,
+        "state": "Imo",
+        "iso": "NG-IM",
+        "zone": "SE"
+      },
+      {
+        "2023": 2172056,
+        "2026": 2633113,
+        "state": "Sokoto",
+        "iso": "NG-SO",
+        "zone": "NW"
+      },
+      {
+        "2023": 2357418,
+        "2026": 2566196,
+        "state": "Akwa Ibom",
+        "iso": "NG-AK",
+        "zone": "SS"
+      },
+      {
+        "2023": 2196566,
+        "2026": 2431146,
+        "state": "Adamawa",
+        "iso": "NG-AD",
+        "zone": "NE"
+      },
+      {
+        "2023": 1954800,
+        "2026": 2327784,
+        "state": "Osun",
+        "iso": "NG-OS",
+        "zone": "SW"
+      },
+      {
+        "2023": 2032041,
+        "2026": 2309503,
+        "state": "Kebbi",
+        "iso": "NG-KE",
+        "zone": "NW"
+      },
+      {
+        "2023": 2120808,
+        "2026": 2306520,
+        "state": "Abia",
+        "iso": "NG-AB",
+        "zone": "SE"
+      },
+      {
+        "2023": 2022374,
+        "2026": 2254380,
+        "state": "Taraba",
+        "iso": "NG-TA",
+        "zone": "NE"
+      },
+      {
+        "2023": 1932654,
+        "2026": 2232398,
+        "state": "Kogi",
+        "iso": "NG-KO",
+        "zone": "NC"
+      },
+      {
+        "2023": 1926870,
+        "2026": 2224017,
+        "state": "Zamfara",
+        "iso": "NG-ZA",
+        "zone": "NW"
+      },
+      {
+        "2023": 2112793,
+        "2026": 2217862,
+        "state": "Enugu",
+        "iso": "NG-EN",
+        "zone": "SE"
+      },
+      {
+        "2023": 1899244,
+        "2026": 2137699,
+        "state": "Nasarawa",
+        "iso": "NG-NA",
+        "zone": "NC"
+      },
+      {
+        "2023": 1991344,
+        "2026": 2116057,
+        "state": "Ondo",
+        "iso": "NG-ON",
+        "zone": "SW"
+      },
+      {
+        "2023": 1766466,
+        "2026": 1928978,
+        "state": "Cross River",
+        "iso": "NG-CR",
+        "zone": "SS"
+      },
+      {
+        "2023": 1695927,
+        "2026": 1916376,
+        "state": "Kwara",
+        "iso": "NG-KW",
+        "zone": "NC"
+      },
+      {
+        "2023": 1597646,
+        "2026": 1828056,
+        "state": "Ebonyi",
+        "iso": "NG-EB",
+        "zone": "SE"
+      },
+      {
+        "2023": 1575794,
+        "2026": 1768566,
+        "state": "Gombe",
+        "iso": "NG-GO",
+        "zone": "NE"
+      },
+      {
+        "2023": 1485146,
+        "2026": 1733671,
+        "state": "Yobe",
+        "iso": "NG-YO",
+        "zone": "NE"
+      },
+      {
+        "2023": 1570307,
+        "2026": 1732043,
+        "state": "FCT",
+        "iso": "NG-FC",
+        "zone": "NC"
+      },
+      {
+        "2023": 1056862,
+        "2026": 1200691,
+        "state": "Bayelsa",
+        "iso": "NG-BY",
+        "zone": "SS"
+      },
+      {
+        "2023": 987647,
+        "2026": 1055708,
+        "state": "Ekiti",
+        "iso": "NG-EK",
+        "zone": "SW"
+      }
+    ]
+  },
+  "claimsObjections": {
+    "published": false,
+    "note": "No count of claims or objections had been published by 28 Oct 2026. Reported: s. 19(2) of the Electoral Act 2026 requires INEC to consider objections within 14 days of display or publication (to confirm against the Act's text).",
+    "sources": [
+      "https://fij.ng/article/no-voters-register-online-from-inec-at-deadline-90-days-to-election/"
+    ]
+  }
+}

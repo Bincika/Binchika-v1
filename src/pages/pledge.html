@@ -1,0 +1,28 @@
+<!--{"title":"Sign the verifier pledge · Binchika","description":"Confirm your email and sign the Binchika verifier pledge to activate your seat.","nav":"verifiers","path":"/join/pledge/","scripts":["/assets/js/pledge.js"],"head":"<meta name=\"robots\" content=\"noindex\"><meta name=\"referrer\" content=\"no-referrer\">"}-->
+<section class="page-head">
+  <div class="wrap" style="max-width:760px">
+    <p class="eyebrow">Become a verifier · confirm and pledge</p>
+    <h1>The verifier <span class="grad-text">pledge.</span></h1>
+    <p class="lede" id="pl-lede">Read the pledge, then type your full name to sign it. Your name stays private: only the BinchikAdmin can see it. The public record shows your seat, public ID, the pledge version and the time.</p>
+  </div>
+</section>
+<section style="padding-top:0">
+  <div class="wrap" style="max-width:760px">
+    <p class="callout" id="pl-error" hidden></p>
+    <form class="portal-form panel" id="pledge-form" hidden novalidate>
+      <p class="eyebrow" style="margin:0" id="pl-seat"></p>
+      <blockquote class="pledge-text" id="pl-text"></blockquote>
+      <p class="source-note">Pledge <span id="pl-version"></span> · SHA-256 <code class="mono" id="pl-hash" style="word-break:break-all"></code></p>
+      <label>Type your full name, exactly as on your application<input id="pl-name" autocomplete="name" maxlength="120" required></label>
+      <label class="opt"><input type="checkbox" id="pl-accept" required> I have read and accept the Binchika verifier pledge.</label>
+      <button class="btn btn-solid" type="submit">Sign and activate my seat</button>
+      <p class="form-status" id="pl-status" role="status"></p>
+    </form>
+    <div class="panel" id="pl-done" hidden tabindex="-1">
+      <h2 style="margin-top:0">Welcome, <span id="pl-done-seat"></span>.</h2>
+      <p>Your seat is active and your email is confirmed. We've sent your welcome packet. From now on, everyone (us included) addresses you by your seat number and public ID, <strong id="pl-done-id"></strong>.</p>
+      <p class="source-note" id="pl-done-time"></p>
+      <div class="cta-row"><a class="btn btn-solid" href="/portal/">Sign in to your dashboard</a><a class="btn btn-ghost" id="pl-rulebook" href="/portal/rulebook/">Read the rule book</a></div>
+    </div>
+  </div>
+</section>

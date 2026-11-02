@@ -1,0 +1,33 @@
+{
+  "updated": "2026-10-24",
+  "source": "INEC register of political parties",
+  "sourceUrl": "https://inecnigeria.org/political-parties/",
+  "colorRule": "Each party gets a colour slot in alphabetical order of its INEC acronym. The colour means nothing, and no party chose or paid for it. A party's acronym is always printed next to its colour, so nobody has to rely on colour alone.",
+  "orderRule": "Cards are shuffled on every visit so no party is always first. Readers can switch to A–Z.",
+  "palette": ["#F3C300", "#875692", "#F38400", "#A1CAF1", "#BE0032", "#C2B280", "#848482", "#008856", "#E68FAC", "#0067A5", "#F99379", "#604E97", "#F6A600", "#B3446C", "#DCD300", "#882D17", "#8DB600", "#654522", "#E25822", "#2B3D26", "#00A0B0", "#1F3A93"],
+  "paletteSource": "Kenneth L. Kelly, 'Twenty-two colors of maximum contrast' (1965), white/black removed, two high-contrast additions",
+  "parties": [
+    { "acronym": "A", "name": "Accord" },
+    { "acronym": "AA", "name": "Action Alliance" },
+    { "acronym": "AAC", "name": "African Action Congress" },
+    { "acronym": "ADC", "name": "African Democratic Congress" },
+    { "acronym": "ADP", "name": "Action Democratic Party" },
+    { "acronym": "APC", "name": "All Progressives Congress" },
+    { "acronym": "APGA", "name": "All Progressives Grand Alliance" },
+    { "acronym": "APM", "name": "Allied Peoples Movement" },
+    { "acronym": "APP", "name": "Action Peoples Party" },
+    { "acronym": "BP", "name": "Boot Party" },
+    { "acronym": "DLA", "name": "Democratic Leadership Alliance" },
+    { "acronym": "LP", "name": "Labour Party" },
+    { "acronym": "NDC", "name": "Nigeria Democratic Congress" },
+    { "acronym": "NDP", "name": "National Democratic Party" },
+    { "acronym": "NNPP", "name": "New Nigeria Peoples Party" },
+    { "acronym": "NRM", "name": "National Rescue Movement" },
+    { "acronym": "PDP", "name": "Peoples Democratic Party" },
+    { "acronym": "PRP", "name": "Peoples Redemption Party" },
+    { "acronym": "SDP", "name": "Social Democratic Party" },
+    { "acronym": "YP", "name": "Youth Party" },
+    { "acronym": "YPP", "name": "Young Progressives Party" },
+    { "acronym": "ZLP", "name": "Zenith Labour Party" }
+  ]
+}

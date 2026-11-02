@@ -1,0 +1,81 @@
+<!--{"title":"Live public ledger of citizen-verified tallies · Binchika","description":"A live, hash-chained, append-only ledger of every processed polling-unit tally: confidence levels, discrepancies with IReV and a full audit trail you can verify in your own browser.","nav":"ledger","path":"/ledger/","scripts":["/assets/js/ledger.js","/assets/js/scroll-lit.js"]}-->
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Public ledger · append-only · hash-chained</p>
+    <h1>Don't trust us. <span class="grad-text">Check us.</span></h1>
+    <p class="lede">{{PIPELINE}} Each high-agreement polling-unit tally appears here within seconds. Each row is chained to the one before it by a SHA-256 hash, so any edit to history breaks the chain. You can verify the whole chain in your own browser with one click.</p>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div id="demo-banner" class="demo-banner" hidden role="alert">DEMO: FICTIONAL DATA. These are made-up parties and polling units for testing the dashboard. Not results of any kind.</div>
+    <div class="kpis" aria-live="polite">
+      <div class="kpi k1"><b id="k-entries">0</b><span>Ledger entries</span></div>
+      <div class="kpi k2"><b id="k-high">0</b><span>High-confidence units</span></div>
+      <div class="kpi k3"><b id="k-disc">0</b><span>Mismatches with IReV</span></div>
+      <div class="kpi k4"><b id="k-states">0</b><span>States reporting</span></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="filters" role="group" aria-label="Filter the ledger">
+        <label class="sr-only" for="f-race">Race</label>
+        <select id="f-race"><option value="">All races</option><option value="president">President</option><option value="senate">Senate</option><option value="house">House</option><option value="governor">Governor</option><option value="state-assembly">State Assembly</option></select>
+        <label class="sr-only" for="f-state">State</label>
+        <select id="f-state"><option value="">All states</option></select>
+        <label class="sr-only" for="f-kind">Entry type</label>
+        <select id="f-kind"><option value="">Tallies &amp; corrections</option><option value="disc">Mismatches only</option><option value="correction">Corrections only</option></select>
+        <label class="sr-only" for="f-q">Search polling unit or hash</label>
+        <input id="f-q" type="search" placeholder="Search PU code or hash…" autocomplete="off">
+      </div>
+      <div class="filters">
+        <span class="live-dot" id="live">Live · updates every 15 s</span>
+        <button class="btn btn-ghost btn-sm" type="button" id="verify">Verify whole chain</button>
+        <button class="btn btn-ghost btn-sm" type="button" id="csv">Download CSV</button>
+        <button class="btn btn-ghost btn-sm" type="button" id="demo" aria-pressed="false">Demo data</button>
+      </div>
+    </div>
+    <p id="verify-out" role="status" class="source-note" style="margin-top:0"></p>
+
+    <div class="table-scroll">
+      <table class="data" id="ledger-table">
+        <caption class="sr-only">Ledger entries, newest first</caption>
+        <thead><tr>
+          <th scope="col"><button type="button" data-sort="seq">#</button></th>
+          <th scope="col">Type</th>
+          <th scope="col"><button type="button" data-sort="pu_code">Polling unit</button></th>
+          <th scope="col">State</th>
+          <th scope="col">Race</th>
+          <th scope="col">Confidence</th>
+          <th scope="col">Largest reported share</th>
+          <th scope="col" class="num"><button type="button" data-sort="total">Votes</button></th>
+          <th scope="col">vs IReV</th>
+          <th scope="col"><button type="button" data-sort="recordedAt">Recorded (WAT)</button></th>
+          <th scope="col">Hash</th>
+        </tr></thead>
+        <tbody id="ledger-body"><tr><td colspan="11">Loading…</td></tr></tbody>
+      </table>
+    </div>
+
+    <dialog id="entry-dialog" class="panel" style="max-width:min(760px,94vw);border:1px solid var(--line);color:var(--ink);background:var(--surface)">
+      <form method="dialog" style="display:flex;justify-content:space-between;align-items:center;gap:1rem"><h2 style="font-size:1.4rem;margin:0" id="entry-title">Entry</h2><button class="icon-btn" aria-label="Close">✕</button></form>
+      <div id="entry-body"></div>
+    </dialog>
+
+    <h2 style="font-size:clamp(1.6rem,3vw,2.4rem);margin-top:3rem">From photo to public entry</h2>
+    <div class="flow" data-scroll-lit style="margin-top:1rem">
+      <div class="lit-step panel"><strong>1 · Photo</strong><p class="muted" style="margin:.3rem 0 0">A citizen photographs or reports the posted result sheet. Their handle becomes a one-way hash.</p></div>
+      <div class="lit-step panel"><strong>2 · Read</strong><p class="muted" style="margin:.3rem 0 0">Machine reading extracts each party's votes; uncertain reads go to people.</p></div>
+      <div class="lit-step panel"><strong>3 · Agree</strong><p class="muted" style="margin:.3rem 0 0">At least 85% of at least 3 independent reports must match for high confidence.</p></div>
+      <div class="lit-step panel"><strong>4 · Compare</strong><p class="muted" style="margin:.3rem 0 0">The tally is checked against INEC's IReV upload and the pre-election register.</p></div>
+      <div class="lit-step panel"><strong>5 · Chain</strong><p class="muted" style="margin:.3rem 0 0">A new entry is hashed onto the chain. Nothing can be edited, only added.</p></div>
+    </div>
+    <div class="pledge" style="margin-top:2.5rem" data-scroll-lit>
+      <div><h3>High confidence</h3><p>At least 85% of independent reports agree on every party's count, from at least 3 reporters. Only these reach the ledger as tallies.</p></div>
+      <div><h3>Mismatch with IReV</h3><p>The consensus citizen tally differs from INEC's IReV upload. The flag shows each party's difference. It is not an accusation.</p></div>
+      <div><h3>Correction</h3><p>A verifier raised a flag, a different Regional Verifier escalated it, AI re-investigated it and the BinchikAdmin recorded the correction. Corrections are new entries, so history is never edited.</p></div>
+      <div><h3>No result sheet</h3><p class="ec8a-rule">{{EC8A_RULE}} It never appears here as a high-agreement tally on its own.</p></div>
+    </div>
+    <p class="source-note">The rules are code, not opinion: <a href="https://github.com/Bincika/Binchika-v1/blob/main/functions/_lib/consensus.js" rel="noopener">consensus.js</a> and <a href="https://github.com/Bincika/Binchika-v1/blob/main/functions/_lib/ledger.js" rel="noopener">ledger.js</a>. The browser verification uses the same ledger.js file.</p>
+  </div>
+</section>

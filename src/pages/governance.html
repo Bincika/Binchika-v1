@@ -1,0 +1,53 @@
+<!--{"title":"AI governance · Binchika","description":"Where Binchika uses AI, where it never does, its limits, the ten-article AI constitution, and every human checkpoint.","nav":"governance","path":"/governance/","scripts":["/assets/js/scroll-lit.js"]}-->
+<section class="page-head">
+  <div class="wrap" style="max-width:960px">
+    <p class="eyebrow">AI data governance</p>
+    <h1>AI suggests. <span class="grad-text">Rules and people decide.</span></h1>
+    <p class="lede">Nothing an AI produces reaches the public ledger without passing the same published rules as everything else, and every correction needs three separate human seats: the verifier who flags it, a Regional Verifier who escalates it, and the BinchikAdmin, who records it.</p>
+  </div>
+</section>
+<section style="padding-top:0">
+  <div class="wrap glass-stack" style="max-width:960px" data-scroll-lit>
+    <article class="glass-bar"><span class="emb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="3"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></span><div>
+      <h2>Where AI is used</h2>
+      <div class="table-scroll" style="max-height:none"><table class="data"><thead><tr><th>Layer</th><th>AI task</th><th>Output is…</th></tr></thead><tbody>
+        <tr><td>Intake</td><td>Photo quality check (blur, glare, cropping)</td><td>a hint to retake the photo</td></tr>
+        <tr><td>Reading</td><td>Reading party totals from Form EC8A</td><td>a <strong>proposed</strong> tally with a confidence score per field</td></tr>
+        <tr><td>Re-investigation</td><td>Re-reading every photo for a flagged unit</td><td>a summary for the OpsAdmin, with no authority</td></tr>
+        <tr><td>Manifestos</td><td>Summaries with page and paragraph citations</td><td>a draft, reviewed before publishing</td></tr>
+        <tr><td>Translation</td><td>Hausa, Yoruba, Igbo and Pidgin guidance</td><td>a draft, reviewed by native speakers</td></tr>
+      </tbody></table></div>
+      <p class="source-note">Never used for: consensus, comparison with IReV, baseline checks, ledger writes, verifier selection, party order or colours, news selection, or saying who is "winning".</p>
+    </div></article>
+    <article class="glass-bar"><span class="emb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.01"/></svg></span><div>
+      <h2>Limits we design around</h2>
+      <ul><li>Handwriting, low light, folds and stamps cause misreads, so every low-confidence field goes to a person.</li><li>AI cannot spot a doctored sheet on its own. Independent reporters agreeing, comparison with IReV and the pre-election baselines can identify document inconsistencies; they do not determine fraud or legal validity.</li><li>Language models can invent text. Summaries must quote and cite, and any unsupported sentence is removed.</li><li>Error rates are monitored by state; if one region misreads more, it goes to people.</li></ul>
+    </div></article>
+    <article class="glass-bar"><span class="emb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 7h14M7 7l-3 7a3.5 3.5 0 0 0 6 0zM17 7l-3 7a3.5 3.5 0 0 0 6 0z"/></svg></span><div>
+      <h2>The AI constitution</h2>
+      <ol>
+        <li><strong>Suggest, never decide.</strong></li>
+        <li><strong>Label everything.</strong> Every AI output is marked and logged with the model, version, input hash and time.</li>
+        <li><strong>No personal data.</strong> Hashed handles, stripped photo metadata and blurred faces before any model sees an image. Nothing identifiable goes to outside AI services.</li>
+        <li><strong>Rules beat models.</strong> If they disagree, the case goes to a person.</li>
+        <li><strong>Say how sure it is.</strong> Below 0.9 confidence per field, a person confirms.</li>
+        <li><strong>No politics.</strong> No predictions, no persuasion, and the same pipeline for every party.</li>
+        <li><strong>Auditable.</strong> Anyone can ask to re-run an AI step on the public evidence.</li>
+        <li><strong>Least power.</strong> AI writes only to a review queue, never to the ledger or the results.</li>
+        <li><strong>Kill switch.</strong> Any AI step can be turned off and the system keeps working with people.</li>
+        <li><strong>Consensus-Approved Corrections.</strong> No single person can change a result. A correction needs the verifier who flags it, a different Regional Verifier who escalates it, and the BinchikAdmin, who records it after the AI re-check. It becomes a new public ledger entry, so nothing is erased.</li>
+      </ol>
+    </div></article>
+    <article class="glass-bar"><span class="emb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><div>
+      <h2>Human checkpoints</h2>
+      <div class="table-scroll" style="max-height:none"><table class="data"><thead><tr><th>Step</th><th>AI?</th><th>Human checkpoint</th></tr></thead><tbody>
+        <tr><td>Photo quality hint</td><td>Yes</td><td>None (advisory only)</td></tr>
+        <tr><td>Reading the tally</td><td>Proposes</td><td>Required below 0.9; a random 5% sample above it</td></tr>
+        <tr><td>Consensus &amp; ledger entry</td><td>No</td><td>Public rules, in code</td></tr>
+        <tr><td>Discrepancy flag</td><td>No</td><td>SZV raises it, NRV reviews it</td></tr>
+        <tr><td>Re-investigation</td><td>Summarises</td><td>OpsAdmin reviews</td></tr>
+        <tr><td>Correction</td><td>No</td><td><strong>Three separate seats:</strong> the flagging verifier, a different Regional Verifier, then the BinchikAdmin records it</td></tr>
+      </tbody></table></div>
+    </div></article>
+  </div>
+</section>

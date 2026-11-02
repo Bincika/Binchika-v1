@@ -1,0 +1,36 @@
+{
+  "$schema": "../tenant.schema.json",
+  "id": "xx",
+  "country": "FILL: country name",
+  "iso": "FILL: ISO 3166-1 alpha-2",
+  "status": "draft",
+  "domain": "FILL",
+  "locale": { "lang": "FILL e.g. en-GB / fr-FR", "timeZone": "FILL IANA zone, e.g. Africa/Nairobi", "zoneLabel": "FILL e.g. EAT", "utcOffset": "FILL e.g. UTC+3", "city": "FILL capital" },
+  "electoralBody": { "name": "FILL: official name", "short": "FILL", "url": "FILL: official site", "resultsPortal": "FILL or null", "resultsPortalShort": "FILL or null", "declaresResults": true },
+  "localElectionsBody": "FILL or null: who runs local elections, if not the national body",
+  "notice": "FILL: e.g. Citizen-verified tallies. Only <short name> declares results.",
+  "site": { "origin": "FILL: https://your-domain", "sourceRepo": "FILL: https://github.com/<you>/<your-fork>" },
+  "elections": "FILL: path to elections.json (dates from the electoral body, with source URLs)",
+  "geography": {
+    "levels": ["FILL: e.g. region", "constituency", "ward", "pollingStation"],
+    "admin1": "FILL: TopoJSON (geoBoundaries ADM1 works for every African country)",
+    "admin2": "FILL: TopoJSON",
+    "meta": "FILL: per-area facts with sources",
+    "pollingUnitCode": "FILL: regex for the official polling-station code",
+    "pollingUnitStatePrefix": "pollingUnits.statePrefix (this file)"
+  },
+  "pollingUnits": {
+    "total": 0,
+    "totalSource": "FILL: source of the national polling-station count",
+    "codePattern": "FILL: regex for the official polling-station code",
+    "statePrefix": { "FILL two-digit prefix": "FILL ISO 3166-2 code of the admin-1 area, e.g. XX-AB" }
+  },
+  "parties": "FILL: party register with source URL",
+  "races": "FILL: races.json (which offices, which areas vote)",
+  "resultForm": "FILL: name of the posted polling-station result form",
+  "rules": {
+    "consensus": { "highShare": 0.85, "minIndependent": 3 },
+    "winning": { "FILL race": "FILL: constitutional/legal rule with article number" }
+  },
+  "baselines": "FILL: registered voters per area, with source and fetch timestamp"
+}

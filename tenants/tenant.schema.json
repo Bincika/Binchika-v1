@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Bincika/Binchika-v1/blob/main/tenants/tenant.schema.json",
+  "title": "Binchika tenant (one country)",
+  "description": "Country-specific values read by the build (scripts/build-site.mjs → functions/_lib/tenant.generated.js and site/data/locale.json), the Pages Functions and the browser code. See docs/TENANT-CONFIG.md.",
+  "type": "object",
+  "required": ["id", "country", "iso", "domain", "locale", "electoralBody", "notice", "site", "geography", "pollingUnits", "parties", "races", "resultForm", "rules"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z]{2}$", "description": "Folder name under tenants/, normally the lower-case ISO code." },
+    "country": { "type": "string" },
+    "iso": { "type": "string", "pattern": "^[A-Z]{2}$" },
+    "status": { "enum": ["draft", "live"] },
+    "domain": { "type": "string" },
+    "locale": {
+      "type": "object",
+      "required": ["lang", "timeZone", "zoneLabel", "utcOffset", "city"],
+      "properties": {
+        "lang": { "type": "string", "description": "BCP 47, e.g. en-GB or fr-SN" },
+        "timeZone": { "type": "string", "description": "IANA zone, e.g. Africa/Accra" },
+        "zoneLabel": { "type": "string", "description": "Shown after times, e.g. GMT, WAT, EAT" },
+        "utcOffset": { "type": "string" },
+        "city": { "type": "string" }
+      }
+    },
+    "electoralBody": {
+      "type": "object",
+      "required": ["name", "short", "url", "declaresResults"],
+      "properties": {
+        "name": { "type": "string" }, "short": { "type": "string" }, "url": { "type": "string" },
+        "resultsPortal": { "type": ["string", "null"] }, "resultsPortalShort": { "type": ["string", "null"] },
+        "declaresResults": { "const": true, "description": "Binchika never declares results; the electoral body does." }
+      }
+    },
+    "localElectionsBody": { "type": ["string", "null"] },
+    "notice": { "type": "string", "description": "The line shown beside every figure (press feed, API, media terms). Must say that only the electoral body declares results." },
+    "site": {
+      "type": "object",
+      "required": ["origin", "sourceRepo"],
+      "properties": { "origin": { "type": "string" }, "sourceRepo": { "type": "string", "description": "Public source code link in the footer and guides." } }
+    },
+    "geography": { "type": "object" },
+    "pollingUnits": {
+      "type": "object",
+      "required": ["total", "totalSource", "codePattern", "statePrefix"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0, "description": "National count of polling stations, the coverage denominator." },
+        "totalSource": { "type": "string" },
+        "codePattern": { "type": "string", "description": "Regular expression for an official polling-station code." },
+        "statePrefix": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Code prefix → ISO 3166-2 admin-1 code." }
+      }
+    },
+    "elections": { "type": "string" },
+    "parties": { "type": "string" },
+    "races": { "type": "string" },
+    "resultForm": { "type": "string" },
+    "rules": { "type": "object" },
+    "baselines": { "type": "string" }
+  }
+}

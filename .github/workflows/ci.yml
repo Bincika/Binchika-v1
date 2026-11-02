@@ -1,0 +1,19 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # Runtime dependencies only (postal-mime, used by the mailbox Worker and its tests); no install scripts.
+      - run: npm ci --omit=dev --ignore-scripts
+      - run: node scripts/validate-data.mjs
+      - run: node --test tests/*.test.mjs
+      - run: node scripts/build-site.mjs

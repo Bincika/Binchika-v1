@@ -1,0 +1,29 @@
+name = "binchika-keepalive"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = false
+
+[triggers]
+# 06:17 UTC every 3rd day — well inside Supabase's 7-day inactivity window
+crons = ["17 6 */3 * *"]
+
+# Retention (session 63; docs/RETENTION.md): the periods promised in the privacy notice, section 8. Change a value here
+# and redeploy (node scripts/wr.mjs deploy --config workers/keepalive/wrangler.toml). Invalid values delete nothing.
+[vars]
+GOVERNORSHIP_FINAL_RESULTS = ""        # YYYY-MM-DD: the day INEC declares the final 2027 governorship results; empty = not yet
+APPLICATION_RETENTION_DAYS = "90"      # applications that never became a seat: deleted this many days after that date
+SEAT_HOLDER_RETENTION_MONTHS = "12"    # former seat holders: deleted this many months after their seat was released
+PHOTO_DELETE_FROM = "2028-02-06"       # result-sheet photos and videos: deleted from this day (12 months after 6 Feb 2027)
+RETENTION_DRY_RUN = "false"            # "true" reports what would be deleted without deleting anything
+
+[[d1_databases]]
+binding = "DB"
+database_name = "binchika-db"
+database_id = "00000000-0000-0000-0000-000000000000   # REPLACE: your D1 database id (wrangler d1 create)"
+
+[[r2_buckets]]
+binding = "EVIDENCE"
+bucket_name = "binchika-evidence"
+
+[observability]
+enabled = true

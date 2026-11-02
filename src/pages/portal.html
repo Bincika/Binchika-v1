@@ -1,0 +1,16 @@
+<!--{"title":"Verifier & admin portal · Binchika","description":"Secure sign-in for selected Binchika verifiers and administrators. Verifiers flag; a different Regional Verifier escalates; the BinchikAdmin records the correction. No single seat can change a result.","nav":"portal","path":"/portal/","scripts":["/assets/js/portal.js"],"head":"<link rel=\"modulepreload\" href=\"/assets/vendor/supabase.js\">"}-->
+<section style="padding-top:1.25rem">
+  <div class="wrap">
+    <div id="preview-banner" class="preview-banner" hidden role="alert">PREVIEW: fictional verifiers, seats, metrics and flags. Nothing is saved or sent.</div>
+    <div id="viewas-banner" class="viewas-banner" hidden role="status"></div>
+    <div class="cpanel">
+      <aside class="cp-side" aria-label="Dashboard navigation">
+        <div class="cp-brand"><picture><source srcset="/assets/img/brand/dash-128.webp" type="image/webp"><img src="/assets/img/brand/dash-128.png" alt="" width="44" height="44"></picture><div><b>Binchika</b><span id="cp-role">Portal</span></div></div>
+        <div id="cp-id"></div>
+        <nav id="cp-nav" class="cp-nav"></nav>
+        <p class="source-note cp-foot">Pseudonymous by design: others see only your seat and public ID.</p>
+      </aside>
+      <div class="cp-main" id="cp-main" aria-live="polite"><p class="muted">Loading…</p></div>
+    </div>
+  </div>
+</section>

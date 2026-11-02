@@ -1,0 +1,58 @@
+<!--{"title":"Nigeria 2027 map: zones, states, LGAs and the constitutional rules · Binchika","description":"3D interactive map of Nigeria: six geo-political zones, 36 states and the FCT, 774 LGAs. Citizen-reported tallies and the constitutional 25% spread rule. Only INEC declares results.","nav":"map","path":"/map/","scripts":["/assets/js/map3d.js"],"head":"<link rel=\"stylesheet\" href=\"/assets/vendor/maplibre-gl.css\"><link rel=\"modulepreload\" href=\"/assets/vendor/topojson.js\"><link rel=\"preload\" as=\"fetch\" href=\"/data/geo/ng-states.topo.json\" crossorigin>"}-->
+<section class="page-head" style="padding-bottom:0">
+  <div class="wrap">
+    <p class="eyebrow">Interactive map · upright 2D, optional 3D</p>
+    <h1>Nigeria, zone by zone.</h1>
+    <p class="lede">Tap a zone, then a state, then a local government area, or jump straight there with the lists. The map stays upright and flat on phones; switch on 3D to see House of Representatives seats as height. On election day, colour shows the party with the largest share of the citizen-reported tallies, and each party is always labelled with its acronym. It is not a result: only INEC declares results.</p>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Choose a race">
+        <button type="button" data-race="explore" aria-pressed="true">Explore</button>
+        <button type="button" data-race="president" aria-pressed="false">President</button>
+        <button type="button" data-race="senate" aria-pressed="false">Senate</button>
+        <button type="button" data-race="house" aria-pressed="false">House</button>
+        <button type="button" data-race="governor" aria-pressed="false">Governor</button>
+      </div>
+      <span class="chip" id="units-chip"><i></i>0 of 176,846 polling units reported</span>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap ng-layout">
+    <div>
+      <div class="ng-map" id="ng-map">
+        <nav class="crumbs" id="crumbs" aria-label="Map level"></nav>
+        <div class="map-tip" id="map-tip" aria-hidden="true"></div>
+        <span class="map-hint" id="map-hint">Upright 2D · tap a zone, state or LGA</span>
+        <button class="btn btn-ghost btn-sm" id="toggle-3d" type="button" aria-pressed="false" style="position:absolute;right:12px;top:12px;z-index:3">3D</button>
+      </div>
+      <ul class="legend" id="legend" aria-label="Map legend"></ul>
+    </div>
+    <aside class="side">
+      <div class="panel">
+        <label class="sr-only" for="zone-pick">Choose a geo-political zone</label>
+        <select class="pick" id="zone-pick"><option value="">All six zones</option></select>
+        <label class="sr-only" for="state-pick">Choose a state</label>
+        <select class="pick" id="state-pick" style="margin-top:.6rem"><option value="">Choose a state…</option></select>
+        <label class="sr-only" for="lga-pick">Choose a local government area</label>
+        <select class="pick" id="lga-pick" style="margin-top:.6rem"><option value="">Choose an LGA (all 774)…</option></select>
+      </div>
+      <div class="panel" id="sel-panel" aria-live="polite"></div>
+      <div class="panel" id="baseline-panel" aria-live="polite"></div>
+      <div class="panel" id="road-panel" aria-live="polite"></div>
+    </aside>
+  </div>
+  <div class="wrap">
+    <details class="table-alt">
+      <summary>Show all states as a table</summary>
+      <div class="table-scroll" style="max-height:none">
+        <table class="data" id="state-table">
+          <caption class="sr-only">States, capitals, zones and seats</caption>
+          <thead><tr><th scope="col">State</th><th scope="col">Capital</th><th scope="col">Zone</th><th scope="col" class="num">LGAs</th><th scope="col" class="num">Senate</th><th scope="col" class="num">House</th><th scope="col">Citizen-count leader</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </details>
+    <p class="source-note">Boundaries: GRID3 via geoBoundaries (CC BY 4.0). LGA counts from the Constitution, First Schedule. House seats per state follow INEC's 2023 delimitation and are flagged for re-checking. Ward and polling-unit levels open once INEC's polling-unit register is loaded.</p>
+  </div>
+</section>

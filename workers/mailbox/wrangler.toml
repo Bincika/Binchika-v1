@@ -1,0 +1,32 @@
+name = "binchika-mailbox"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = false
+
+# Receives mail for accounts@, ops@ and noreply@binchika.com from Cloudflare Email Routing (rule action "worker").
+# It forwards every message to EMAIL_FORWARD_TO first (secret), then keeps a copy for the dashboard's Inbox & Sent tab,
+# then sends the sender one automatic reply.
+# Deploy: node ../../scripts/wr.mjs deploy  (from this folder). Routing: node scripts/mailbox-routing.mjs. Guide: docs/EMAIL-GUIDE.md.
+
+# Automatic reply from noreply@ to each sender (functions/_lib/autoreply.js). "off" stops it; forwarding and the Inbox
+# are not affected either way. Needs the RESEND_API_KEY secret (set by scripts/mailbox-deploy.mjs).
+[vars]
+AUTO_REPLY = "on"
+# Retention: dashboard mail (Inbox and Sent, with raw copies in R2) older than this many days is deleted by the daily run
+# below. Whole days, at least 30; "off" stops it. The copies in the EMAIL_FORWARD_TO inbox are not affected.
+MAIL_RETENTION_DAYS = "365"
+
+[triggers]
+crons = ["41 3 * * *"]   # 03:41 UTC (04:41 in Lagos) every day
+
+[[d1_databases]]
+binding = "DB"
+database_name = "binchika-db"
+database_id = "00000000-0000-0000-0000-000000000000   # REPLACE: your D1 database id (wrangler d1 create)"
+
+[[r2_buckets]]
+binding = "EVIDENCE"
+bucket_name = "binchika-evidence"
+
+[observability]
+enabled = true

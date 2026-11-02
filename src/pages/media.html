@@ -1,0 +1,101 @@
+<!--{"title":"For newsrooms · Binchika press feed","description":"How newsrooms and civic organisations use Binchika's citizen-verified tallies: the open press feed, the terms of use, and how to register your desk.","nav":"media","path":"/media/","scripts":["/assets/js/media.js"]}-->
+<div class="launch-banner" role="note"><div class="wrap launch-inner"><span class="launch-dot" aria-hidden="true"></span><p><strong>Public launch: Thursday 5 November 2026.</strong> Site readiness testing is ongoing. Until citizen reporting opens (after our privacy notice is in force; the date will be announced here), the feed returns zero counts. This is expected and is not an error.</p></div></div>
+<section class="page-head">
+  <div class="wrap" style="max-width:860px">
+    <p class="eyebrow">For newsrooms and civic organisations</p>
+    <h1>Use our citizen tallies, <span class="grad-text">correctly.</span></h1>
+    <p class="lede">Binchika publishes citizen-verified polling-unit tallies as an open, read-only feed. Any newsroom can use it today, without a key. Registered desks also get a named contact for corrections and notice before the feed changes.</p>
+    <p class="source-note"><strong>These are not results.</strong> Only INEC declares election results in Nigeria. Binchika never declares a winner and never projects one.</p>
+  </div>
+</section>
+
+<section style="padding-top:0" aria-labelledby="feed-h">
+  <div class="wrap" style="max-width:860px">
+    <h2 id="feed-h">What the feed is</h2>
+    <ul class="tick-list">
+      <li>Vote totals from polling units whose citizen tally passed every check: at least three separate citizen reports of the same posted result sheet, at least 85% agreement, confirmed by a trained Binchika volunteer (a verifier), and figures on the sheet that add up. Units that fail a check appear in the unit counts but not in the vote totals.</li>
+      <li>Aggregates only: national and per-state totals, unit counts, and how many units have a citizen tally that does not match the result sheet INEC published on IReV, INEC's online result-viewing portal. A difference is not proof of wrongdoing: report it as “does not match”, never as fraud. No photographs, no names, no personal data.</li>
+      <li>Every published unit is in the public, tamper-evident <a href="/ledger/">ledger</a>, so you can check any figure yourself.</li>
+      <li>Local government elections are run by the State Independent Electoral Commissions (SIECs), not INEC. They are not in the feed.</li>
+    </ul>
+
+    <h2 id="connect-h" style="margin-top:2rem">Connect</h2>
+    <p>One address per race: <code>president</code>, <code>senate</code>, <code>house</code>, <code>governor</code> or <code>state-assembly</code>. JSON, open to any origin, refreshed at most every 15 seconds. Checking more often returns the same copy.</p>
+    <pre class="code" tabindex="0" aria-label="Example request"><code>GET https://binchika.com/api/press/snapshot?race=president</code></pre>
+    <details style="margin-top:.75rem"><summary style="cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center">Example in JavaScript and Python</summary>
+<pre class="code" tabindex="0" aria-label="JavaScript example"><code>const r = await fetch("https://binchika.com/api/press/snapshot?race=president");
+const feed = await r.json();
+// Always show feed.notice next to the figures. It is the required line:
+// "Citizen-verified tallies. Only INEC declares results."
+console.log(feed.notice, feed.units.published, feed.national.totals);</code></pre>
+<pre class="code" tabindex="0" aria-label="Python example"><code>import requests
+feed = requests.get("https://binchika.com/api/press/snapshot",
+                    params={"race": "president"}, timeout=10).json()
+print(feed["notice"], feed["units"]["published"], feed["national"]["totals"])</code></pre>
+    </details>
+    <details style="margin-top:.75rem"><summary style="cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center">Example response and errors</summary>
+<pre class="code" tabindex="0" aria-label="Example response"><code>{
+  "notice": "Citizen-verified tallies. Only INEC declares results.",
+  "race": "president",
+  "updatedAt": "2026-11-01T12:05:41.043Z",
+  "ledger": { "head": null, "count": 0, "verify": "https://binchika.com/ledger/" },
+  "units": { "published": 0, "lowerConfidence": 0, "held": 0, "notYetHigh": 0,
+             "denominator": 176846, "denominatorSource": "INEC 2023 polling units" },
+  "national": { "totals": {} },
+  "byState": {},
+  "irev": { "compared": 0, "mismatches": 0 },
+  "rules": "Lower-confidence and held units are not in the totals. ..."
+}</code></pre>
+      <ul class="source-note" style="padding-left:1.2rem;display:grid;gap:.3rem">
+        <li><code>national.totals</code>: party acronym → votes, from published units only.</li>
+        <li><code>byState</code>: one entry per ISO 3166-2 state code (<code>NG-AB</code> … <code>NG-ZA</code>; the FCT is <code>NG-FC</code>), each <code>{ "units": n, "totals": { … } }</code>, where <code>units</code> is the number of published units in that state.</li>
+        <li><code>units.published</code>: units in the totals. <code>lowerConfidence</code>: agreement too low to count. <code>held</code>: failed a posting check (for example totals that do not add up). <code>notYetHigh</code>: still waiting for enough reports. Only <code>published</code> units are in the votes.</li>
+        <li><strong>Coverage.</strong> The denominator is INEC's 2023 national count of polling units (176,846). Use “<code>units.published</code> of 176,846” only for the president, Senate and House races. Not every state elects a governor on the same day, and the FCT has no State House of Assembly, so for governor and state-assembly races state the count instead: “from 1,240 polling units in the states voting”. The feed has no per-state polling-unit total, so for a state also state the count: “from 312 polling units in Lagos”.</li>
+        <li>For Senate, House, governor and state-assembly races, <code>national.totals</code> adds up party votes across constituencies or states. It is not seats and not a result for any constituency or state. In those races each <code>byState</code> entry adds up the published units from every constituency in that state that has any, so label it that way, for example “all Senate districts in Lagos combined”, never as if the state were one contest.</li>
+        <li><code>byState</code> lists only states with at least one published unit. A missing <code>race</code> means <code>president</code>.</li>
+        <li><code>ledger.head</code> is <code>null</code> until the first unit is published. Show the time from <code>updatedAt</code> (UTC; add one hour for WAT), for example “as of 21:05 WAT”.</li>
+        <li>Errors: <code>400</code> for an unknown race; <code>404</code> for a wrong URL path; <code>5xx</code> means try again after 15–60 seconds and keep showing your last good copy.</li>
+      </ul>
+    </details>
+
+    <h2 id="terms-h" style="margin-top:2rem">Terms of use</h2>
+    <ol>
+      <li>Show “Citizen-verified tallies. Only INEC declares results.” beside the figures, every time.</li>
+      <li>Credit Binchika (binchika.com).</li>
+      <li>Never present the figures as official results, a projection or a winner.</li>
+      <li>Always state coverage. President, Senate and House: “in N of 176,846 polling units”. Governor and state assembly: “from N polling units in the states voting”. One state: “from N polling units in Lagos”.</li>
+      <li>Senate, House and state assembly: the figures add up votes from many separate contests. They are not seats and not a result for any constituency or state. Say “party votes across all Senate districts with published units” or “all Senate districts in Lagos combined”, never “Lagos Senate result”.</li>
+    </ol>
+    <p><strong>Say</strong>, for example, for the presidential race: “In 1,240 of 176,846 polling units, citizen-verified tallies show Party X with 52,310 votes and Party Y with 48,920. Only INEC declares results.” <strong>Don't say:</strong> “Party X leads”, “X is winning” or “projected winner”, and do not call the party with the most votes “leading”, “ahead” or “trending”. Published units are not a random sample and do not show the national picture. On screen, do not highlight, colour or tick the party with the most votes; if you sort parties by votes, label the list “by citizen-verified votes so far”. Always state coverage. On radio or television, say the notice aloud.</p>
+    <p class="source-note">The same terms apply to every outlet: no exclusives, no paid tier, no early access.</p>
+  </div>
+</section>
+
+<section class="media-form-wrap" aria-labelledby="register-h">
+  <div class="wrap" style="max-width:860px">
+    <form class="contact-card" id="media-form" novalidate>
+      <p class="eyebrow" style="color:#F2A672">Register your desk</p>
+      <h2 id="register-h">Request media registration</h2>
+      <p>For newsrooms, broadcasters, news agencies, election observers and research groups. We aim to reply within two working days. Registration gives your desk a named contact for corrections and notice before the feed's format changes; it does not unlock any extra data. It lasts 12 months. Political parties and campaigns: please use the <a href="/contact/?topic=party" style="color:#F2A672">contact form</a> instead.</p>
+      <div class="form-grid" style="margin-top:1rem">
+        <label>Organisation name<input type="text" name="org" id="m-org" required maxlength="120" autocomplete="organization"></label>
+        <label>Registration number (optional)<input type="text" name="reg_no" id="m-reg" maxlength="40" placeholder="e.g. RC 123456"></label>
+        <label>Official website<input type="url" name="org_url" id="m-url" required maxlength="200" placeholder="https://" inputmode="url"></label>
+        <label>Type of organisation<select name="org_type" id="m-type" required><option value="">Choose…</option><option value="broadcaster">Broadcaster (TV or radio)</option><option value="newsroom">Newspaper or online newsroom</option><option value="agency">News agency or wire service</option><option value="observer">Election observer or civic organisation</option><option value="research">University or research group</option><option value="other">Other media organisation</option></select></label>
+        <label>Your name (optional)<input type="text" name="name" id="m-name" maxlength="100" autocomplete="name"></label>
+        <label>Your work email<input type="email" name="email" id="m-email" required autocomplete="email"></label>
+        <label>Technical contact email (optional)<input type="email" name="tech_email" id="m-tech" maxlength="320"></label>
+        <label>How you will use the feed<select name="use" id="m-use" required><option value="">Choose…</option><option value="live_page">Live election-night page or embed</option><option value="broadcast">On-air graphics</option><option value="analysis">Analysis or research</option><option value="factcheck">Fact-checking or verification</option></select></label>
+        <label class="wide">How often you will check the feed<select name="polling" id="m-polling" required><option value="">Choose…</option><option value="15s">Every 15 seconds (the fastest the feed changes)</option><option value="minute">About once a minute</option><option value="hour">About once an hour</option><option value="day">Daily or less often</option></select></label>
+        <label class="wide">Short description (where the figures will appear, and anything else we should know)<textarea name="message" id="m-message" required minlength="20" maxlength="5000"></textarea></label>
+        <label class="wide opt"><input type="checkbox" name="terms" id="m-terms" value="yes" required> <span>We accept the terms of use above.</span></label>
+        <label class="hp" aria-hidden="true">Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <p class="source-note" style="color:#CFC9BD;margin-top:.9rem">An email address at your organisation's own domain helps us confirm the request. We check the domains automatically and a person reviews every request. Your details are kept only with your message in our mailbox and are deleted after 12 months.</p>
+      <div class="cta-row" style="margin-top:1rem;align-items:center">
+        <button class="btn btn-solid" type="submit" id="m-send">Send request</button>
+        <p class="form-status" id="m-status" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>

@@ -1,0 +1,101 @@
+<!--{"title":"Become a verifier: screening questionnaire · Binchika","description":"The published screening questionnaire for Binchika volunteer verifiers, our ethics and data-protection standard, and the application timetable.","nav":"verifiers","path":"/verifiers/apply/","scripts":["/assets/js/apply.js","/assets/js/scroll-lit.js"]}-->
+<section class="page-head">
+  <div class="wrap" style="max-width:900px">
+    <p class="eyebrow">Become a verifier · step 1 of 3</p>
+    <h1>Before you apply, <span class="grad-text">check yourself.</span></h1>
+    <div id="gate" hidden class="callout"><strong>Please start from the Verifiers page.</strong> This questionnaire opens when you choose to become a verifier, so you see the roles and rules first. <a href="/verifiers/">Go to the Verifiers page →</a></div>
+    <p class="lede" id="intro">These are the exact screening questions everyone will answer, published in advance so the rules are the same for all. This self-check runs only in your browser: nothing you choose here is saved or sent.</p>
+  </div>
+</section>
+
+<div id="gated" hidden>
+<section style="padding-top:0">
+  <div class="wrap" style="max-width:900px">
+    <div class="glass-stack" data-scroll-lit>
+      <article class="glass-bar">
+        <span class="emb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/></svg></span>
+        <div>
+          <h2>Our ethics and data standard</h2>
+          <p style="margin-top:0">This standard applies wherever the Binchika Protocol runs. For Nigeria it implements the <strong>Nigeria Data Protection Act 2023</strong>. Other countries swap in their own law (for example Kenya's Data Protection Act 2019, Ghana's Data Protection Act 2012, South Africa's POPIA, or Senegal's Law 2008-12), guided by the African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention).</p>
+          <ul class="tick-list">
+            <li><strong>Consent, clearly asked.</strong> You apply by choice, and can withdraw at any time before or after selection.</li>
+            <li><strong>Only what is needed.</strong> Your full name, state of origin or residence, an email, and your voter card number stored only as a salted hash plus its last four characters (never the full number). We never ask for your NIN or BVN. Your name is private: it is used only to check the name you type when you sign the verifier pledge, and only the BinchikAdmin can see it.</li>
+            <li><strong>One purpose.</strong> Data is used only to screen, select and run the verifier network. It is never used for marketing and never shared with parties.</li>
+            <li><strong>Short retention.</strong> Applications that are not selected are deleted 90 days after the final election in the cycle.</li>
+            <li><strong>Your rights.</strong> You can see, correct or delete your data. Use the <a href="/contact/?topic=verifier">contact page</a>.</li>
+            <li><strong>Assessment first.</strong> A data-protection impact assessment is completed and the privacy notice is reviewed before applications open.</li>
+            <li><strong>Fair selection.</strong> The same published questions, an automated bias check, a regional spread check, and no favours. Applicants are addressed only by their assigned number after selection.</li>
+          </ul>
+          <p class="source-note">This is our standard, not legal advice. The privacy notice will be reviewed by a qualified data-protection professional before applications open.</p>
+        </div>
+      </article>
+
+      <article class="glass-bar">
+        <span class="emb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+        <div>
+          <h2>Proposed timetable (Nigeria 2027)</h2>
+          <p style="margin-top:0">This timetable avoids the Christmas and New Year break and keeps a buffer before both election days. It is a proposal, and the final dates will be announced on this page.</p>
+          <ol class="timeline">
+            <li><strong>2–16 Nov 2026 · Applications open (2 weeks).</strong> Only after the privacy notice is published.</li>
+            <li><strong>17 Nov–4 Dec · Screening.</strong> Published questions, bias check and regional spread check.</li>
+            <li><strong>7 Dec · First wave announced.</strong> Seat codes go out by email only. Selectees have 24 hours to claim their seat at binchika.com/join (email + password), then confirm their email and sign the verifier pledge.</li>
+            <li><strong>8–12 Dec · Backfill.</strong> Places not taken pass to the next applicant from the same state, who has 6 hours.</li>
+            <li><strong>14–19 Dec · Training block 1</strong> (online, evenings): duties, privacy, and how to flag.</li>
+            <li><strong>20 Dec–3 Jan · Holiday pause.</strong> No deadlines.</li>
+            <li><strong>4–10 Jan 2027 · Training block 2</strong> and a full dry run on test data.</li>
+            <li><strong>16 Jan · Presidential &amp; National Assembly.</strong> Then 72 hours of active verifying.</li>
+            <li><strong>6 Feb · Governorship &amp; State Assembly.</strong> Then 72 hours of active verifying.</li>
+          </ol>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="screen-h">
+  <div class="wrap" style="max-width:820px">
+    <p class="eyebrow">Screening self-check · private</p>
+    <h2 id="screen-h">Would you qualify?</h2>
+    <form id="quiz" novalidate>
+      <fieldset><legend>Which state would you verify for?</legend>
+        <label class="sr-only" for="q-state">State</label><select class="pick" id="q-state" name="state"><option value="">Choose your state of origin or residence…</option></select>
+        <p class="source-note">You can only ever verify this one state (or its region, for regional roles).</p></fieldset>
+      <fieldset><legend>1. Do you expect payment or any other compensation for verifying?</legend>
+        <label class="opt"><input type="radio" name="q1" value="yes"> Yes</label><label class="opt"><input type="radio" name="q1" value="no"> No</label></fieldset>
+      <fieldset><legend>2. Are you currently a member, official, candidate, polling agent or employee of any political party or campaign?</legend>
+        <label class="opt"><input type="radio" name="q2" value="yes"> Yes</label><label class="opt"><input type="radio" name="q2" value="no"> No</label></fieldset>
+      <fieldset><legend>3. In the last four years, have you held party office or stood as a candidate?</legend>
+        <label class="opt"><input type="radio" name="q3" value="yes"> Yes</label><label class="opt"><input type="radio" name="q3" value="no"> No</label></fieldset>
+      <fieldset><legend>4. Will you work for the electoral body (INEC), or as an election official, in these elections?</legend>
+        <label class="opt"><input type="radio" name="q4" value="yes"> Yes</label><label class="opt"><input type="radio" name="q4" value="no"> No</label></fieldset>
+      <fieldset><legend>5. Are you 18 or older, with a valid voter card?</legend>
+        <label class="opt"><input type="radio" name="q5" value="yes"> Yes</label><label class="opt"><input type="radio" name="q5" value="no"> No</label></fieldset>
+      <fieldset><legend>6. Can you be available on both election days and for the 72 hours after each?</legend>
+        <label class="opt"><input type="radio" name="q6" value="yes"> Yes</label><label class="opt"><input type="radio" name="q6" value="no"> No</label></fieldset>
+      <fieldset><legend>7. Would you flag a mismatch even if it hurt a party you like?</legend>
+        <label class="opt"><input type="radio" name="q7" value="yes"> Yes</label><label class="opt"><input type="radio" name="q7" value="no"> No</label><label class="opt"><input type="radio" name="q7" value="unsure"> Not sure</label></fieldset>
+      <fieldset><legend>8. Will you be deployed as an accredited election observer in these elections?</legend>
+        <label class="opt"><input type="radio" name="q8" value="yes"> Yes</label><label class="opt"><input type="radio" name="q8" value="no"> No</label></fieldset>
+      <button class="btn btn-solid" type="submit">Check my answers</button>
+      <div class="result-box" id="quiz-result" role="status" tabindex="-1" hidden></div>
+    </form>
+
+    <p class="callout" id="apply-closed" hidden><strong>Applications are not open yet.</strong> They open only once our privacy notice has been reviewed and published, so nothing can be submitted today. The self-check above already tells you whether you would qualify; please come back when the timetable says applications are open.</p>
+
+    <form class="portal-form panel" id="apply-form" hidden novalidate aria-labelledby="apply-h" style="margin-top:1.5rem">
+      <h2 id="apply-h" style="margin-top:0">Apply for a verifier seat</h2>
+      <p class="source-note">We use your answers above, plus the details below. Your name and email are private. Your voter identification number is stored only as a salted hash and its last four characters, to stop duplicate applications. We never ask for BVN, NIN, bank details or biometrics.</p>
+      <div class="form-grid">
+        <label class="wide">Full name (exactly as you will type it to sign the pledge)<input id="a-name" autocomplete="name" maxlength="120" required></label>
+        <label class="wide">Email<input id="a-email" type="email" autocomplete="email" maxlength="254" required></label>
+        <label>This state is my<select id="a-basis" required><option value="">Choose…</option><option value="origin">state of origin</option><option value="residence">state of residence</option></select></label>
+        <label>Role<select id="a-role" required><option value="szv">State Zone Verifier (SZV)</option><option value="nrv">Regional Verifier (NRV)</option></select></label>
+        <label class="wide">Voter identification number (VIN) on your voter card<input id="a-vin" autocomplete="off" spellcheck="false" maxlength="30" required></label>
+      </div>
+      <label class="opt"><input type="checkbox" id="a-consent" required> <span>I have read the <a id="a-privacy" href="/privacy/">privacy notice</a> (version <span id="a-privacy-v"></span>) and agree that Binchika uses these details only to screen, select and run the verifier network.</span></label>
+      <button class="btn btn-solid" type="submit">Submit my application</button>
+      <p class="form-status" id="apply-status" role="status" tabindex="-1"></p>
+    </form>
+  </div>
+</section>
+</div>

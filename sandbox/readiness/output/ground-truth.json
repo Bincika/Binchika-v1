@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-11-01T12:28:48.863Z",
+  "sheet": {
+    "fictional": true,
+    "label": "Fictional sandbox unit. Shares follow the 2023 national declaration. This is not an INEC polling-unit result.",
+    "puCode": "37-01-01-901",
+    "race": "president",
+    "register": 480,
+    "accredited": 130,
+    "rejected": 5,
+    "spoiled": 4,
+    "parties": {
+      "APC": 47,
+      "PDP": 37,
+      "LP": 32,
+      "NNPP": 8
+    },
+    "valid": 124,
+    "cast": 129
+  },
+  "sheetCheck": {
+    "ok": true,
+    "eligible": true,
+    "valid": 124,
+    "cast": 129,
+    "rejected": 5,
+    "errors": [],
+    "reason": "balanced"
+  },
+  "national": "see ec8a-rules.mjs NATIONAL_2023"
+}

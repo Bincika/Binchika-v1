@@ -1,0 +1,45 @@
+{
+  "$schema": "../tenant.schema.json",
+  "id": "ng",
+  "country": "Nigeria",
+  "iso": "NG",
+  "status": "live",
+  "domain": "binchika.com",
+  "locale": { "lang": "en-GB", "timeZone": "Africa/Lagos", "zoneLabel": "WAT", "utcOffset": "UTC+1", "city": "Abuja" },
+  "electoralBody": { "name": "Independent National Electoral Commission", "short": "INEC", "url": "https://www.inecnigeria.org/", "resultsPortal": "https://inecelectionresults.ng/elections/types", "resultsPortalShort": "IReV", "declaresResults": true },
+  "localElectionsBody": "State Independent Electoral Commissions (SIECs) run local government elections",
+  "notice": "Citizen-verified tallies. Only INEC declares results.",
+  "site": { "origin": "https://binchika.com", "sourceRepo": "https://github.com/Bincika/Binchika-v1" },
+  "elections": "site/data/elections.json",
+  "geography": {
+    "levels": ["zone", "state", "lga", "ward", "pollingUnit"],
+    "admin1": "site/data/geo/ng-states.topo.json",
+    "admin2": "site/data/geo/ng-lgas.topo.json",
+    "meta": "site/data/states.json",
+    "pollingUnitCode": "^\\d{2}-\\d{2}-\\d{2}-\\d{3}$",
+    "pollingUnitStatePrefix": "pollingUnits.statePrefix (this file)"
+  },
+  "pollingUnits": {
+    "total": 176846,
+    "totalSource": "INEC 2023 polling units",
+    "codePattern": "^\\d{2}-\\d{2}-\\d{2}-\\d{3}$",
+    "statePrefix": {
+      "01": "NG-AB", "02": "NG-AD", "03": "NG-AK", "04": "NG-AN", "05": "NG-BA", "06": "NG-BY", "07": "NG-BE", "08": "NG-BO",
+      "09": "NG-CR", "10": "NG-DE", "11": "NG-EB", "12": "NG-ED", "13": "NG-EK", "14": "NG-EN", "15": "NG-GO", "16": "NG-IM",
+      "17": "NG-JI", "18": "NG-KD", "19": "NG-KN", "20": "NG-KT", "21": "NG-KE", "22": "NG-KO", "23": "NG-KW", "24": "NG-LA",
+      "25": "NG-NA", "26": "NG-NI", "27": "NG-OG", "28": "NG-ON", "29": "NG-OS", "30": "NG-OY", "31": "NG-PL", "32": "NG-RI",
+      "33": "NG-SO", "34": "NG-TA", "35": "NG-YO", "36": "NG-ZA", "37": "NG-FC"
+    }
+  },
+  "parties": "site/data/parties.json",
+  "races": "site/data/races.json",
+  "resultForm": "Form EC8A (polling-unit result sheet)",
+  "rules": {
+    "consensus": { "highShare": 0.85, "minIndependent": 3 },
+    "winning": {
+      "president": "Constitution s.134(2): most votes + ≥25% in two-thirds of the states and the FCT",
+      "governor": "Constitution s.179(2): most votes + ≥25% in two-thirds of the state's LGAs"
+    }
+  },
+  "baselines": "site/data/baselines/registered-voters.json"
+}

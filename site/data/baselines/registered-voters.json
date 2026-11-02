@@ -1,0 +1,877 @@
+{
+ "generatedAt": "2026-10-25T04:00:48.952Z",
+ "documents": [
+  {
+   "id": "2023-state-register",
+   "title": "Registered Voters & PVCs Collected for the 2023 General Election",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z",
+   "bytes": 18474326,
+   "level": "state"
+  },
+  {
+   "id": "2023-delim-bayelsa-imo-kogi",
+   "title": "Delimitation data: Bayelsa, Imo and Kogi governorship elections (Nov 2023)",
+   "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+   "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+   "fetchedAt": "2026-10-25T04:01:02.553Z",
+   "bytes": 13735030,
+   "level": "lga"
+  }
+ ],
+ "state": {
+  "NG-AB": {
+   "registered": 2120808,
+   "pvcCollected": 1949197,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-AD": {
+   "registered": 2196566,
+   "pvcCollected": 1970650,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-AK": {
+   "registered": 2357418,
+   "pvcCollected": 2198628,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-AN": {
+   "registered": 2656437,
+   "pvcCollected": 2624764,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-BA": {
+   "registered": 2749268,
+   "pvcCollected": 2721780,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-BY": {
+   "registered": 1056862,
+   "pvcCollected": 1009895,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-BE": {
+   "registered": 2777727,
+   "pvcCollected": 2607141,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-BO": {
+   "registered": 2513281,
+   "pvcCollected": 2447209,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-CR": {
+   "registered": 1766466,
+   "pvcCollected": 1672810,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-DE": {
+   "registered": 3221697,
+   "pvcCollected": 2989514,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-EB": {
+   "registered": 1597646,
+   "pvcCollected": 1551795,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-ED": {
+   "registered": 2501081,
+   "pvcCollected": 2128288,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-EK": {
+   "registered": 987647,
+   "pvcCollected": 958052,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-EN": {
+   "registered": 2112793,
+   "pvcCollected": 1995389,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-GO": {
+   "registered": 1575794,
+   "pvcCollected": 1534954,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-IM": {
+   "registered": 2419922,
+   "pvcCollected": 2280339,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-JI": {
+   "registered": 2351298,
+   "pvcCollected": 2298365,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-KD": {
+   "registered": 4335208,
+   "pvcCollected": 4164473,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-KN": {
+   "registered": 5921370,
+   "pvcCollected": 5594193,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-KT": {
+   "registered": 3516719,
+   "pvcCollected": 3459945,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-KE": {
+   "registered": 2032041,
+   "pvcCollected": 1980171,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-KO": {
+   "registered": 1932654,
+   "pvcCollected": 1813741,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-KW": {
+   "registered": 1695927,
+   "pvcCollected": 1537275,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-LA": {
+   "registered": 7060195,
+   "pvcCollected": 6214970,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-NA": {
+   "registered": 1899244,
+   "pvcCollected": 1847752,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-NI": {
+   "registered": 2698344,
+   "pvcCollected": 2633728,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-OG": {
+   "registered": 2688305,
+   "pvcCollected": 2278063,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-ON": {
+   "registered": 1991344,
+   "pvcCollected": 1729641,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-OS": {
+   "registered": 1954800,
+   "pvcCollected": 1594066,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-OY": {
+   "registered": 3276675,
+   "pvcCollected": 2761421,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-PL": {
+   "registered": 2789528,
+   "pvcCollected": 2687533,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-RI": {
+   "registered": 3537190,
+   "pvcCollected": 3285785,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-SO": {
+   "registered": 2172056,
+   "pvcCollected": 2097798,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-TA": {
+   "registered": 2022374,
+   "pvcCollected": 1825325,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-YO": {
+   "registered": 1485146,
+   "pvcCollected": 1437851,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-ZA": {
+   "registered": 1926870,
+   "pvcCollected": 1850055,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  },
+  "NG-FC": {
+   "registered": 1570307,
+   "pvcCollected": 1476451,
+   "doc": "2023-state-register",
+   "url": "https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "retrievedFrom": "http://web.archive.org/web/20260815131408id_/https://www.inecnigeria.org/wp-content/uploads/2023/02/PVCs-Collected-Registered-Voters.pdf",
+   "sha256": "d054efbaf77d4cb582968f3ba4ffad29f2ad0a6ce8362054704ef01a0999e6c8",
+   "fetchedAt": "2026-10-25T04:00:56.239Z"
+  }
+ },
+ "lga": {
+  "NG-BY": {
+   "BRASS": {
+    "registered": 94040,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Brass"
+   },
+   "EKEREMOR": {
+    "registered": 137225,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ekeremor"
+   },
+   "NEMBE": {
+    "registered": 99035,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Nembe"
+   },
+   "YENAGOA": {
+    "registered": 218394,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Yenegoa"
+   },
+   "OGBIA": {
+    "registered": 119571,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ogbia"
+   },
+   "KOLOKUMA/OPOKUMA": {
+    "registered": 65364,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Kolokuma/Opokuma"
+   },
+   "SOUTHERN IJAW": {
+    "registered": 184401,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Southern Ijaw"
+   },
+   "SAGBAMA": {
+    "registered": 138832,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Sagbama"
+   }
+  },
+  "NG-IM": {
+   "ABOH MBAISE": {
+    "registered": 111207,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Aboh-Mbaise"
+   },
+   "OKIGWE": {
+    "registered": 76250,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Okigwe"
+   },
+   "IKEDURU": {
+    "registered": 119987,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ikeduru"
+   },
+   "MBAITOLI": {
+    "registered": 153283,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Mbatoli"
+   },
+   "OGUTA": {
+    "registered": 95287,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Oguta"
+   },
+   "OHAJI EGBEMA": {
+    "registered": 107456,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ohaji/Egbema"
+   },
+   "ISU": {
+    "registered": 55203,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Isu"
+   },
+   "NKWERRE": {
+    "registered": 59899,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Nkwerre"
+   },
+   "ORLU": {
+    "registered": 103223,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Orlu"
+   },
+   "ORSU": {
+    "registered": 57721,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Orsu"
+   },
+   "ORU EAST": {
+    "registered": 85902,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Oru East"
+   },
+   "ORU WEST": {
+    "registered": 71183,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Oru West"
+   },
+   "NWANGELE": {
+    "registered": 55808,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Nwangele"
+   },
+   "ONUIMO": {
+    "registered": 36548,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Onuimo"
+   },
+   "OBOWO": {
+    "registered": 68690,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Obowo"
+   },
+   "NJABA": {
+    "registered": 64068,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Njaba"
+   },
+   "AHIAZU MBAISE": {
+    "registered": 98887,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ahiazu-Mbaise"
+   },
+   "OWERRI MUNICIPAL": {
+    "registered": 134194,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Owerri Municipal"
+   },
+   "OWERRI NORTH": {
+    "registered": 134557,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Owerri North"
+   },
+   "OWERRI WEST": {
+    "registered": 140242,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Owerri West"
+   },
+   "EHIME MBANO": {
+    "registered": 79212,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ehime-Mbano"
+   },
+   "ISIALA MBANO": {
+    "registered": 99149,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Isiala Mbano"
+   },
+   "IDEATO NORTH": {
+    "registered": 86905,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ideato North"
+   },
+   "IHITTE UBOMA": {
+    "registered": 52108,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ihitte/Uboma"
+   },
+   "IDEATO SOUTH": {
+    "registered": 79310,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ideato South"
+   },
+   "EZINIHITTE MBAISE": {
+    "registered": 91595,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ezinihitte"
+   },
+   "NGOR OKPALA": {
+    "registered": 102048,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ngor-Okpala"
+   }
+  },
+  "NG-KO": {
+   "BASSA": {
+    "registered": 69376,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Bassa"
+   },
+   "OMALA": {
+    "registered": 74537,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Omala"
+   },
+   "IBAJI": {
+    "registered": 90556,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ibaji"
+   },
+   "IDAH": {
+    "registered": 64519,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Idah"
+   },
+   "OLAMABORO": {
+    "registered": 105864,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Olamaboro"
+   },
+   "IGALAMELA/ODOLU": {
+    "registered": 77577,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Igalamela-Odolu"
+   },
+   "AJAOKUTA": {
+    "registered": 96504,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ajaokuta"
+   },
+   "OFU": {
+    "registered": 101964,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ofu"
+   },
+   "DEKINA": {
+    "registered": 187881,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Dekina"
+   },
+   "ANKPA": {
+    "registered": 180095,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ankpa"
+   },
+   "ADAVI": {
+    "registered": 114663,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Adavi"
+   },
+   "OKENE": {
+    "registered": 151243,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Okene"
+   },
+   "OKEHI": {
+    "registered": 94456,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Okehi"
+   },
+   "YAGBA EAST": {
+    "registered": 53436,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Yagba East"
+   },
+   "YAGBA WEST": {
+    "registered": 51234,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Yagba West"
+   },
+   "OGORI MANGOGO": {
+    "registered": 17688,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ogori/Magongo"
+   },
+   "IJUMU": {
+    "registered": 66482,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Ijumu"
+   },
+   "KABBA/BUNU": {
+    "registered": 87162,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Kabba/Bunu"
+   },
+   "KOGI.K.K": {
+    "registered": 63342,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Kogi"
+   },
+   "LOKOJA": {
+    "registered": 157248,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Lokoja"
+   },
+   "MOPA MORO": {
+    "registered": 26827,
+    "doc": "2023-delim-bayelsa-imo-kogi",
+    "url": "https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "retrievedFrom": "http://web.archive.org/web/20241213102252id_/https://inecnigeria.org/wp-content/uploads/2023/11/DELIMITATION-DATA-FOR-BAYELSA-IMO-KOGI-ELECTION.pdf",
+    "sha256": "0ffb1acc8c8eed4719540deb31342ac7602c8f478ca6766df0a4785ab9cc2e0b",
+    "fetchedAt": "2026-10-25T04:01:02.553Z",
+    "grid3": "Mopa-Muro"
+   }
+  }
+ },
+ "coverage": {
+  "states": 37,
+  "lgas": 56,
+  "note": "LGA-level figures exist only where INEC has published a delimitation booklet. Others are pending, not estimated."
+ }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "level": "ADM1",
+    "file": "geoBoundaries-NGA-ADM1_simplified.geojson",
+    "features": 37,
+    "bytes": 827817,
+    "source": "GRID3",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "yearRepresented": "2022",
+    "sourceUpdated": "Sun Feb 26 12:26:14 2023",
+    "url": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NGA/ADM1/geoBoundaries-NGA-ADM1_simplified.geojson",
+    "fetchedAt": "2026-10-24T07:08:10.381Z"
+  },
+  {
+    "level": "ADM2",
+    "file": "geoBoundaries-NGA-ADM2_simplified.geojson",
+    "features": 774,
+    "bytes": 3717494,
+    "source": "GRID3",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "yearRepresented": "2022",
+    "sourceUpdated": "Sun Feb 26 12:26:14 2023",
+    "url": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/NGA/ADM2/geoBoundaries-NGA-ADM2_simplified.geojson",
+    "fetchedAt": "2026-10-24T07:08:12.379Z"
+  }
+]

@@ -1,0 +1,136 @@
+<!--{"title":"Become a Binchika verifier · volunteer, unpaid, anonymous","description":"Binchika verifiers are unpaid volunteers who check citizen reports for their own state. They flag problems; they never change results. Read the roles, the rules and the screening questions.","nav":"verifiers","path":"/verifiers/","scripts":["/assets/js/verifiers.js","/assets/js/scroll-lit.js"]}-->
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Volunteer verifiers · unpaid · anonymous by default</p>
+    <h1>Check the count, <span class="grad-text">not the candidate.</span></h1>
+    <p class="lede">Verifiers look at the citizen photos coming in from their own state and flag anything that doesn't add up. They never change a result. A flag goes to a Regional Verifier, then to an automated re-investigation. No single person can change a result: a correction needs three separate seats, and every decision is published in the ledger.</p>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="flow-h" style="padding-block:3rem">
+  <div class="wrap">
+    <h2 id="flow-h" style="font-size:clamp(1.6rem,3vw,2.4rem)">How a problem gets fixed</h2>
+    <div data-scroll-lit><ol class="flow">
+      <li><strong>Citizens report</strong><br><span class="muted">When reporting opens, photos or reports of the posted result sheet will be accepted on the channels announced here. Reporting is not open during readiness testing.</span></li>
+      <li><strong>People confirm the reading</strong><br><span class="muted">A machine may propose the numbers; they count only after a verifier confirms them beside the photo. High confidence needs at least 85% agreement among at least 3 independent confirmed readings.</span></li>
+      <li><strong>Verifiers flag</strong><br><span class="muted">An SZV or NRV sees something wrong in their area and raises a flag with a reason.</span></li>
+      <li><strong>AI re-investigates</strong><br><span class="muted">All photos and reports for that unit are re-read and compared, and a summary is written.</span></li>
+      <li class="admin"><strong>Consensus-Approved Corrections</strong><br><span class="muted">No single person can change a result. A correction needs three separate seats: the verifier who flags it, a Regional Verifier who escalates it, and the BinchikAdmin, who records it after the AI re-check. Approved fixes are new ledger entries, so nothing is erased. (Planned: a quorum of at least 5 of 7 randomly assigned Regional Verifiers.)</span></li>
+    </ol></div>
+    <p class="source-note ec8a-rule" style="max-width:70ch">{{EC8A_RULE}} Auditing such evidence is part of a verifier's work.</p>
+    <p class="source-note" style="max-width:70ch">{{PIPELINE}}</p>
+  </div>
+</section>
+
+<section aria-labelledby="roles-h">
+  <div class="wrap">
+    <h2 id="roles-h">Three roles</h2>
+    <div class="roles" data-scroll-lit>
+      <div class="role"><p class="count count-icon" role="img" aria-label="Unlimited: anyone at a polling unit can take part"><svg viewBox="0 0 72 72" width="72" height="72" aria-hidden="true" focusable="false"><defs><linearGradient id="cm-face" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBD3A6"/><stop offset=".45" stop-color="#C8742E"/><stop offset="1" stop-color="#6E3410"/></linearGradient><linearGradient id="cm-edge" x1="1" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#3E1C08"/><stop offset="1" stop-color="#FFE6C8"/></linearGradient><radialGradient id="cm-lens" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset=".5" stop-color="#FFE9D0" stop-opacity=".18"/><stop offset="1" stop-color="#C8742E" stop-opacity=".3"/></radialGradient><filter id="cm-emboss" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur in="SourceAlpha" stdDeviation="1.1" result="b"/><feSpecularLighting in="b" surfaceScale="3.2" specularConstant=".85" specularExponent="16" lighting-color="#FFFFFF" result="s"><fePointLight x="-24" y="-36" z="70"/></feSpecularLighting><feComposite in="s" in2="SourceAlpha" operator="in" result="s2"/><feComposite in="SourceGraphic" in2="s2" operator="arithmetic" k1="0" k2="1" k3=".6" k4="0" result="lit"/><feDropShadow in="lit" dx="1.4" dy="2.4" stdDeviation="1.4" flood-color="#000000" flood-opacity=".38"/></filter></defs><g filter="url(#cm-emboss)"><rect x="9" y="7" width="35" height="45" rx="4.5" fill="url(#cm-face)" stroke="url(#cm-edge)" stroke-width="2"/><path d="M16 17h21M16 24h21M16 31h13M16 38h9" stroke="#4A220A" stroke-width="2.6" stroke-linecap="round" opacity=".62"/><path d="M54 52l9.5 9.5" stroke="url(#cm-face)" stroke-width="7.5" stroke-linecap="round"/><circle cx="45" cy="43" r="12.5" fill="url(#cm-lens)" stroke="url(#cm-face)" stroke-width="5.5"/><circle cx="45" cy="43" r="12.5" fill="none" stroke="url(#cm-edge)" stroke-width="1.2"/></g></svg></p><h3>Citizen monitors</h3><p>Anyone at a polling unit. Photograph or report the posted result sheet and send it in. You need no account, you stay independent, and you can call out any mistake, including ours.</p></div>
+      <div class="role"><p class="count">129</p><h3>State Zone Verifiers (SZV)</h3><p>Three for most states and three for the FCT. The states with the largest share of INEC's 2023 register have more: seven for Lagos and Kano, five for Kaduna, Rivers, Katsina, Oyo and Delta. Always an odd number, so a state vote can never tie. They see incoming reports for <strong>their own state only</strong> and flag problems.</p></div>
+      <div class="role"><p class="count">24</p><h3>Regional Verifiers (NRV)</h3><p>Three for each of eight regions (draft): an odd number, so a regional vote can never tie. They oversee the SZVs in their region, review escalations, and can flag in any state of their region.</p></div>
+    </div>
+    <p class="source-note" style="margin-top:1rem">Every verifier is known publicly only by a sequential 5-character ID (for example <span class="mono">V0042</span>); only the BinchikAdmin can link it to a person. The chain is SZV → regional NRV → OpsAdmin → BinchikAdmin, and a correction needs three separate seats: the verifier who flags it, a different Regional Verifier who escalates it, and the BinchikAdmin, who records it. <a href="/portal/">Open the portal →</a></p>
+  </div>
+</section>
+
+<section aria-labelledby="org-h">
+  <div class="wrap" style="max-width:960px">
+    <h2 id="org-h">Who does what</h2>
+    <p class="muted" style="max-width:62ch">Every seat is fixed in number. A flag travels up the chain, from SZV to BinchikAdmin. No single seat can change a result: a correction needs the verifier who flags it, a different Regional Verifier and the BinchikAdmin.</p>
+    <ol class="org" aria-label="Binchika seat hierarchy, top to bottom">
+      <li class="org-tier org-top">
+        <div class="org-card"><p class="org-n">1 seat</p><h3>BinchikAdmin</h3>
+          <p>The only superadmin. It is locked to one owner address that can never be changed or handed on, and it needs an authenticator app to act.</p>
+          <ul><li>Records or rejects corrections that a different Regional Verifier has escalated, never on a flag it raised itself (each correction is a new public ledger entry)</li><li>Invites verifiers, releases seats and appoints the three OpsAdmins</li></ul></div>
+      </li>
+      <li class="org-tier">
+        <div class="org-card"><p class="org-n">Exactly 3 seats · <span class="mono">OPS-1</span> <span class="mono">OPS-2</span> <span class="mono">OPS-3</span></p><h3>OpsAdmin</h3>
+          <p>Appointed only by the BinchikAdmin, never by code or application, and an authenticator app is required.</p>
+          <ul><li>Runs the AI re-investigation and helps with reviews</li><li>Cannot approve corrections, invite, release seats or see who holds a seat</li></ul></div>
+      </li>
+      <li class="org-tier">
+        <div class="org-card"><p class="org-n">24 seats · 3 per region · 8 regions</p><h3>Regional Verifier (NRV)</h3>
+          <p>Reviews flags from the states in its region, then escalates them with findings or dismisses them. Three per region, so a regional vote can't tie.</p></div>
+      </li>
+      <li class="org-tier">
+        <div class="org-card"><p class="org-n">129 seats · 3, 5 or 7 per state and the FCT</p><h3>State Zone Verifier (SZV)</h3>
+          <p>Reads citizen reports from its own state and raises flags with a reason someone else can check. Never edits a result.</p></div>
+      </li>
+    </ol>
+    <div class="callout org-rule"><strong>Roles never change.</strong> A seat's role, its account and its email address are fixed for as long as the seat is held. No one can be promoted, and no one can ever become BinchikAdmin. To change who holds a seat, the BinchikAdmin releases it (the old public ID is retired for good) and invites or appoints someone new. The database enforces all of this, not just the website.</div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="rules-h">
+  <div class="wrap" style="max-width:900px">
+    <h2 id="rules-h">The rules, enforced by the database</h2>
+    <div class="pledge" style="grid-template-columns:1fr 1fr" data-scroll-lit>
+      <div><h3>Your state, your reports</h3><p>You choose your state of origin or of residence when you apply, and it can't be changed later. Someone from Lagos verifies Lagos, not Bauchi. The database rejects any other assignment.</p></div>
+      <div><h3>24 hours, then 6</h3><p>First-wave selectees get a one-time code and 24 hours to create an account and complete their profile. An unused place passes to the next most compatible applicant <strong>from the same state</strong>, who gets 6 hours.</p></div>
+      <div><h3>Flags, not edits</h3><p>Verifiers cannot write or change results. They can read reports in their area and raise flags. A correction needs three separate seats (the verifier who flags it, a different Regional Verifier and the BinchikAdmin), after AI re-investigation.</p></div>
+      <div><h3>Unpaid, on purpose</h3><p>This is volunteer work. Expecting payment rules an applicant out, which protects verifiers from anyone trying to buy influence.</p></div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="data-h">
+  <div class="wrap" style="max-width:900px">
+    <p class="eyebrow">Privacy · NDPA 2023</p>
+    <h2 id="data-h">What we will ask for, and why</h2>
+    <div class="table-scroll" style="max-height:none">
+      <table class="data">
+        <thead><tr><th scope="col">Item</th><th scope="col">Why</th><th scope="col">How it is stored</th></tr></thead>
+        <tbody>
+          <tr><td>State of origin or residence</td><td>Sets the only state you can verify</td><td>Plain, fixed after acceptance</td></tr>
+          <tr><td>Email</td><td>Delivers your one-time code and verifier notices</td><td>Not published or shared with any party or campaign; handled by our disclosed service providers (see the <a href="/privacy/">privacy notice</a>)</td></tr>
+          <tr><td>PVC Voter Identification Number (VIN)</td><td>One person, one application</td><td><strong>Salted hash + last 4 characters only.</strong> The full number is never stored.</td></tr>
+          <tr><td>Screening answers</td><td>Published, identical rules for everyone</td><td>Private; scored automatically</td></tr>
+          <tr><td>Display name &amp; avatar</td><td>Optional, for teammates</td><td>Never a photo of yourself</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><strong>Applications are not open yet.</strong> They open once our privacy notice has been published and reviewed under the Nigeria Data Protection Act 2023. Binchika will never ask for your BVN, bank details or passwords.</div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="regions-h">
+  <div class="wrap">
+    <p class="eyebrow">Proposed NRV regions · draft</p>
+    <h2 id="regions-h">Eight regions covering all 37.</h2>
+    <p>These regions follow geography and travel routes, not politics. Once INEC's polling-unit list is loaded, they will be rebalanced so each carries a similar number of polling units.</p>
+    <ul class="region-grid" id="regions"></ul>
+  </div>
+</section>
+
+<section aria-labelledby="seats-h">
+  <div class="wrap">
+    <p class="eyebrow">Seat board · live</p>
+    <h2 id="seats-h">153 numbered seats. <span class="grad-text">Taken seats grey out.</span></h2>
+    <p>Every verifier seat has a sequential code: <span class="mono">SZV-001</span> to <span class="mono">SZV-129</span> (<span class="mono">SZV-001</span>–<span class="mono">111</span>: three per state and the FCT, A–Z; <span class="mono">SZV-112</span>–<span class="mono">129</span>: the extra seats for Lagos, Kano, Kaduna, Rivers, Katsina, Oyo and Delta) and <span class="mono">NRV-01</span> to <span class="mono">NRV-24</span> (three per region). The board shows only whether a seat is open or taken, never who holds it.</p>
+    <div class="toolbar"><div class="seg" role="group" aria-label="Seat type"><button type="button" data-seatf="szv" aria-pressed="true">State seats (SZV)</button><button type="button" data-seatf="nrv" aria-pressed="false">Regional seats (NRV)</button></div><span class="chip" id="seat-count"><i></i>Loading…</span></div>
+    <div id="seat-board" class="seat-board" aria-live="polite"></div>
+    <div class="cta-row"><a class="btn btn-solid" href="/verifiers/apply/?from=verifiers" id="become-btn">Become a verifier</a></div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="time-h">
+  <div class="wrap" style="max-width:820px">
+    <p class="eyebrow">Selection timetable</p>
+    <h2 id="time-h">Fair, published and on time.</h2>
+    <div class="callout" style="margin-top:0"><strong>Where we are now:</strong> applications are <strong>not open yet</strong>. They open only after our privacy notice has been reviewed and published. Every date below moves with that, except two fixed points: a <strong>holiday pause from 20 December to 3 January</strong> (no deadlines, no offers, no training) and the election days themselves, <strong>16 January</strong> and <strong>6 February 2027</strong>.</div>
+    <div data-scroll-lit><ol class="timeline">
+      <li><strong>Privacy notice published.</strong> Applications cannot open before this.</li>
+      <li><strong>Application window: two weeks, 2–16 November 2026 (proposed).</strong> It opens only if the privacy notice is in force by then. Any change is announced here and on @getbinchika. Late applications are never reviewed.</li>
+      <li><strong>Screening: 17 November – 4 December (proposed), about two and a half weeks.</strong> The same published questions for everyone, a bias filter, and a spread check across states. The scoring code is open source.</li>
+      <li><strong>First wave, early December.</strong> Each selectee receives a seat code by email only, from noreply@binchika.com.</li>
+      <li><strong>24 hours to claim.</strong> Claim your seat at binchika.com/join with an email and password, then confirm your email and sign the verifier pledge. Places not taken pass to the next eligible applicant from the same state, who has 6 hours.</li>
+      <li><strong>Training block 1, mid-December</strong> (online, evenings): duties, privacy, and how to flag.</li>
+      <li><strong>20 December – 3 January: holiday pause.</strong> Nothing is due. Any place still open is re-offered from 4 January.</li>
+      <li><strong>Training block 2 and a full dry run, 4–10 January.</strong></li>
+      <li><strong>16 January and 6 February 2027: election days.</strong> Then 72 hours of active verifying after each.</li>
+    </ol></div>
+    <p class="source-note">The detailed proposed dates are on the <a href="/verifiers/apply/?from=verifiers">application page</a>. If the privacy notice is late, the window and screening shrink; the holiday pause and the election days do not move.</p>
+    <p class="source-note">Questions about verifying? Use the <a href="/contact/?topic=verifier">contact form</a>.</p>
+  </div>
+</section>

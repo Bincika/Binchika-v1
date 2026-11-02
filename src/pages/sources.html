@@ -1,0 +1,55 @@
+<!--{"title":"Sources & licences · Binchika","description":"Every dataset Binchika uses, with its licence and retrieval details, plus a live per-country citation list.","nav":"sources","path":"/sources/","scripts":["/assets/js/sources.js"]}-->
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Citations · licences · provenance</p>
+    <h1>Every number has <span class="grad-text">a source.</span></h1>
+    <p class="lede">Pick a country and its citation list updates instantly. Below that is every dataset Binchika uses, with its licence. Anything still being written is labelled; nothing is estimated silently.</p>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap glass-stack">
+    <div class="glass-bar">
+      <span class="emb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span>
+      <div>
+        <h2>Sources for a country</h2>
+        <label class="sr-only" for="src-country">Choose a country</label>
+        <select class="pick" id="src-country" style="max-width:420px"><option value="">Choose a country (A–Z)…</option></select>
+        <div id="src-country-out" aria-live="polite" style="margin-top:1rem"><p class="muted">Choose a country to see exactly where each of its figures comes from.</p></div>
+      </div>
+    </div>
+
+    <div class="glass-bar">
+      <span class="emb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h12l4 4v12H4z"/><path d="M8 12h8M8 16h6M8 8h4"/></svg></span>
+      <div>
+        <h2>Nigeria election data</h2>
+        <ul class="src-list">
+          <li><b>INEC: 2027 timetable (16 Jan &amp; 6 Feb 2027)</b><span>Revised under the Electoral Act 2026. <a href="https://allafrica.com/stories/202602270088.html" rel="noopener">Report</a></span></li>
+          <li><b>INEC: register of political parties (22)</b><span><a href="https://inecnigeria.org/political-parties/" rel="noopener">inecnigeria.org/political-parties</a>, checked 24 October 2026</span></li>
+          <li><b>INEC: Registered Voters &amp; PVCs Collected, 2023 (37 states)</b><span>Original INEC URL now 404s; retrieved from the Internet Archive copy. SHA-256 and fetch time recorded in <a href="/data/baselines/registered-voters.json">registered-voters.json</a>. The states sum to exactly 93,469,008.</span></li>
+          <li><b>INEC: delimitation data booklet (Bayelsa, Imo, Kogi)</b><span>LGA registered voters; each state accepted only because its LGAs sum exactly to the state total.</span></li>
+          <li><b>Party logos</b><span>Official assets on inecnigeria.org (21 of 22; none published for Accord). Party marks, shown only to identify parties.</span></li>
+          <li><b>Constitution of Nigeria 1999</b><span>First Schedule (774 LGAs); s.134 and s.179 (the thresholds: most votes, and a spread across states or local governments). Binchika does not apply them as a declaration.</span></li>
+          <li><b>Nigeria Independence Act 1960</b><span><a href="https://www.legislation.gov.uk/ukpga/Eliz2/8-9/55/contents" rel="noopener">legislation.gov.uk</a></span></li>
+          <li><b>Registered voters by sex and age (2023)</b><span>INEC figures as reported by <a href="https://www.channelstv.com/2023/01/11/2023-93-4-million-nigerians-to-vote-says-inec/" rel="noopener">Channels TV</a> and <a href="https://www.icirnigeria.org/inec-removes-underage-voters-records-93-5m-voter-registration/" rel="noopener">ICIR</a></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="glass-bar">
+      <span class="emb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg></span>
+      <div>
+        <h2>Maps and world data</h2>
+        <ul class="src-list">
+          <li><b>GRID3 Nigeria boundaries via geoBoundaries</b><span>States and LGAs</span><span class="lic">CC BY 4.0 · geoboundaries.org</span></li>
+          <li><b>Natural Earth 1:110m</b><span>World countries via world-atlas</span><span class="lic">Public domain</span></li>
+          <li><b>World Bank World Development Indicators</b><span>Population, land area, GDP, inflation, central government debt</span><span class="lic">CC BY 4.0 · data.worldbank.org</span></li>
+          <li><b>Wikidata</b><span>Heads of state and government, form of government (P122), HDI (P1081, from UNDP), peoples, inception</span><span class="lic">CC0</span></li>
+          <li><b>world-countries (mledoze)</b><span>Names, capitals, languages, currencies, borders, calling codes</span><span class="lic">ODbL</span></li>
+          <li><b>CIA World Factbook via factbook/factbook.json</b><span>Government type, natural resources, religions, climate, terrain. A foreign-government source, not an African primary source; its history narratives are not used.</span><span class="lic">Public domain (US government)</span></li>
+          <li><b>Simple Icons</b><span>Social glyphs in the footer</span><span class="lic">CC0</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

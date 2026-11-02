@@ -1,0 +1,362 @@
+{
+  "started": "2026-11-01T12:28:48.863Z",
+  "finished": "2026-11-01T12:29:00.680Z",
+  "base": "https://binchika.com",
+  "sheet": {
+    "puCode": "37-01-01-901",
+    "fictional": true,
+    "balanced": true
+  },
+  "areas": {
+    "ec8a": 100,
+    "irevAndConsensus": 100,
+    "verifier": 100,
+    "ledger": 100,
+    "ocrAndIngest": 100,
+    "press": 100,
+    "security": 100,
+    "photo": 100
+  },
+  "ocr": [
+    {
+      "id": "clear",
+      "file": "sandbox/readiness/output/sheets/clear.png",
+      "note": "Printed Arial, full page, high contrast.",
+      "expectRead": true,
+      "engineOk": true,
+      "engineError": null,
+      "transcript": "SANDBOX FORM EC8A Fictional unit. Not an INEC result. Code 37-01-01-901 Race president APC: 47 PDP: 37 LP: 32 NNPP: 8 Rejected ballots 5 Accredited voters 130 Register 480",
+      "matched": 4,
+      "fields": 4,
+      "gateEligible": true,
+      "confident": true,
+      "accurate": true,
+      "proposalAllowed": true,
+      "falsePublish": false,
+      "pass": true
+    },
+    {
+      "id": "handwritten",
+      "file": "sandbox/readiness/output/sheets/handwritten.png",
+      "note": "Ink Free glyphs. Handwriting-style, not a photograph of a real sheet.",
+      "expectRead": false,
+      "engineOk": true,
+      "engineError": null,
+      "transcript": "SANV?OX F-5RM ECOA Fic+ionat Nof an INEC resul�. code 37-01-01-01 Race preside* A? C: 47 -p-p-p: 37 LY: 32 Rejected ballo+s 5 Accredited vo+ers 130 Reois�er 400",
+      "matched": 0,
+      "fields": 4,
+      "gateEligible": false,
+      "confident": false,
+      "accurate": false,
+      "proposalAllowed": false,
+      "falsePublish": false,
+      "pass": true
+    },
+    {
+      "id": "blurry",
+      "file": "sandbox/readiness/output/sheets/blurry.png",
+      "note": "Same printed sheet, Gaussian blur sigma 4.5.",
+      "expectRead": false,
+      "engineOk": true,
+      "engineError": null,
+      "transcript": "cos APC: 47 pop: 37 LP: 32 NNPP: 8",
+      "matched": 3,
+      "fields": 4,
+      "gateEligible": false,
+      "confident": false,
+      "accurate": false,
+      "proposalAllowed": false,
+      "falsePublish": false,
+      "pass": true
+    },
+    {
+      "id": "skewed",
+      "file": "sandbox/readiness/output/sheets/skewed.png",
+      "note": "Printed sheet skewed 18 degrees on the horizontal.",
+      "expectRead": false,
+      "engineOk": false,
+      "engineError": "Bad control character in string literal in JSON at position 119 (line 1 column 120)",
+      "transcript": "",
+      "matched": 0,
+      "fields": 4,
+      "gateEligible": false,
+      "confident": false,
+      "accurate": false,
+      "proposalAllowed": false,
+      "falsePublish": false,
+      "pass": true
+    },
+    {
+      "id": "low-contrast",
+      "file": "sandbox/readiness/output/sheets/low-contrast.png",
+      "note": "Grey ink on a grey page.",
+      "expectRead": false,
+      "engineOk": true,
+      "engineError": null,
+      "transcript": "SANDBOX FORM EC8A Fictional unit. Not an INEC result. Code 37-01-01-901 Race president APC 47 Rejected ballots 5 Accredited voters 130 Register 480",
+      "matched": 1,
+      "fields": 4,
+      "gateEligible": false,
+      "confident": false,
+      "accurate": false,
+      "proposalAllowed": false,
+      "falsePublish": false,
+      "pass": true
+    },
+    {
+      "id": "partial",
+      "file": "sandbox/readiness/output/sheets/partial.png",
+      "note": "Top 32% only. Party rows and control totals are cut off.",
+      "expectRead": false,
+      "engineOk": true,
+      "engineError": null,
+      "transcript": "SANDBOX FORM EC8A Fictional unit. Not an INEC result. Code 37-01-01-901 Race president APC: 47",
+      "matched": 1,
+      "fields": 4,
+      "gateEligible": false,
+      "confident": false,
+      "accurate": false,
+      "proposalAllowed": false,
+      "falsePublish": false,
+      "pass": true
+    }
+  ],
+  "pipeline": [
+    {
+      "id": "two-reports",
+      "pass": true,
+      "actual": "medium",
+      "expected": "not high, no ledger entry"
+    },
+    {
+      "id": "split-below-85",
+      "pass": true,
+      "actual": "medium share 0.667",
+      "expected": "medium, no ledger entry"
+    },
+    {
+      "id": "high-with-irev-mismatch",
+      "pass": true,
+      "actual": "status high; discrepancy [{\"party\":\"PDP\",\"citizen\":37,\"official\":40,\"delta\":-3}]; ledger yes",
+      "expected": "high confidence still appends, and the IReV difference is stored on the entry"
+    },
+    {
+      "id": "pending-alternative",
+      "pass": true,
+      "actual": "insufficient",
+      "expected": "pending alternative excluded from a high tally"
+    },
+    {
+      "id": "area-audit",
+      "pass": true,
+      "actual": "200/403/403",
+      "expected": "200 for Lagos SZV, 403 for Kano SZV and for OpsAdmin"
+    },
+    {
+      "id": "evidence-viewer-gate",
+      "pass": true,
+      "actual": "403/200/403",
+      "expected": "MFA required, own state only"
+    },
+    {
+      "id": "ocr-pending-excluded",
+      "pass": true,
+      "actual": "insufficient",
+      "expected": "a photo with no tally does not enter consensus"
+    },
+    {
+      "id": "append-only-chain",
+      "pass": true,
+      "actual": "update blocked true; delete blocked true; chain true",
+      "expected": "triggers refuse edits and the chain verifies"
+    },
+    {
+      "id": "append-retry",
+      "pass": true,
+      "actual": 1,
+      "expected": "one entry after a simulated unique-key collision"
+    },
+    {
+      "id": "contained-load-40-units",
+      "pass": true,
+      "actual": "40 entries in 15 ms",
+      "expected": "40 high-confidence units, one entry each, chain intact"
+    },
+    {
+      "id": "needs-review-excluded",
+      "pass": true,
+      "actual": "insufficient, 0 counted",
+      "expected": "unconfirmed readings do not count (AI governance)"
+    },
+    {
+      "id": "verifier-confirm-posts",
+      "pass": true,
+      "actual": "403/200/high/true",
+      "expected": "MFA required; three confirmations make the unit high and posted"
+    },
+    {
+      "id": "gates-hold-unbalanced",
+      "pass": true,
+      "actual": "held; failed control-totals,baseline",
+      "expected": "a high unit with a sheet above its register is held, not posted"
+    },
+    {
+      "id": "posting-score",
+      "pass": true,
+      "actual": "post false, score 80",
+      "expected": "a bad polling-unit code fails one of five gates (80) and is not posted"
+    },
+    {
+      "id": "ocr-fails-closed",
+      "pass": true,
+      "actual": "off/withheld/withheld/withheld",
+      "expected": "off by default; withheld for uncleared photos, engine errors and unreadable output"
+    },
+    {
+      "id": "press-snapshot",
+      "pass": true,
+      "actual": "{\"published\":1,\"lowerConfidence\":0,\"held\":1,\"notYetHigh\":0,\"denominator\":176846,\"denominatorSource\":\"INEC 2023 polling units\"}",
+      "expected": "aggregates only; held units out of the totals"
+    },
+    {
+      "id": "control-totals-on-ingest",
+      "pass": true,
+      "actual": "Votes cast (129) exceed accredited voters (120).",
+      "expected": "cast above accredited refused; 00-00-00-000 and 99-99-99-999 refused"
+    },
+    {
+      "id": "people-check-default",
+      "pass": true,
+      "actual": "unchecked",
+      "expected": "unchecked when no detector is configured, so publication stays withheld"
+    },
+    {
+      "id": "syntax-shapes",
+      "pass": true,
+      "actual": "[{\"puCode\":\"37-01-01-901\",\"accepted\":true},{\"puCode\":\"00-00-00-000\",\"accepted\":false},{\"puCode\":\"99-99-99-999\",\"accepted\":false},{\"puCode\":\"24-09-05-012'; --\",\"accepted\":false},{\"puCode\":\"<script>\",\"accepted\":false},{\"puCode\":\"37-01-01-901 \",\"accepted\":false}]",
+      "expected": "a real code is accepted; 00-00-00-000, 99-99-99-999, injection and markup are refused"
+    }
+  ],
+  "live": [
+    {
+      "id": "security-headers",
+      "pass": true,
+      "actual": "status 200; csp present",
+      "expected": "CSP, HSTS, DENY, nosniff, strict referrer"
+    },
+    {
+      "id": "homepage-secret-scan",
+      "pass": true,
+      "actual": "no token pattern",
+      "expected": "public HTML has no service token"
+    },
+    {
+      "id": "health-booleans-only",
+      "pass": true,
+      "actual": "db true; ingest configured true; evidence true",
+      "expected": "booleans only, database up"
+    },
+    {
+      "id": "config-no-service-key",
+      "pass": true,
+      "actual": "signIn true; publishable key present true; admin flag undefined",
+      "expected": "publishable key may be present; service credentials must not"
+    },
+    {
+      "id": "intake-get-closed",
+      "pass": true,
+      "actual": "open false",
+      "expected": "applications closed"
+    },
+    {
+      "id": "intake-post-closed",
+      "pass": true,
+      "actual": "403",
+      "expected": "403, nothing stored"
+    },
+    {
+      "id": "ingest-closed",
+      "pass": true,
+      "actual": "401/401",
+      "expected": "missing and wrong tokens are refused"
+    },
+    {
+      "id": "anonymous-gates",
+      "pass": true,
+      "actual": "/api/pipeline/unit 401; /api/pipeline/media?id=x 401; /api/r2-check 401; /api/telegram 503; /api/admin/mail 401; /api/admin/decide 401; /api/admin/ops 401; /api/admin/release 401; /api/portal/evidence 401; /api/portal/evidence-media?id=x 401; /api/admin/tickets 401",
+      "expected": "admin, pipeline, evidence and R2 refuse anonymous callers; Telegram is off"
+    },
+    {
+      "id": "signin-link-rejects-bad-email",
+      "pass": true,
+      "actual": "422",
+      "expected": "422 before any message is sent"
+    },
+    {
+      "id": "contact-rejects-non-form",
+      "pass": true,
+      "actual": "400",
+      "expected": "400, no email"
+    },
+    {
+      "id": "report-aggregates-only",
+      "pass": true,
+      "actual": "total 0",
+      "expected": "counts only"
+    },
+    {
+      "id": "live-ledger-chain",
+      "pass": true,
+      "actual": "count 0; chain true",
+      "expected": "public chain verifies and carries the INEC notice"
+    },
+    {
+      "id": "results-minimised",
+      "pass": true,
+      "actual": "units 0",
+      "expected": "aggregates and the neutrality notice"
+    },
+    {
+      "id": "unknown-race-refused",
+      "pass": true,
+      "actual": "400",
+      "expected": "400"
+    },
+    {
+      "id": "vote-void-copy",
+      "pass": true,
+      "actual": "200",
+      "expected": "all six published ballot conditions"
+    },
+    {
+      "id": "new-routes-closed",
+      "pass": true,
+      "actual": "401/401/401",
+      "expected": "401 for OCR, official and review without credentials"
+    },
+    {
+      "id": "press-snapshot-live",
+      "pass": true,
+      "actual": "200",
+      "expected": "aggregates only, with the notice"
+    },
+    {
+      "id": "config-no-role-flag",
+      "pass": true,
+      "actual": "200",
+      "expected": "no service-role boolean"
+    },
+    {
+      "id": "results-irev-counts",
+      "pass": true,
+      "actual": "200",
+      "expected": "IReV comparison counts published"
+    },
+    {
+      "id": "privacy-draft",
+      "pass": true,
+      "actual": "200",
+      "expected": "notice still not in force; photos never published"
+    }
+  ]
+}

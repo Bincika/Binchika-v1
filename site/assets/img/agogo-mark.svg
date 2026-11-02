@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="t">
+  <title id="t">Binchika — agogo double bell</title>
+  <defs>
+    <linearGradient id="bz" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C46A3A"/>
+      <stop offset=".55" stop-color="#A24A22"/>
+      <stop offset="1" stop-color="#7C3516"/>
+    </linearGradient>
+  </defs>
+  <!-- striker -->
+  <path d="M12 57.5 L43 52" stroke="#C9A36A" stroke-width="3.6" stroke-linecap="round" fill="none"/>
+  <!-- handle joining the two bells -->
+  <path d="M23 21.5 C7 21.5 5.5 43.5 21.5 43.5" stroke="#7C3516" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+  <!-- large bell -->
+  <path d="M21 21.5 L49.5 10.5 Q53.5 21.5 49.5 32.5 Z" fill="url(#bz)"/>
+  <ellipse cx="50" cy="21.5" rx="3.6" ry="11" fill="#2A1A10"/>
+  <!-- small bell -->
+  <path d="M19.5 43.5 L42 36.5 Q45 43.5 42 50.5 Z" fill="url(#bz)"/>
+  <ellipse cx="42.6" cy="43.5" rx="2.8" ry="7" fill="#2A1A10"/>
+  <!-- the call: sound rings -->
+  <path d="M57 13.5 Q61.5 21.5 57 29.5" stroke="#D08A55" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+  <path d="M49.5 38 Q53 43.5 49.5 49" stroke="#D08A55" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+</svg>

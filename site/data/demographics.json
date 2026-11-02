@@ -1,0 +1,21 @@
+{
+  "register": "INEC final register of voters for the 2023 general election",
+  "official": true,
+  "total": 93469008,
+  "sex": [
+    { "label": "Male", "n": 49054162, "pct": 52.5 },
+    { "label": "Female", "n": 44414846, "pct": 47.5 }
+  ],
+  "age": [
+    { "label": "18–34", "n": 37060399, "pct": 39.65 },
+    { "label": "35–49", "n": 33413591, "pct": 35.75 },
+    { "label": "50–69", "n": 17700270, "pct": 18.94 },
+    { "label": "70+", "n": 5294748, "pct": 5.66 }
+  ],
+  "sources": [
+    { "name": "Channels TV, 11 Jan 2023, reporting INEC's figures", "url": "https://www.channelstv.com/2023/01/11/2023-93-4-million-nigerians-to-vote-says-inec/" },
+    { "name": "ICIR, reporting INEC's final register", "url": "https://www.icirnigeria.org/inec-removes-underage-voters-records-93-5m-voter-registration/" }
+  ],
+  "notes": "Registration figures only. INEC does not publish turnout or party support by age or sex. Any such figure on Binchika is crowdsourced and labelled as such.",
+  "update": "Replace with INEC's 2027 register breakdown when published."
+}

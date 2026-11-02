@@ -1,0 +1,5 @@
+# Cloudflare Pages redirects (session 76). The Election Monitor became the Live Tally Ledger at /tally/;
+# old links and shared images that point at /monitor keep working.
+/monitor /tally/ 301
+/monitor/ /tally/ 301
+/monitor/* /tally/ 301

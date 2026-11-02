@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head><meta charset="utf-8"><title>Binchika sandbox EC8A review</title>
+<style>
+  body { margin: 0; font: 16px/1.45 Georgia, serif; background: #f6f1e8; color: #23190f; }
+  main { max-width: 980px; margin: 0 auto; padding: 2rem 1.2rem 4rem; }
+  .banner { background: #8a5a12; color: #fff; padding: .8rem 1rem; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  img { width: 100%; height: auto; background: #fff; border: 1px solid #d9cbb6; }
+  pre { white-space: pre-wrap; background: #fff; padding: .8rem; }
+  @media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+</style></head>
+<body>
+<p class="banner">Sandbox only. Site readiness testing is ongoing. These sheets are fictional and are not election results. Only INEC declares results.</p>
+<main>
+  <h1>Side-by-side EC8A review</h1>
+  <p>Unit 37-01-01-901 is fictional. Party shares follow the labelled 2023 national declaration, scaled to one unit. A proposal is eligible only when every party field is read at confidence 0.9 or above and the control totals balance. Eligibility here is not a ledger write.</p>
+  <article>
+    <h2>clear</h2>
+    <p>Printed Arial, full page, high contrast.</p>
+    <div class="pair">
+      <figure><img src="sheets/clear.png" alt="Sandbox sheet, clear"><figcaption>Original sandbox image</figcaption></figure>
+      <div>
+        <p><strong>Engine:</strong> Windows OCR read the page</p>
+        <p><strong>Fields matching the fictional ground truth:</strong> 4 of 4</p>
+        <p><strong>Eligible to offer as a tally proposal:</strong> yes</p>
+        <p><strong>This case:</strong> PASS</p>
+        <pre>SANDBOX FORM EC8A Fictional unit. Not an INEC result. Code 37-01-01-901 Race president APC: 47 PDP: 37 LP: 32 NNPP: 8 Rejected ballots 5 Accredited voters 130 Register 480</pre>
+      </div>
+    </div>
+  </article><article>
+    <h2>handwritten</h2>
+    <p>Ink Free glyphs. Handwriting-style, not a photograph of a real sheet.</p>
+    <div class="pair">
+      <figure><img src="sheets/handwritten.png" alt="Sandbox sheet, handwritten"><figcaption>Original sandbox image</figcaption></figure>
+      <div>
+        <p><strong>Engine:</strong> Windows OCR read the page</p>
+        <p><strong>Fields matching the fictional ground truth:</strong> 0 of 4</p>
+        <p><strong>Eligible to offer as a tally proposal:</strong> no, stays with a person</p>
+        <p><strong>This case:</strong> PASS</p>
+        <pre>SANV?OX F-5RM ECOA Fic+ionat Nof an INEC resul�. code 37-01-01-01 Race preside* A? C: 47 -p-p-p: 37 LY: 32 Rejected ballo+s 5 Accredited vo+ers 130 Reois�er 400</pre>
+      </div>
+    </div>
+  </article><article>
+    <h2>blurry</h2>
+    <p>Same printed sheet, Gaussian blur sigma 4.5.</p>
+    <div class="pair">
+      <figure><img src="sheets/blurry.png" alt="Sandbox sheet, blurry"><figcaption>Original sandbox image</figcaption></figure>
+      <div>
+        <p><strong>Engine:</strong> Windows OCR read the page</p>
+        <p><strong>Fields matching the fictional ground truth:</strong> 3 of 4</p>
+        <p><strong>Eligible to offer as a tally proposal:</strong> no, stays with a person</p>
+        <p><strong>This case:</strong> PASS</p>
+        <pre>cos APC: 47 pop: 37 LP: 32 NNPP: 8</pre>
+      </div>
+    </div>
+  </article><article>
+    <h2>skewed</h2>
+    <p>Printed sheet skewed 18 degrees on the horizontal.</p>
+    <div class="pair">
+      <figure><img src="sheets/skewed.png" alt="Sandbox sheet, skewed"><figcaption>Original sandbox image</figcaption></figure>
+      <div>
+        <p><strong>Engine:</strong> No read</p>
+        <p><strong>Fields matching the fictional ground truth:</strong> 0 of 4</p>
+        <p><strong>Eligible to offer as a tally proposal:</strong> no, stays with a person</p>
+        <p><strong>This case:</strong> PASS</p>
+        <pre>Bad control character in string literal in JSON at position 119 (line 1 column 120)</pre>
+      </div>
+    </div>
+  </article><article>
+    <h2>low-contrast</h2>
+    <p>Grey ink on a grey page.</p>
+    <div class="pair">
+      <figure><img src="sheets/low-contrast.png" alt="Sandbox sheet, low-contrast"><figcaption>Original sandbox image</figcaption></figure>
+      <div>
+        <p><strong>Engine:</strong> Windows OCR read the page</p>
+        <p><strong>Fields matching the fictional ground truth:</strong> 1 of 4</p>
+        <p><strong>Eligible to offer as a tally proposal:</strong> no, stays with a person</p>
+        <p><strong>This case:</strong> PASS</p>
+        <pre>SANDBOX FORM EC8A Fictional unit. Not an INEC result. Code 37-01-01-901 Race president APC 47 Rejected ballots 5 Accredited voters 130 Register 480</pre>
+      </div>
+    </div>
+  </article><article>
+    <h2>partial</h2>
+    <p>Top 32% only. Party rows and control totals are cut off.</p>
+    <div class="pair">
+      <figure><img src="sheets/partial.png" alt="Sandbox sheet, partial"><figcaption>Original sandbox image</figcaption></figure>
+      <div>
+        <p><strong>Engine:</strong> Windows OCR read the page</p>
+        <p><strong>Fields matching the fictional ground truth:</strong> 1 of 4</p>
+        <p><strong>Eligible to offer as a tally proposal:</strong> no, stays with a person</p>
+        <p><strong>This case:</strong> PASS</p>
+        <pre>SANDBOX FORM EC8A Fictional unit. Not an INEC result. Code 37-01-01-901 Race president APC: 47</pre>
+      </div>
+    </div>
+  </article>
+</main>
+</body></html>

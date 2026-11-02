@@ -1,0 +1,70 @@
+{
+  "updated": "2026-10-24",
+  "notes": {
+    "lgas": "Counted from GRID3 LGA boundaries (geoBoundaries gbOpen NGA ADM2, CC BY 4.0). These match the Constitution's First Schedule.",
+    "senate": "3 senatorial districts per state and 1 for the FCT (Constitution s.48).",
+    "house": "Federal constituencies per state from the INEC 2023 delimitation. They add up to 360 (Constitution s.49). VERIFY against INEC before results go live.",
+    "zones": "The six geo-political zones in common use.",
+    "verified": { "lgas": true, "senate": true, "house": false, "capital": true, "zone": true }
+  },
+  "zones": {
+    "NC": "North Central",
+    "NE": "North East",
+    "NW": "North West",
+    "SE": "South East",
+    "SS": "South South",
+    "SW": "South West"
+  },
+  "states": [
+    { "iso": "NG-AB", "name": "Abia", "capital": "Umuahia", "zone": "SE", "lgas": 17, "senate": 3, "house": 8 },
+    { "iso": "NG-AD", "name": "Adamawa", "capital": "Yola", "zone": "NE", "lgas": 21, "senate": 3, "house": 8 },
+    { "iso": "NG-AK", "name": "Akwa Ibom", "capital": "Uyo", "zone": "SS", "lgas": 31, "senate": 3, "house": 10 },
+    { "iso": "NG-AN", "name": "Anambra", "capital": "Awka", "zone": "SE", "lgas": 21, "senate": 3, "house": 11 },
+    { "iso": "NG-BA", "name": "Bauchi", "capital": "Bauchi", "zone": "NE", "lgas": 20, "senate": 3, "house": 12 },
+    { "iso": "NG-BY", "name": "Bayelsa", "capital": "Yenagoa", "zone": "SS", "lgas": 8, "senate": 3, "house": 5 },
+    { "iso": "NG-BE", "name": "Benue", "capital": "Makurdi", "zone": "NC", "lgas": 23, "senate": 3, "house": 11 },
+    { "iso": "NG-BO", "name": "Borno", "capital": "Maiduguri", "zone": "NE", "lgas": 27, "senate": 3, "house": 10 },
+    { "iso": "NG-CR", "name": "Cross River", "capital": "Calabar", "zone": "SS", "lgas": 18, "senate": 3, "house": 8 },
+    { "iso": "NG-DE", "name": "Delta", "capital": "Asaba", "zone": "SS", "lgas": 25, "senate": 3, "house": 10 },
+    { "iso": "NG-EB", "name": "Ebonyi", "capital": "Abakaliki", "zone": "SE", "lgas": 13, "senate": 3, "house": 6 },
+    { "iso": "NG-ED", "name": "Edo", "capital": "Benin City", "zone": "SS", "lgas": 18, "senate": 3, "house": 9 },
+    { "iso": "NG-EK", "name": "Ekiti", "capital": "Ado-Ekiti", "zone": "SW", "lgas": 16, "senate": 3, "house": 6 },
+    { "iso": "NG-EN", "name": "Enugu", "capital": "Enugu", "zone": "SE", "lgas": 17, "senate": 3, "house": 8 },
+    { "iso": "NG-FC", "name": "Federal Capital Territory", "short": "FCT", "capital": "Abuja", "zone": "NC", "lgas": 6, "senate": 1, "house": 2 },
+    { "iso": "NG-GO", "name": "Gombe", "capital": "Gombe", "zone": "NE", "lgas": 11, "senate": 3, "house": 6 },
+    { "iso": "NG-IM", "name": "Imo", "capital": "Owerri", "zone": "SE", "lgas": 27, "senate": 3, "house": 10 },
+    { "iso": "NG-JI", "name": "Jigawa", "capital": "Dutse", "zone": "NW", "lgas": 27, "senate": 3, "house": 11 },
+    { "iso": "NG-KD", "name": "Kaduna", "capital": "Kaduna", "zone": "NW", "lgas": 23, "senate": 3, "house": 16 },
+    { "iso": "NG-KN", "name": "Kano", "capital": "Kano", "zone": "NW", "lgas": 44, "senate": 3, "house": 24 },
+    { "iso": "NG-KT", "name": "Katsina", "capital": "Katsina", "zone": "NW", "lgas": 34, "senate": 3, "house": 15 },
+    { "iso": "NG-KE", "name": "Kebbi", "capital": "Birnin Kebbi", "zone": "NW", "lgas": 21, "senate": 3, "house": 8 },
+    { "iso": "NG-KO", "name": "Kogi", "capital": "Lokoja", "zone": "NC", "lgas": 21, "senate": 3, "house": 9 },
+    { "iso": "NG-KW", "name": "Kwara", "capital": "Ilorin", "zone": "NC", "lgas": 16, "senate": 3, "house": 6 },
+    { "iso": "NG-LA", "name": "Lagos", "capital": "Ikeja", "zone": "SW", "lgas": 20, "senate": 3, "house": 24 },
+    { "iso": "NG-NA", "name": "Nasarawa", "capital": "Lafia", "zone": "NC", "lgas": 13, "senate": 3, "house": 5 },
+    { "iso": "NG-NI", "name": "Niger", "capital": "Minna", "zone": "NC", "lgas": 25, "senate": 3, "house": 10 },
+    { "iso": "NG-OG", "name": "Ogun", "capital": "Abeokuta", "zone": "SW", "lgas": 20, "senate": 3, "house": 9 },
+    { "iso": "NG-ON", "name": "Ondo", "capital": "Akure", "zone": "SW", "lgas": 18, "senate": 3, "house": 9 },
+    { "iso": "NG-OS", "name": "Osun", "capital": "Osogbo", "zone": "SW", "lgas": 30, "senate": 3, "house": 9 },
+    { "iso": "NG-OY", "name": "Oyo", "capital": "Ibadan", "zone": "SW", "lgas": 33, "senate": 3, "house": 14 },
+    { "iso": "NG-PL", "name": "Plateau", "capital": "Jos", "zone": "NC", "lgas": 17, "senate": 3, "house": 8 },
+    { "iso": "NG-RI", "name": "Rivers", "capital": "Port Harcourt", "zone": "SS", "lgas": 23, "senate": 3, "house": 13 },
+    { "iso": "NG-SO", "name": "Sokoto", "capital": "Sokoto", "zone": "NW", "lgas": 23, "senate": 3, "house": 11 },
+    { "iso": "NG-TA", "name": "Taraba", "capital": "Jalingo", "zone": "NE", "lgas": 16, "senate": 3, "house": 6 },
+    { "iso": "NG-YO", "name": "Yobe", "capital": "Damaturu", "zone": "NE", "lgas": 17, "senate": 3, "house": 6 },
+    { "iso": "NG-ZA", "name": "Zamfara", "capital": "Gusau", "zone": "NW", "lgas": 14, "senate": 3, "house": 7 }
+  ],
+  "verifierRegions": {
+    "status": "DRAFT proposal. Rebalance by polling-unit load once INEC polling-unit data is ingested.",
+    "regions": [
+      { "id": "R1", "name": "Sokoto–Rima", "states": ["NG-SO", "NG-KE", "NG-ZA"] },
+      { "id": "R2", "name": "Kano–Katsina–Kaduna", "states": ["NG-KN", "NG-JI", "NG-KT", "NG-KD"] },
+      { "id": "R3", "name": "Lake Chad & Upper Benue", "states": ["NG-BO", "NG-YO", "NG-BA", "NG-GO", "NG-AD", "NG-TA"] },
+      { "id": "R4", "name": "Plateau & Capital", "states": ["NG-PL", "NG-NA", "NG-BE", "NG-FC"] },
+      { "id": "R5", "name": "Niger–Kwara–Kogi", "states": ["NG-NI", "NG-KW", "NG-KO"] },
+      { "id": "R6", "name": "South West", "states": ["NG-LA", "NG-OG", "NG-OY", "NG-OS", "NG-ON", "NG-EK"] },
+      { "id": "R7", "name": "South East", "states": ["NG-AB", "NG-AN", "NG-EB", "NG-EN", "NG-IM"] },
+      { "id": "R8", "name": "Niger Delta & Cross River", "states": ["NG-AK", "NG-BY", "NG-CR", "NG-DE", "NG-ED", "NG-RI"] }
+    ]
+  }
+}

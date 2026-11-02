@@ -1,0 +1,132 @@
+{
+  "source": "INEC (inecnigeria.org) party register assets",
+  "manifest": {
+    "A": null,
+    "AA": {
+      "webp": "/assets/img/parties/aa.webp",
+      "png": "/assets/img/parties/aa.png",
+      "source": "https://inecnigeria.org/_nuxt/action-alliance-aa_logo.DQolkzM6.jpg",
+      "fetchedAt": "2026-10-24T11:58:50.247Z"
+    },
+    "AAC": {
+      "webp": "/assets/img/parties/aac.webp",
+      "png": "/assets/img/parties/aac.png",
+      "source": "https://inecnigeria.org/_nuxt/african-action-congress-aac_logo.BiPR0ZxO.jpg",
+      "fetchedAt": "2026-10-24T11:58:50.500Z"
+    },
+    "ADC": {
+      "webp": "/assets/img/parties/adc.webp",
+      "png": "/assets/img/parties/adc.png",
+      "source": "https://inecnigeria.org/_nuxt/african-democratic-congress-adc_logo.DBilnanA.jpg",
+      "fetchedAt": "2026-10-24T11:58:50.754Z"
+    },
+    "ADP": {
+      "webp": "/assets/img/parties/adp.webp",
+      "png": "/assets/img/parties/adp.png",
+      "source": "https://inecnigeria.org/_nuxt/action-democratic-party-adp_logo.7qxyEaV2.png",
+      "fetchedAt": "2026-10-24T11:58:51.046Z"
+    },
+    "APC": {
+      "webp": "/assets/img/parties/apc.webp",
+      "png": "/assets/img/parties/apc.png",
+      "source": "https://inecnigeria.org/_nuxt/all-progressives-congress-apc_logo.CSXCWB6p.jpg",
+      "fetchedAt": "2026-10-24T11:58:51.307Z"
+    },
+    "APGA": {
+      "webp": "/assets/img/parties/apga.webp",
+      "png": "/assets/img/parties/apga.png",
+      "source": "https://inecnigeria.org/_nuxt/all-progressives-grand-alliance-apga_logo.PfgYjSjV.jpg",
+      "fetchedAt": "2026-10-24T11:58:51.579Z"
+    },
+    "APM": {
+      "webp": "/assets/img/parties/apm.webp",
+      "png": "/assets/img/parties/apm.png",
+      "source": "https://inecnigeria.org/_nuxt/allied-peoples-movement-apm_logo.BQN54Bkl.jpg",
+      "fetchedAt": "2026-10-24T11:58:51.837Z"
+    },
+    "APP": {
+      "webp": "/assets/img/parties/app.webp",
+      "png": "/assets/img/parties/app.png",
+      "source": "https://inecnigeria.org/_nuxt/action-peoples-party-app_logo.BhRwRU7M.png",
+      "fetchedAt": "2026-10-24T11:58:52.102Z"
+    },
+    "BP": {
+      "webp": "/assets/img/parties/bp.webp",
+      "png": "/assets/img/parties/bp.png",
+      "source": "https://inecnigeria.org/_nuxt/boot-party-bp_logo.Br5O5Wf6.jpg",
+      "fetchedAt": "2026-10-24T11:58:52.374Z"
+    },
+    "DLA": {
+      "webp": "/assets/img/parties/dla.webp",
+      "png": "/assets/img/parties/dla.png",
+      "source": "https://inecnigeria.org/_nuxt/democratic-leadership-alliance-dla_logo.B-mFJlad.jpg",
+      "fetchedAt": "2026-10-24T11:58:52.703Z"
+    },
+    "LP": {
+      "webp": "/assets/img/parties/lp.webp",
+      "png": "/assets/img/parties/lp.png",
+      "source": "https://inecnigeria.org/_nuxt/labour-party-lp_logo.SV1XCjLU.jpg",
+      "fetchedAt": "2026-10-24T11:58:53.005Z"
+    },
+    "NDC": {
+      "webp": "/assets/img/parties/ndc.webp",
+      "png": "/assets/img/parties/ndc.png",
+      "source": "https://inecnigeria.org/_nuxt/nigeria-democratic-congress_logo.BRx6oQl5.jpeg",
+      "fetchedAt": "2026-10-24T11:58:53.281Z"
+    },
+    "NDP": {
+      "webp": "/assets/img/parties/ndp.webp",
+      "png": "/assets/img/parties/ndp.png",
+      "source": "https://inecnigeria.org/_nuxt/national-democratic-party_logo.B2wV2anp.jpg",
+      "fetchedAt": "2026-10-24T11:58:53.601Z"
+    },
+    "NNPP": {
+      "webp": "/assets/img/parties/nnpp.webp",
+      "png": "/assets/img/parties/nnpp.png",
+      "source": "https://inecnigeria.org/_nuxt/new-nigeria-peoples-party-nnpp_logo.DkfmFai5.jpg",
+      "fetchedAt": "2026-10-24T11:58:53.918Z"
+    },
+    "NRM": {
+      "webp": "/assets/img/parties/nrm.webp",
+      "png": "/assets/img/parties/nrm.png",
+      "source": "https://inecnigeria.org/_nuxt/national-rescue-movement-nrm_logo.BUg-M2QT.png",
+      "fetchedAt": "2026-10-24T11:58:54.198Z"
+    },
+    "PDP": {
+      "webp": "/assets/img/parties/pdp.webp",
+      "png": "/assets/img/parties/pdp.png",
+      "source": "https://inecnigeria.org/_nuxt/peoples-democratic-party-pdp_logo.D7bjcnnk.png",
+      "fetchedAt": "2026-10-24T11:58:54.465Z"
+    },
+    "PRP": {
+      "webp": "/assets/img/parties/prp.webp",
+      "png": "/assets/img/parties/prp.png",
+      "source": "https://inecnigeria.org/_nuxt/peoples-redemption-party-prp_logo.C8_o4OQI.png",
+      "fetchedAt": "2026-10-24T11:58:54.730Z"
+    },
+    "SDP": {
+      "webp": "/assets/img/parties/sdp.webp",
+      "png": "/assets/img/parties/sdp.png",
+      "source": "https://inecnigeria.org/_nuxt/social-democratic-party-sdp_logo.DhlQ2VXw.png",
+      "fetchedAt": "2026-10-24T11:58:54.979Z"
+    },
+    "YP": {
+      "webp": "/assets/img/parties/yp.webp",
+      "png": "/assets/img/parties/yp.png",
+      "source": "https://inecnigeria.org/_nuxt/youth-party-yp_logo.CLRm4uyn.png",
+      "fetchedAt": "2026-10-24T11:58:55.236Z"
+    },
+    "YPP": {
+      "webp": "/assets/img/parties/ypp.webp",
+      "png": "/assets/img/parties/ypp.png",
+      "source": "https://inecnigeria.org/_nuxt/young-progressive-party-ypp_logo.Biw28-Pp.jpeg",
+      "fetchedAt": "2026-10-24T11:58:55.557Z"
+    },
+    "ZLP": {
+      "webp": "/assets/img/parties/zlp.webp",
+      "png": "/assets/img/parties/zlp.png",
+      "source": "https://inecnigeria.org/_nuxt/zenith-labour-party-zlp_logo.B_S46I7c.jpg",
+      "fetchedAt": "2026-10-24T11:58:55.816Z"
+    }
+  }
+}

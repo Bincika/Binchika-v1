@@ -1,0 +1,44 @@
+<!--{"title":"Claim your verifier seat · Binchika","description":"Selected verifiers claim their seat with the code from their invitation email.","nav":"verifiers","path":"/join/","scripts":["/assets/js/join.js"],"head":"<meta name=\"robots\" content=\"noindex\">"}-->
+<section class="page-head">
+  <div class="wrap" style="max-width:720px">
+    <p class="eyebrow">Become a verifier · step 3 of 3</p>
+    <h1>Claim your <span class="grad-text">seat.</span></h1>
+    <p class="lede">You need the 8-character code from your invitation email. Codes work once, only with the email address you applied with, and expire after 24 hours (6 hours for backfill places).</p>
+  </div>
+</section>
+<section style="padding-top:0">
+  <div class="wrap" style="max-width:720px">
+    <ol class="join-steps" aria-label="Steps"><li id="js-1" aria-current="step">Code</li><li id="js-2">Account</li><li id="js-3">Confirm and pledge</li></ol>
+
+    <form class="portal-form panel" id="code-form" novalidate>
+      <label>Your seat code<input id="j-code" inputmode="text" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" maxlength="9" placeholder="K7QM-4XPD" required class="code-input"></label>
+      <button class="btn btn-solid" type="submit">Check code</button>
+      <p class="form-status" id="code-status" role="status"></p>
+    </form>
+
+    <form class="portal-form panel" id="claim-form" hidden novalidate>
+      <div class="seat-card" id="seat-card"></div>
+      <fieldset class="seat-pick" id="seat-pick" hidden>
+        <legend>Choose your seat</legend>
+        <p class="source-note" id="seat-pick-note" style="margin:.1rem 0 .6rem"></p>
+        <div class="seat-options" id="seat-options"></div>
+      </fieldset>
+      <div class="form-grid">
+        <label class="wide">Email (the one on your application)<input id="j-email" type="email" autocomplete="email" required></label>
+        <label>Password<input id="j-pass" type="password" autocomplete="new-password" minlength="12" maxlength="72" required aria-describedby="pw-hint"></label>
+        <label>Repeat password<input id="j-pass2" type="password" autocomplete="new-password" minlength="12" maxlength="72" required></label>
+        <p class="source-note wide" id="pw-hint" style="margin-top:-.4rem">At least 12 characters. A short sentence is easier to remember than random symbols. <button type="button" class="linklike" id="pw-show" aria-pressed="false">Show passwords</button></p>
+        <label class="wide"><span id="area-label">Your state</span><select id="j-area" required></select></label>
+      </div>
+      <p class="source-note">The state (or region) must match the seat. Verifiers only ever serve the area they applied for.</p>
+      <button class="btn btn-solid" type="submit">Create my account</button>
+      <p class="form-status" id="claim-status" role="status"></p>
+    </form>
+
+    <div class="panel" id="done" hidden tabindex="-1">
+      <h2 style="margin-top:0">Check your email.</h2>
+      <p>We've sent a confirmation link from <strong>noreply@binchika.com</strong> to <strong id="done-email"></strong>. Open it within 24 hours to confirm your email and sign the verifier pledge. Your seat becomes active once you sign.</p>
+      <p class="source-note">Can't find it? Check spam or promotions. Your seat <strong id="done-seat"></strong> and public ID <strong id="done-id"></strong> are reserved until the link expires.</p>
+    </div>
+  </div>
+</section>

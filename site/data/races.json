@@ -1,0 +1,89 @@
+{
+  "updated": "2026-10-30",
+  "races": {
+    "president": {
+      "label": "Presidential",
+      "date": "2027-01-16",
+      "unit": "votes",
+      "rule": "Constitution s.134(2): the most votes nationally AND at least 25% of votes in at least two-thirds of all the states and the FCT.",
+      "spreadGoal": 24,
+      "spreadOf": 36,
+      "spreadNote": "24 of 36 is a two-thirds arithmetic reference only. FCT reporting is separate. Partial citizen reports never certify constitutional qualification; INEC applies the rule. The authoritative FCT judgment check remains outstanding.",
+      "ruleSource": "https://justice.gov.ng/wp-content/uploads/2020/09/Nigerian-Constitution.pdf"
+    },
+    "senate": {
+      "label": "Senate",
+      "date": "2027-01-16",
+      "unit": "seats",
+      "seats": 109,
+      "majority": 55,
+      "rule": "Constitution s.48: 109 senatorial districts (3 per state, 1 for the FCT). Electoral Act 2026 ss.66–67: highest votes in each constituency; a tied highest tally requires a fresh election. 55 is a majority of the full chamber, not a candidate election threshold.",
+      "ruleSource": "https://nass.gov.ng/documents/download/11248"
+    },
+    "house": {
+      "label": "House of Representatives",
+      "date": "2027-01-16",
+      "unit": "seats",
+      "seats": 360,
+      "majority": 181,
+      "rule": "Constitution s.49: 360 federal constituencies. Electoral Act 2026 ss.66–67: highest votes in each constituency; a tied highest tally requires a fresh election. 181 is a majority of the full chamber, not a candidate election threshold.",
+      "ruleSource": "https://nass.gov.ng/documents/download/11248"
+    },
+    "governor": {
+      "label": "Governorship",
+      "date": "2027-02-06",
+      "unit": "states",
+      "rule": "Constitution s.179(2): the most votes in the state AND at least 25% in at least two-thirds of its LGAs.",
+      "offCycle": [
+        "NG-AN",
+        "NG-BY",
+        "NG-ED",
+        "NG-EK",
+        "NG-IM",
+        "NG-KO",
+        "NG-ON",
+        "NG-OS"
+      ],
+      "offCycleNote": "28 states have governorship contests in the 2027 general election. Anambra, Bayelsa, Edo, Ekiti, Imo, Kogi, Ondo and Osun are off-cycle. Source: INEC 2027 final candidate lists.",
+      "verified": true,
+      "scopeSource": "https://www.inecnigeria.org/press",
+      "ruleSource": "https://justice.gov.ng/wp-content/uploads/2020/09/Nigerian-Constitution.pdf"
+    },
+    "state-assembly": {
+      "label": "State Houses of Assembly",
+      "date": "2027-02-06",
+      "unit": "seats",
+      "seats": 993,
+      "rule": "State constituencies in all 36 states, including off-cycle governorship states; no FCT Assembly. Highest votes in each constituency under Electoral Act 2026 ss.66–67. 993 is the 2023 seat reference; the 2027 total remains unverified pending constituency restoration and roster reconciliation.",
+      "verified": false,
+      "seatReferenceYear": 2023,
+      "scopeSource": "https://www.inecnigeria.org/press/final-list-of-candidates-for-2027-state-houses-of-assembly-elections",
+      "ruleSource": "https://nass.gov.ng/documents/download/11248"
+    },
+    "local-government": {
+      "label": "Local Government",
+      "date": null,
+      "unit": "lgas",
+      "seats": 774,
+      "rule": "State local government elections are run by SIECs on separately sourced state calendars. Chairman and councillor rules differ; Electoral Act 2026 ss.110 and 153 require checking the relevant office and event. FCT Area Council elections are a separate INEC jurisdiction. No local feed is connected.",
+      "ruleSource": "https://nass.gov.ng/documents/download/11248"
+    }
+  },
+  "sources": [
+    {
+      "title": "Constitution, ss.48–49, 56, 90–91, 134, 179",
+      "url": "https://justice.gov.ng/wp-content/uploads/2020/09/Nigerian-Constitution.pdf",
+      "checked": "2026-10-30"
+    },
+    {
+      "title": "Electoral Act 2026, ss.66–67, 110, 153",
+      "url": "https://nass.gov.ng/documents/download/11248",
+      "checked": "2026-10-30"
+    },
+    {
+      "title": "INEC 2027 final lists and constituency notices",
+      "url": "https://www.inecnigeria.org/press",
+      "checked": "2026-10-30"
+    }
+  ]
+}

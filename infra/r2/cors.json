@@ -1,0 +1,9 @@
+{
+  "rules": [
+    {
+      "allowed": { "origins": ["https://binchika.com"], "methods": ["GET", "PUT"], "headers": ["content-type"] },
+      "exposeHeaders": ["ETag"],
+      "maxAgeSeconds": 3600
+    }
+  ]
+}

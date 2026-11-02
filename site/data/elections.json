@@ -1,0 +1,81 @@
+{
+  "country": "NG",
+  "cycle": "2027",
+  "updated": "2026-10-24",
+  "elections": [
+    {
+      "id": "ng-2027-federal",
+      "date": "2027-01-16",
+      "label": "Presidential & National Assembly",
+      "offices": [
+        "president",
+        "senate",
+        "house"
+      ],
+      "source": "INEC revised 2027 timetable after the Electoral Act 2026 (reported by AllAfrica, 27 Feb 2026)",
+      "sourceUrl": "https://allafrica.com/stories/202602270088.html"
+    },
+    {
+      "id": "ng-2027-state",
+      "date": "2027-02-06",
+      "label": "Governorship & State Houses of Assembly",
+      "offices": [
+        "governor",
+        "state-assembly"
+      ],
+      "source": "INEC revised 2027 timetable after the Electoral Act 2026 (reported by AllAfrica, 27 Feb 2026)",
+      "sourceUrl": "https://allafrica.com/stories/202602270088.html"
+    }
+  ],
+  "structure": {
+    "baseline": "2023 general election (update from INEC when 2027 figures are published)",
+    "states": 36,
+    "fct": 1,
+    "lgas": 774,
+    "wards": 8809,
+    "pollingUnits": 176846,
+    "registeredVoters": 93469008,
+    "senateSeats": 109,
+    "houseSeats": 360,
+    "sources": [
+      {
+        "what": "LGAs (774)",
+        "by": "Constitution of the Federal Republic of Nigeria 1999, First Schedule; cross-checked against GRID3 boundaries (geoBoundaries gbOpen NGA ADM2, CC BY 4.0)"
+      },
+      {
+        "what": "Wards, polling units, registered voters",
+        "by": "INEC 2023 general election figures — to be re-verified by scripts/scrape_inec.py",
+        "verified": false
+      }
+    ]
+  },
+  "officialSources": [
+    {
+      "name": "INEC",
+      "url": "https://www.inecnigeria.org/"
+    },
+    {
+      "name": "INEC Result Viewing Portal (IReV)",
+      "url": "https://inecelectionresults.ng/elections/types"
+    }
+  ],
+  "register2027": {
+    "status": "Preliminary register displayed at registration areas 9–15 Oct 2026 (not published online). INEC says a clean final register will be published by 15 Dec 2026.",
+    "wardLevel": "Not yet available online. Binchika will ingest the final register per ward/polling unit when INEC publishes it, and keep the 2023 figures as the comparison baseline until then.",
+    "sources": [
+      {
+        "name": "Premium Times",
+        "url": "https://www.premiumtimesng.com/news/top-news/918916-inec-violates-electoral-act-fails-to-publish-voter-register-90-days-before-election.html"
+      },
+      {
+        "name": "Parrot Nigeria (display 9–15 Oct)",
+        "url": "https://parrotnigeria.com/2026/10/09/2027-inec-displays-voter-register-begins-pvc-distribution/"
+      },
+      {
+        "name": "WithinNigeria explainer",
+        "url": "https://www.withinnigeria.com/2026/10/24/2027-inec-voter-register-controversy/"
+      }
+    ],
+    "checked": "2026-10-26"
+  }
+}

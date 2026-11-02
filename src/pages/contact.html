@@ -1,0 +1,60 @@
+<!--{"title":"Contact Binchika","description":"Manifesto submissions, data requests, corrections, verifier questions and press. Every message reaches a person.","nav":"contact","path":"/contact/","scripts":["/assets/js/contact.js"],"head":"<link rel=\"preload\" as=\"image\" href=\"/assets/img/renders/nigeria-bronze-1200.webp\" media=\"(max-width: 900px)\"><link rel=\"preload\" as=\"image\" href=\"/assets/img/renders/nigeria-bronze-2400.webp\" media=\"(min-width: 901px)\">"}-->
+<section class="contact-bleed" id="contact" style="min-height:calc(100vh - var(--head-h))" aria-labelledby="contact-h">
+  <picture class="bg" aria-hidden="true">
+    <source media="(max-width: 900px)" srcset="/assets/img/renders/nigeria-bronze-1200.webp" type="image/webp">
+    <source srcset="/assets/img/renders/nigeria-bronze-2400.webp" type="image/webp">
+    <img src="/assets/img/renders/nigeria-bronze-2400.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+  </picture>
+  <div class="wrap">
+    <form class="contact-card" id="contact-form" novalidate>
+      <p class="eyebrow" style="color:#F2A672">Contact</p>
+      <h2 id="contact-h" style="font-size:clamp(1.8rem,4vw,2.8rem)">Talk to us.</h2>
+      <p>Manifestos, data requests, corrections, verifier questions, press. Every message reaches a person. Images you attach are compressed in your browser before upload, and stay visually identical.</p>
+      <div class="form-grid" style="margin-top:1rem">
+        <label>Nature of your enquiry
+          <select name="nature" id="c-nature" required>
+            <option value="">Choose…</option>
+            <option value="manifesto">Party manifesto or motto submission</option>
+            <option value="party">Party communication</option>
+            <option value="data">Data request</option>
+            <option value="error">Report an error in our data</option>
+            <option value="verifier">Verifier question</option>
+            <option value="technical">Website or technical issue</option>
+            <option value="press">Press and media</option>
+            <option value="media_access">Media access request (press feed)</option>
+            <option value="other">Something else</option>
+          </select>
+        </label>
+        <label>Your email (for our reply)<input type="email" name="email" id="c-email" required autocomplete="email"></label>
+        <label class="wide">Your name or organisation (optional)<input type="text" name="name" id="c-name" maxlength="100" autocomplete="name"></label>
+        <fieldset class="wide media-fields" id="c-media" hidden>
+          <legend>Media access request</legend>
+          <p>Newsrooms can also use the dedicated <a href="/media/" style="color:#F2A672">For newsrooms</a> page, which explains the feed and its terms. For newsrooms, broadcasters, news agencies, election observers and research groups that want to be registered for the press feed. The feed itself is open to everyone; registration gives your desk a named route for corrections and notice before the feed changes. Political parties and campaigns: please choose “Party communication” instead.</p>
+          <div class="form-grid">
+            <label>Organisation name<input type="text" name="org" id="c-org" maxlength="120" autocomplete="organization"></label>
+            <label>Organisation website<input type="url" name="org_url" id="c-org-url" maxlength="200" placeholder="https://" inputmode="url"></label>
+            <label>Type of organisation<select name="org_type" id="c-org-type"><option value="">Choose…</option><option value="broadcaster">Broadcaster (TV or radio)</option><option value="newsroom">Newspaper or online newsroom</option><option value="agency">News agency or wire service</option><option value="observer">Election observer or civic organisation</option><option value="research">University or research group</option><option value="other">Other media organisation</option></select></label>
+            <label>How you will use the feed<select name="use" id="c-use"><option value="">Choose…</option><option value="live_page">Live results page or embed</option><option value="broadcast">On-air graphics</option><option value="analysis">Analysis or research</option><option value="factcheck">Fact-checking or verification</option></select></label>
+            <label class="wide">How often you will check the feed<select name="polling" id="c-polling"><option value="">Choose…</option><option value="15s">Every 15 seconds (the fastest the feed changes)</option><option value="minute">About once a minute</option><option value="hour">About once an hour</option><option value="day">Daily or less often</option></select></label>
+            <label class="wide opt"><input type="checkbox" name="terms" id="c-terms" value="yes"> <span>We will show “Citizen-verified tallies. Only INEC declares results.” beside the figures, credit Binchika, and never present the figures as official results, a projection or a winner.</span></label>
+          </div>
+          <p class="source-note">An email address at your organisation's own domain helps us confirm the request. These details are kept only with your message in our mailbox and are deleted after 12 months.</p>
+        </fieldset>
+        <label class="wide"><span id="c-message-label">Message</span><textarea name="message" id="c-message" required minlength="20" maxlength="5000" aria-labelledby="c-message-label"></textarea></label>
+        <div class="wide">
+          <div class="attach">
+            <label class="btn btn-ghost btn-sm" for="c-files" style="display:inline-flex;cursor:pointer">Attach files</label>
+            <input type="file" id="c-files" multiple accept="image/*,application/pdf,text/plain,text/csv,.docx,.xlsx" class="sr-only">
+            <span class="source-note" style="margin:0;color:#CFC9BD">Up to 5 files, 10 MB total · images, PDF, Word, Excel, text</span>
+          </div>
+          <ul class="attach-list" id="c-list" aria-live="polite"></ul>
+        </div>
+        <label class="hp" aria-hidden="true">Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <div class="cta-row" style="margin-top:1.2rem;align-items:center">
+        <button class="btn btn-solid" type="submit" id="c-send">Send message</button>
+        <p class="form-status" id="c-status" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>

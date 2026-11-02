@@ -1,0 +1,21 @@
+#!/bin/sh
+# Blocks commits that leak secrets. Install: git config core.hooksPath scripts/hooks
+fail=0
+
+# 1. .env.example must have no values except the allow-listed non-secrets.
+if git diff --cached --name-only | grep -qx ".env.example"; then
+  bad=$(git show :.env.example | grep -E '^[A-Z0-9_]+=[^ #]' | grep -vE '^(SUPABASE_URL|RESEND_FROM_[A-Z]+)=')
+  if [ -n "$bad" ]; then
+    echo "pre-commit: .env.example contains values for:" >&2
+    echo "$bad" | sed 's/=.*//' >&2
+    fail=1
+  fi
+fi
+
+# 2. Known token shapes anywhere in staged content.
+if git diff --cached -U0 | grep -E '^\+' | grep -qE '(cfut_[A-Za-z0-9]{20,}|sbp_[a-f0-9]{30,}|sb_secret_[A-Za-z0-9_-]{10,}|re_[A-Za-z0-9]{8,}_[A-Za-z0-9]{10,}|github_pat_[A-Za-z0-9_]{30,}|gh[pousr]_[A-Za-z0-9]{30,}|eyJhbGciOi[A-Za-z0-9_-]{20,}\.)'; then
+  echo "pre-commit: staged changes contain something that looks like a secret token." >&2
+  fail=1
+fi
+
+[ $fail -eq 0 ] || { echo "Commit blocked. Move secrets to .env (gitignored)." >&2; exit 1; }
