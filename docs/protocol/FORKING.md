@@ -3,7 +3,7 @@
 This is a working path for a civic-tech group in Ghana, Kenya, Senegal or anywhere else. It assumes one developer, a Cloudflare account and a GitHub account. Facts about your country's election law, dates and parties must come from your electoral body. Do not copy Nigeria's.
 
 ## Hour 0–4: accounts and repo
-1. Fork `github.com/Bincika/Binchika-v1` (the open-source tree; the original repository stays private). Keep the MIT licence and, as requested, the "Built on the Binchika Protocol" link.
+1. Fork `github.com/Bincika/Binchika-v1` (the open-source tree; the original repository stays private). The code is dual-licensed under the MIT License and the Apache License 2.0, so **your fork may use either licence** (or offer both, as we do). Keep the copyright notice and the text of the licence you use (`LICENSE-MIT`, `LICENSE-APACHE`; keeping both files is simplest). If you use Apache 2.0, also keep `NOTICE` (Apache 2.0, section 4(d)). As requested, not required, keep the "Built on the Binchika Protocol" link.
 2. Create a free Cloudflare account and add your domain. Create a D1 database and point `wrangler.toml` at it. Enable R2.
 3. `cp .env.example .env`, fill it in, and run `git config core.hooksPath scripts/hooks` (the secret guard).
 

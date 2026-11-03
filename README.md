@@ -6,7 +6,7 @@ Binchika is a citizen transparency layer for elections. Citizens report the resu
 
 **Binchika never declares results.** Only the electoral body does. Every page, feed and API response says so.
 
-This repository is the open-source tree of the Nigeria deployment at [binchika.com](https://binchika.com), released under the **MIT licence** so any civic-tech group in Africa (or anywhere) can fork it and run it for its own election.
+This repository is the open-source tree of the Nigeria deployment at [binchika.com](https://binchika.com), dual-licensed under **MIT or Apache 2.0** so any civic-tech group in Africa (or anywhere) can fork it and run it for its own election.
 
 ## Reconfigure it for your country
 Country values live in one place:
@@ -48,4 +48,8 @@ These are the same steps as CI (`.github/workflows/ci.yml`). Deployment uses Clo
 - Secrets never go in git. Install the guard: `git config core.hooksPath scripts/hooks`.
 
 ## Licence
-MIT; see [`LICENSE`](LICENSE) and attribution notes in [`NOTICE`](NOTICE). A "Built on the Binchika Protocol" link is appreciated, not required.
+This project is dual-licensed under the MIT License and the Apache License 2.0. You may choose either licence.
+- MIT: [`LICENSE-MIT`](LICENSE-MIT)
+- Apache 2.0: [`LICENSE-APACHE`](LICENSE-APACHE)
+
+SPDX expression: `MIT OR Apache-2.0`. Forks may use either licence. Attribution notes and third-party data licences are in [`NOTICE`](NOTICE). A "Built on the Binchika Protocol" link is appreciated, not required.

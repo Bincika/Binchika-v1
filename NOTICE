@@ -1,5 +1,9 @@
 Binchika Protocol: notices
 
+Copyright (c) 2026 Oruanyi and the Binchika Protocol contributors.
+Licensed under the MIT License (LICENSE-MIT) or the Apache License 2.0
+(LICENSE-APACHE), at your option.
+
 Attribution request (not a licence condition): forks are asked to keep a visible
 "Built on the Binchika Protocol" link and the statement that only the national
 electoral body declares official results.
@@ -7,4 +11,4 @@ electoral body declares official results.
 Third-party data keeps its own licence: GRID3/geoBoundaries (CC BY 4.0), Natural
 Earth (public domain), World Bank WDI (CC BY 4.0), Wikidata (CC0), world-countries
 (ODbL). Party logos are the marks of their parties and are shown only for neutral
-identification; they are not covered by the MIT licence in LICENSE.
+identification; they are not covered by either code licence (LICENSE-MIT, LICENSE-APACHE).

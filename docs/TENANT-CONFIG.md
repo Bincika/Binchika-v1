@@ -1,6 +1,6 @@
 # Tenant configuration: running Binchika for another country
 
-_Session 98, 2 November 2026. Applies to github.com/Bincika/Binchika-v1 (open source, MIT) and to the Nigeria deployment at binchika.com, which runs on the same code with the Nigeria tenant._
+_Session 98, 2 November 2026. Applies to github.com/Bincika/Binchika-v1 (open source, MIT or Apache-2.0) and to the Nigeria deployment at binchika.com, which runs on the same code with the Nigeria tenant._
 
 ## The idea in one paragraph
 Everything that names a country lives in one tenant folder. `tenant_config.json` (repository root) says which one is active:
@@ -57,7 +57,7 @@ Session 98 count for Nigeria: config 44 · data 1,076 · content 891 · **code 5
 | Comments | throughout | Harmless; they explain the Nigeria example. |
 
 ## Standing up a new country (short version; the full path is `docs/protocol/FORKING.md`)
-1. Fork github.com/Bincika/Binchika-v1. Keep the MIT licence and `NOTICE`.
+1. Fork github.com/Bincika/Binchika-v1. Your fork may use either licence, MIT or Apache 2.0. Keep `LICENSE-MIT`, `LICENSE-APACHE` and `NOTICE`.
 2. `cp -r tenants/_template tenants/<iso>`, fill every `FILL` with a sourced value, and set `"tenant": "<iso>"` in `tenant_config.json`.
 3. Replace the country data in `site/data/` (keep the file shapes) and rewrite `src/pages/`.
 4. `node scripts/build-site.mjs`, then `node --test tests/*.test.mjs`. Nigeria fixtures in some tests will fail until you change them for your country; they tell you what to change.

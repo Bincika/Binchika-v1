@@ -2,7 +2,7 @@
 
 **Africa's First Decentralised Election Ledger** is a citizen transparency layer that does the arithmetic in public. It is not an election system. It never declares results; only the national electoral body does (INEC in Nigeria).
 
-The protocol is MIT-licensed (see `/LICENSE`). Nigeria is the first fully configured tenant (`tenants/ng/tenant.json`).
+The protocol is dual-licensed under the MIT License and the Apache License 2.0; you may choose either licence (see `/LICENSE-MIT` and `/LICENSE-APACHE`). Nigeria is the first fully configured tenant (`tenants/ng/tenant.json`).
 
 ## What the protocol is
 | Layer | What it does | Where |
