@@ -11,7 +11,7 @@ alter table public.discrepancy_flags add constraint discrepancy_flags_decided_by
 
 -- retention_purge: dry run by default. It deletes
 --  (a) applications that never became a seat, and accounts that claimed an invite but never pledged, once the
---      application period after INEC declares the final 2027 governorship results has passed (p_governorship_final;
+--      application period after EEC declares the final 2027 governorship results has passed (p_governorship_final;
 --      NULL means "not declared yet", so nothing is deleted);
 --  (b) former seat holders p_holder_months after their seat was released: pledge (typed name), application (name,
 --      email, answers, voter-card hash) and the sign-in account (which removes the verifier row, MFA factors and

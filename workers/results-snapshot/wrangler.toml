@@ -1,0 +1,17 @@
+name = "binchika-results-snapshot"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = false
+
+# Precomputed public totals (session 111; docs/results-precomputed-totals.md). One minute is the shortest cron interval.
+[triggers]
+crons = ["* * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "binchika-db"
+database_id = "00000000-0000-0000-0000-000000000000   # REPLACE: your D1 database id (wrangler d1 create)"
+
+# Session 121, on the owner's word: lets the Real-Time Issue notification see this Worker's errors (docs/OWNER-ACTIONS.md, section 6).
+[observability]
+enabled = true

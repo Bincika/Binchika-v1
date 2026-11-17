@@ -1,4 +1,4 @@
-// Verifier confirmation of a Form EC8A reading (session 88; docs/protocol/AI-GOVERNANCE.md). A result-sheet reading,
+// Verifier confirmation of a Form R1 reading (session 88; docs/protocol/AI-GOVERNANCE.md). A result-sheet reading,
 // typed by a reporter or proposed by OCR, counts toward consensus only after an SZV or NRV for the unit's state has
 // looked at the photo and confirmed it. Confirm or reject only: a verifier never edits the numbers, so no single person
 // can rewrite readings to manufacture agreement. Corrected control totals may be supplied, and must balance.

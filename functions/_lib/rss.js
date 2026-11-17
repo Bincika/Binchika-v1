@@ -13,6 +13,7 @@ const pick = (block, tag) => {
   return m ? decode(m[1]) : "";
 };
 
+import { TENANT } from "./tenant.generated.js";
 export function parseFeed(xml, source) {
   const items = [];
   const blocks = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) ?? xml.match(/<entry[\s>][\s\S]*?<\/entry>/gi) ?? [];
@@ -28,7 +29,7 @@ export function parseFeed(xml, source) {
   return items;
 }
 
-export const ELECTION_TERMS = /\b(INEC|IReV|BVAS|election|electoral|elections|poll|polls|polling|vote|votes|voters?|ballot|PVC|campaign|governorship|presidential|primaries|primary|candidate|National Assembly|Senate|collation|tribunal|2027)\b/i;
+export const ELECTION_TERMS = new RegExp(TENANT.news.terms, "i");
 
 export function electionOnly(items) {
   return items.filter((i) => ELECTION_TERMS.test(i.title));

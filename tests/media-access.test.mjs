@@ -6,7 +6,7 @@ import { onRequestPost } from "../functions/api/contact.js";
 import { mailboxForNature } from "../functions/_lib/contactmail.js";
 import { autoReplyMail } from "../functions/_lib/autoreply.js";
 import { updateTicket } from "../functions/_lib/tickets.js";
-import { MEDIA_NATURE, MEDIA_DECISIONS, MEDIA_DECLINE_REASONS, validateMedia, domainMatch, mediaBlock, mediaChecks, mediaAutoChecks, mediaResolution, mediaDecisionOf, mediaReply, decideMedia } from "../functions/_lib/media.js";
+import { MEDIA_POLLING, MEDIA_NATURE, MEDIA_DECISIONS, MEDIA_DECLINE_REASONS, validateMedia, domainMatch, mediaBlock, mediaChecks, mediaAutoChecks, mediaResolution, mediaDecisionOf, mediaReply, decideMedia } from "../functions/_lib/media.js";
 
 // Session 91: media access requests through the existing contact form. Real SQLite with the real D1 migrations; Resend
 // and R2 stubbed. The request's details live only in the mailbox copy; the ticket holds the topic and a decision note.
@@ -86,7 +86,7 @@ test("a request reaches the owner and the Inbox with its details; the ticket hol
     assert.deepEqual(reply.to, ["desk@example.org"]);
     assert.ok(reply.text.includes("Your media access request is logged for review."));
     assert.ok(reply.text.includes("https://binchika.com/api/press/snapshot?race=president"));
-    assert.ok(reply.text.includes('"Citizen-verified tallies. Only INEC declares results."'));
+    assert.ok(reply.text.includes('"Citizen-verified tallies. Only EEC declares results."'));
     // The review checklist is read back from the stored text: booleans and fixed labels only.
     const c = mediaChecks(inn.body_text);
     assert.deepEqual(c.checks, { request: true, website: true, domain: true, terms: true, type: true, use: true, registration: false, resolves: true, mx: true });
@@ -161,7 +161,7 @@ test("draft replies: reference, notice and limits are present; nothing promises 
   for (const d of Object.keys(MEDIA_DECISIONS)) {
     const t = mediaReply(d, "BIN-2611-0001");
     assert.ok(t.includes("Your reference is BIN-2611-0001."), d);
-    assert.ok(t.includes("Citizen-verified tallies. Only INEC declares results."), d);
+    assert.ok(t.includes("Citizen-verified tallies. Only EEC declares results."), d);
     assert.ok(!/\b(official partner|accredited|guarantee|exclusive)\b/i.test(t), d);
   }
   assert.ok(mediaReply("approved", "BIN-2611-0001").includes("Registration lasts 12 months"));
@@ -227,7 +227,101 @@ test("decline reasons: each reply states its neutral reason, the open feed and t
 
 test("/media/ is built with the form, the notice, the launch banner and the terms", () => {
   const html = readFileSync("site/media/index.html", "utf8");
-  for (const s of ['id="media-form"', 'name="org"', 'name="reg_no"', 'name="org_url"', 'name="email"', 'name="tech_email"', 'name="use"', 'name="message"', 'name="terms"', 'name="website"', "Public launch: Thursday 5 November 2026.", "Site readiness testing is ongoing.", "Only INEC declares election results in Nigeria.", "Never present the figures as official results, a projection or a winner.", "/api/press/snapshot?race=president"]) assert.ok(html.includes(s), s);
+  for (const s of ['id="media-form"', 'name="org"', 'name="reg_no"', 'name="org_url"', 'name="email"', 'name="tech_email"', 'name="use"', 'name="message"', 'name="terms"', 'name="website"', "Example site.", "Only EEC declares election results in Exampleland.", "Never present the figures as official results, a projection or a winner.", "/api/press/snapshot?race=president"]) assert.ok(html.includes(s), s);
   assert.ok(!/name="robots" content="noindex"/.test(html));
   assert.ok(readFileSync("site/sitemap.xml", "utf8").includes("/media/"));
+});
+
+// Session 114: freshness wording and figuresBuiltAt. docs/media-freshness-wording-draft.md
+test("the parser reads the new polling label and the earlier one as 15s, and nothing else", () => {
+  const block = (label) => `Media access request\nChecking the feed: ${label}`;
+  assert.equal(mediaChecks(block(MEDIA_POLLING["15s"])).polling, "15s");
+  assert.equal(mediaChecks(block("Every 15 seconds (the fastest the feed changes)")).polling, "15s", "requests already logged keep their value");
+  assert.equal(mediaChecks(block("About once a minute")).polling, "minute");
+  for (const label of ["Every 1 second", "constructor", "__proto__"]) assert.equal(mediaChecks(block(label)).polling, null, label);
+  assert.equal(Object.values(MEDIA_POLLING).includes("Every 15 seconds (the fastest the feed changes)"), false, "the earlier label is not offered");
+});
+
+test("both forms' polling labels equal the server's, so the parser cannot drift", () => {
+  for (const [file, id] of [["site/media/index.html", "m-polling"], ["src/pages/media.html", "m-polling"], ["site/contact/index.html", "c-polling"], ["src/pages/contact.html", "c-polling"]]) {
+    const select = readFileSync(file, "utf8").match(new RegExp(`<select[^>]*id="${id}"[^>]*>(.*?)</select>`, "s"))[1];
+    const offered = Object.fromEntries([...select.matchAll(/<option value="([^"]+)">([^<]+)<\/option>/g)].map((m) => [m[1], m[2]]));
+    assert.deepEqual(offered, MEDIA_POLLING, file);
+  }
+});
+
+test("the approval email states the freshness rules", () => {
+  const t = mediaReply("approved", "BIN-2611-0001");
+  for (const s of ["at most once a minute", "figuresBuiltAt", "12 minutes", "503", "These figures may be out of date", "Source: Binchika (binchika.com). Feed time 21:05 XLT.", "Only EEC declares results."]) assert.ok(t.includes(s), s);
+  assert.ok(!t.includes("changes at most every 15 seconds"));
+});
+
+test("/media/ carries the shipped wording, on the built page and in its source", () => {
+  for (const file of ["site/media/index.html", "src/pages/media.html"]) {
+    const html = readFileSync(file, "utf8");
+    for (const s of ['id="age-h"', "How old the figures are", "Source: Binchika (binchika.com). Feed time 21:05 XLT.", "figuresBuiltAt", "12 minutes", "20 minutes", "These figures may be out of date", 'results temporarily unavailable', "Senate, House, governor and state assembly", "Region LA governorship result",
+      "Only EEC declares election results in Exampleland.", "Binchika never declares a winner and never projects one.", "Never present the figures as official results, a projection or a winner.", "Citizen-verified tallies. Only EEC declares results."]) assert.ok(html.includes(s), `${file}: ${s}`);
+    for (const s of ["the fastest the feed changes", "refreshed at most every 15 seconds", "“as of 21:05 XLT”."]) assert.ok(!html.includes(s), `${file}: ${s}`);
+    assert.equal((html.match(/<ol>[\s\S]*?<\/ol>/)[0].match(/<li>/g) ?? []).length, 5, "the time line is not a numbered term");
+  }
+});
+
+// Session 117: the "Before this goes on air" box and R1-R5. docs/media-before-air-box-draft.md
+const MEDIA_PAGES = ["site/media/index.html", "src/pages/media.html"];
+const SHARE_LABEL = "Citizen-verified vote shares from published units only. Not results, projections or winners.";
+const ZERO_LINE = "No citizen-verified tallies have been published yet. Only EEC declares results. Source: Binchika (binchika.com).";
+const boxOf = (html) => html.match(/<aside aria-labelledby="air-h"[\s\S]*?<\/aside>/)[0];
+
+test("/media/ carries the Before this goes on air box", () => {
+  for (const file of MEDIA_PAGES) {
+    const box = boxOf(readFileSync(file, "utf8"));
+    for (const s of ["Before this goes on air", "“Citizen-verified tallies. Only EEC declares results.”", "“in N of 12,000 polling units”", "“from N polling units in the states voting”", "“Source: Binchika (binchika.com). Feed time 21:05 XLT.”", "Never present the figures as official results, a projection or a winner.", "Only EEC declares election results in Exampleland.", `“${SHARE_LABEL}”`, "“by citizen-verified votes so far”", "Do not use party brand colours.", "“These figures may be out of date”", "Without that check, always add those words.", `“${ZERO_LINE}”`, 'href="#age-h"', 'href="#terms-h"']) assert.ok(box.includes(s), `${file}: ${s}`);
+  }
+});
+
+test("the box comes straight after the headline, before the opening paragraph", () => {
+  for (const file of MEDIA_PAGES) {
+    const html = readFileSync(file, "utf8");
+    assert.ok(html.indexOf("</h1>") < html.indexOf('id="air-h"') && html.indexOf('id="air-h"') < html.indexOf('class="lede"'), file);
+    assert.equal(html.split('id="air-h"').length, 2, `${file}: one box`);
+    assert.ok(html.includes('id="age-h"') && html.includes('id="terms-h"'), `${file}: its links have targets`);
+  }
+});
+
+test("the percentages label is in the box and the Say paragraph, in the same words", () => {
+  for (const file of MEDIA_PAGES) {
+    const html = readFileSync(file, "utf8");
+    const say = html.match(/<p><strong>Say<\/strong>[\s\S]*?<\/p>/)[0];
+    assert.ok(boxOf(html).includes(SHARE_LABEL), `${file}: box`);
+    assert.ok(say.includes(SHARE_LABEL), `${file}: Say paragraph`);
+    assert.ok(say.includes("Do not use party brand colours."), `${file}: Say paragraph colours`);
+  }
+});
+
+test("the box adds no numbered term", () => {
+  for (const file of MEDIA_PAGES) {
+    const html = readFileSync(file, "utf8");
+    assert.ok(!boxOf(html).includes("<ol"), file);
+    assert.equal((html.match(/<ol>[\s\S]*?<\/ol>/)[0].match(/<li>/g) ?? []).length, 5, file);
+  }
+});
+
+test("the samples follow the box: zero, frozen, stuck and failed", () => {
+  for (const file of MEDIA_PAGES) {
+    const html = readFileSync(file, "utf8");
+    for (const label of ["JavaScript example", "Python example"]) {
+      const sample = html.match(new RegExp(`aria-label="${label}"><code>([\\s\\S]*?)</code>`))[1];
+      for (const s of [ZERO_LINE, "These figures may be out of date.", "figuresBuiltAt", "Feed time"]) assert.ok(sample.includes(s), `${file} ${label}: ${s}`);
+      assert.match(sample, /last_?[mM]oved/, `${file} ${label}: the 2-minute check`);
+      assert.match(sample, /frozen or stuck/, `${file} ${label}`);
+    }
+  }
+});
+
+test("the field notes name the 12-minute check, the 2-minute threshold and how to work out a share", () => {
+  for (const file of MEDIA_PAGES) {
+    const html = readFileSync(file, "utf8");
+    for (const s of ["This is the 12-minute check.", "has not moved for about 2 minutes", "The feed gives no shares.", 'href="#air-h"']) assert.ok(html.includes(s), `${file}: ${s}`);
+    assert.ok(!html.includes("itself stops moving"), file);
+  }
 });

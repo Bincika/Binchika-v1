@@ -76,7 +76,7 @@ insert into public.pledge_texts (version, body) values ('P-2026-1', $p$I accept 
 4. My area only. I will act only for the state or region of my seat.
 5. Anonymity. I will use only my seat number and public ID in meetings and messages. I will not share any verifier's identity, including my own, and I will not share a phone number on Binchika channels.
 6. Confidentiality. I will keep reporters' data, unpublished flags and internal discussions private, and use them only for verifying.
-7. INEC declares. I will never present Binchika's work as an official result or declare a winner.
+7. EEC declares. I will never present Binchika's work as an official result or declare a winner.
 8. Stepping down. If I can no longer meet this pledge, I will tell Binchika and give up my seat. I accept that the BinchikaAdmin may release my seat if I break it.$p$)
 on conflict (version) do nothing;   -- a published version is never edited; new wording = new version
 
@@ -138,7 +138,7 @@ create or replace function public.norm_name(t text) returns text language sql im
 $$;
 create or replace function public.seat_area(p_seat text) returns text language sql stable set search_path = public as $$
   select case when s.role = 'szv' then st.name else r.name end
-  from public.verifier_seats s left join public.ng_states st on st.iso = s.state_iso left join public.verifier_regions r on r.id = s.region_id
+  from public.verifier_seats s left join public.area_states st on st.iso = s.state_iso left join public.verifier_regions r on r.id = s.region_id
   where s.code = p_seat
 $$;
 

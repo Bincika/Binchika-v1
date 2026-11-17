@@ -1,7 +1,11 @@
 {
+  "id": "/",
   "name": "Binchika · Africa’s First Decentralised Election Ledger",
   "short_name": "Binchika",
+  "description": "A citizen transparency layer that does the maths in public. Binchika never declares results.",
+  "lang": "en-GB",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#F4EFE6",
   "theme_color": "#16140F",
@@ -15,6 +19,18 @@
       "src": "/assets/img/brand/agogo-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/assets/img/brand/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
+  ],
+  "shortcuts": [
+    { "name": "Citizen-verified tally", "short_name": "Tally", "url": "/tally/" },
+    { "name": "Check the public ledger", "short_name": "Ledger", "url": "/ledger/" },
+    { "name": "Help and questions", "short_name": "Help", "url": "/help/" },
+    { "name": "Verifier & admin sign-in", "short_name": "Sign in", "url": "/portal/" }
   ]
 }

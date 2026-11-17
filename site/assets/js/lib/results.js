@@ -1,26 +1,27 @@
-// Aggregation + Nigeria's constitutional winning rules. Pure, shared by API and tests.
+// Aggregation + Exampleland's constitutional winning rules. Pure, shared by API and tests.
 //
-// President — Constitution s.134(2): highest votes AND at least 25% of votes in at least two-thirds
-// of all the States and the FCT. Binchika shows the spread count; the courts, not Binchika, interpret it.
-// Governor — Constitution s.179(2): highest votes AND at least 25% in at least two-thirds of the LGAs.
+// President — The example rule: highest votes AND at least 25% of votes in at least two-thirds
+// of all the States and the Capital Region. Binchika shows the spread count; the courts, not Binchika, interpret it.
+// Governor — The example rule: highest votes AND at least 25% in at least two-thirds of the districts.
 
 // Polling-unit code prefix → admin-1 area (ISO 3166-2), from the active tenant (tenants/<id>/tenant.json,
-// pollingUnits.statePrefix; session 98). For Nigeria: INEC state codes, alphabetical, FCT = 37. VERIFY against INEC PU register.
+// pollingUnits.statePrefix; session 98). For Exampleland: EEC state codes, alphabetical, Capital Region = 37. VERIFY against EEC PU register.
 import { TENANT } from "./tenant.generated.js";
 export const REGION_CODE = TENANT.pollingUnits.statePrefix;
-export const INEC_STATE_CODE = REGION_CODE;   // original name, kept for every existing import
+export const STATE_CODE = REGION_CODE;   // original name, kept for every existing import
 
-export const stateOfPu = (pu) => INEC_STATE_CODE[String(pu ?? "").slice(0, 2)] ?? null;
+export const stateOfPu = (pu) => STATE_CODE[String(pu ?? "").slice(0, 2)] ?? null;
 
-// Nigeria / INEC 2027 scope, mirrored in site/data/races.json. The eight off-cycle
-// governorship exclusions remain verified:false there pending INEC's final 2027 notice.
-const GOVERNOR_OFF_CYCLE = new Set(["NG-AN", "NG-BY", "NG-ED", "NG-EK", "NG-IM", "NG-KO", "NG-ON", "NG-OS"]);
-const STATE_ISOS = new Set(Object.values(INEC_STATE_CODE));
+// Exampleland / EEC 2027 scope, mirrored in site/data/races.json. The eight off-cycle
+// governorship exclusions remain verified:false there pending EEC's final 2027 notice.
+const GOVERNOR_OFF_CYCLE = new Set(TENANT.rules.governorOffCycle);
+const CAPITAL_TERRITORY = TENANT.rules.capitalTerritoryIso;
+const STATE_ISOS = new Set(Object.values(STATE_CODE));
 export function eligibleStateForRace(race, iso) {
   if (!STATE_ISOS.has(iso)) return false;
   if (["president", "senate", "house"].includes(race)) return true;
-  if (race === "governor") return iso !== "NG-FC" && !GOVERNOR_OFF_CYCLE.has(iso);
-  return race === "state-assembly" && iso !== "NG-FC";
+  if (race === "governor") return iso !== CAPITAL_TERRITORY && !GOVERNOR_OFF_CYCLE.has(iso);
+  return race === "state-assembly" && iso !== CAPITAL_TERRITORY;
 }
 
 /** rows: [{ pu_code, tally: {PARTY: n} }] (high-confidence only) → per-state and national totals. */
@@ -42,7 +43,7 @@ export function aggregate(rows) {
   return { units, national, byState };
 }
 
-/** Valid PU codes only; numeric prefixes identify LGAs without claiming a name mapping. */
+/** Valid PU codes only; numeric prefixes identify districts without claiming a name mapping. */
 export function aggregateByLga(rows) {
   const byLga = {};
   for (const row of rows) {
@@ -77,5 +78,5 @@ export function spread(areaTotals) {
   return out;
 }
 
-/** Two-thirds threshold, rounded up (e.g. 24 of 36, 25 of 37, 30 of 44 LGAs). */
+/** Two-thirds threshold, rounded up (e.g. 24 of 36, 25 of 37, 30 of 44 districts). */
 export const twoThirds = (n) => Math.ceil((2 * n) / 3);

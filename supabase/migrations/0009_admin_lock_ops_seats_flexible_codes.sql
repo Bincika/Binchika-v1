@@ -132,7 +132,7 @@ create or replace function public.seat_is_open(p_seat text) returns boolean lang
      and not exists (select 1 from public.verifier_offers o where o.seat_code = p_seat and o.status in ('pending_send','sent','claimed'))
 $$;
 create or replace function public.area_name(p_role text, p_state text, p_region text) returns text language sql stable set search_path = public as $$
-  select case when p_role = 'szv' then (select name from public.ng_states where iso = p_state) else (select name from public.verifier_regions where id = p_region) end
+  select case when p_role = 'szv' then (select name from public.area_states where iso = p_state) else (select name from public.verifier_regions where id = p_region) end
 $$;
 -- The seats an offer may claim: its one seat, or every seat of its type in the applicant's area (open or not).
 create or replace function public.offer_seat_options(p_offer uuid) returns jsonb language sql stable security definer set search_path = public as $$

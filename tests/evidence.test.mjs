@@ -20,7 +20,7 @@ function sqliteD1() {
   });
   return { db, prepare: (sql) => stmt(sql) };
 }
-const T = { APC: 100, PDP: 80 }, U = { APC: 90, PDP: 95 };
+const T = { PA: 100, PB: 80 }, U = { PA: 90, PB: 95 };
 const rep = (h, tally, evidence = "ec8a", audit = null) => ({ reporterHash: h, tally, evidence, audit });
 let n = 0;
 // Session 88: a result-sheet reading counts only once a verifier has confirmed it, and is posted only if its sheet
@@ -37,7 +37,7 @@ function addReport(D1, { pu = "24-09-05-012", race = "president", tally = T, evi
 }
 const unit = (D1) => D1.db.prepare("SELECT status, reports FROM unit_consensus WHERE pu_code = '24-09-05-012' AND race = 'president'").get();
 const ledgerCount = (D1) => D1.db.prepare("SELECT COUNT(*) AS c FROM ledger_entries").get().c;
-const LAGOS_SZV = { role: "szv", public_id: "V0007", states: ["NG-LA"] };
+const LAGOS_SZV = { role: "szv", public_id: "V0007", states: ["XL-LA"] };
 const NOTE = "Video shows the board at this unit; numbers match.";
 
 test("evidence: reports default to the result sheet; only the three published alternatives are accepted", () => {
@@ -87,8 +87,8 @@ test("audit: only an SZV/NRV for that state, only pending alternatives, always w
   addReport(D1); addReport(D1);
   const alt = addReport(D1, { evidence: "handwritten", audit: "pending" });
   const sheet = addReport(D1, { pu: "24-09-05-013" });
-  assert.equal((await auditEvidence(D1, { reportId: alt, decision: "approved", note: NOTE }, { ...LAGOS_SZV, states: ["NG-KN"] })).status, 403, "other state");
-  assert.equal((await auditEvidence(D1, { reportId: alt, decision: "approved", note: NOTE }, { role: "admin", public_id: "V0002", states: ["NG-LA"] })).status, 403, "OpsAdmin cannot audit");
+  assert.equal((await auditEvidence(D1, { reportId: alt, decision: "approved", note: NOTE }, { ...LAGOS_SZV, states: ["XL-KN"] })).status, 403, "other state");
+  assert.equal((await auditEvidence(D1, { reportId: alt, decision: "approved", note: NOTE }, { role: "admin", public_id: "V0002", states: ["XL-LA"] })).status, 403, "OpsAdmin cannot audit");
   assert.equal((await auditEvidence(D1, { reportId: alt, decision: "approved", note: "ok" }, LAGOS_SZV)).status, 422, "reason required");
   assert.equal((await auditEvidence(D1, { reportId: alt, decision: "maybe", note: NOTE }, LAGOS_SZV)).status, 422);
   assert.equal((await auditEvidence(D1, { reportId: sheet, decision: "approved", note: NOTE }, LAGOS_SZV)).status, 409, "result sheets need no audit");
@@ -99,7 +99,7 @@ test("audit: only an SZV/NRV for that state, only pending alternatives, always w
   const row = D1.db.prepare("SELECT audit_status, audited_by, audit_note, audited_at FROM reports WHERE id = ?").get(alt);
   assert.deepEqual([row.audit_status, row.audited_by, row.audit_note, Boolean(row.audited_at)], ["approved", "V0007", NOTE, true]);
   assert.equal((await auditEvidence(D1, { reportId: alt, decision: "rejected", note: NOTE }, LAGOS_SZV)).status, 409, "decided once");
-  const nrv = { role: "nrv", public_id: "V0042", states: ["NG-LA", "NG-OG", "NG-OY"] };
+  const nrv = { role: "nrv", public_id: "V0042", states: ["XL-LA", "XL-OG", "XL-OY"] };
   const alt2 = addReport(D1, { evidence: "video", audit: "pending" });
   assert.equal((await auditEvidence(D1, { reportId: alt2, decision: "rejected", note: NOTE }, nrv)).status, 200, "the region's NRV can audit");
 });

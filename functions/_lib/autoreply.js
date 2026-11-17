@@ -1,4 +1,4 @@
-// Automatic reply for mail to ops@, accounts@ and noreply@binchika.com. Sent by the Email Worker (workers/mailbox) only
+// Automatic reply for mail to ops@, accounts@ and noreply@mail.example.org. Sent by the Email Worker (workers/mailbox) only
 // after the message has been forwarded to the owner and/or stored for the Inbox, so it never replaces either.
 // Pure decision and message builders, shared with tests. Rules follow RFC 3834: never answer automated, bulk, list or
 // bounce mail, never our own domain, and at most one reply per sender per day (checked by the Worker). See docs/EMAIL-GUIDE.md.
@@ -8,7 +8,7 @@ import { MEDIA_NATURE, mediaAutoReplyText } from "./media.js";
 
 export const AUTO_REPLY_SENDER = "auto-reply";   // sent_by of the Sent rows the Worker records; not counted in DAILY_LIMIT
 export const AUTO_REPLY_DAILY_LIMIT = 30;        // all senders together per 24 hours, so the Resend quota stays free for the dashboard
-const OWN = /(^|\.)binchika\.com$/i;
+const OWN = /(^|\.)mail\.example\.org$/i;
 const ROBOT = /^(no-?reply|do-?not-?reply|mailer-daemon|postmaster|bounces?|daemon|notifications?)([+._-]|$)|noreply/i;
 const no = (reason) => ({ reply: false, reason });
 

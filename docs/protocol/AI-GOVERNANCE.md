@@ -6,17 +6,17 @@ AI in Binchika **suggests; deterministic code and people decide.** Nothing an AI
 | Layer | AI task | Model / where it runs | Output is… |
 |---|---|---|---|
 | Intake | Image quality check (blur, glare, cropped sheet) | Workers AI vision (Cloudflare) | a hint to the sender to retake the photo |
-| Reading | OCR of Form EC8A party totals | Workers AI vision, with on-device Tesseract as a fallback in the app | a **proposed** tally with per-field confidence |
+| Reading | OCR of Form R1 party totals | Workers AI vision, with on-device Tesseract as a fallback in the app | a **proposed** tally with per-field confidence |
 | Re-investigation | Re-reads every photo for a flagged unit, lists disagreements | Workers AI (text + vision) | a summary for the OpsAdmin; **no authority** |
 | Manifestos | Summary with page and paragraph citations | LLM, human-reviewed before publishing | a draft; the same template for every party |
-| Translation | Hausa, Yoruba, Igbo, Pidgin versions of guidance | LLM, reviewed by native speakers | a draft |
+| Translation | Local-language versions of guidance | LLM, reviewed by native speakers | a draft |
 
 ## Where AI is deliberately **not** used
-Consensus (≥85% of ≥3), the comparison with IReV, baseline checks, ledger writes, verifier selection, party order and colours, news selection, and anything that says who is "winning". All of these are deterministic, published code.
+Consensus (≥85% of ≥3), the comparison with ERP, baseline checks, ledger writes, verifier selection, party order and colours, news selection, and anything that says who is "winning". All of these are deterministic, published code.
 
 ## Limits we accept and design around
 - Handwriting, low light, folds and stamps cause misreads. Every low-confidence field goes to a person.
-- A doctored sheet photographed perfectly is still doctored. AI cannot detect fraud on its own; agreement between independent reporters and comparison with IReV and the baselines are what catch it.
+- A doctored sheet photographed perfectly is still doctored. AI cannot detect fraud on its own; agreement between independent reporters and comparison with ERP and the baselines are what catch it.
 - Language models can invent text ("hallucinate"). Summaries must quote and cite, and any unsupported sentence is removed by the reviewer.
 - Models can carry bias across scripts and handwriting styles. We monitor error rates by state and, if one region misreads more, route that region to people.
 

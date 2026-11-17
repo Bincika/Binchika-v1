@@ -1,6 +1,6 @@
 // POST /api/join/claim { code, email, password, area, seat? } — claim a seat (seat = the one picked with an SZV / NRV code): the email must be the one applied with,
 // the area must be the seat's state (SZV) or region (NRV). Creates the account, binds the seat (inactive)
-// and emails the confirmation + pledge link from noreply@binchika.com. The link token is never returned here.
+// and emails the confirmation + pledge link from noreply@mail.example.org. The link token is never returned here.
 import { supaConfigured, json } from "../../_lib/supa.js";
 import { claimSeat } from "../../_lib/invites.js";
 

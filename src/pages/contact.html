@@ -1,10 +1,6 @@
-<!--{"title":"Contact Binchika","description":"Manifesto submissions, data requests, corrections, verifier questions and press. Every message reaches a person.","nav":"contact","path":"/contact/","scripts":["/assets/js/contact.js"],"head":"<link rel=\"preload\" as=\"image\" href=\"/assets/img/renders/nigeria-bronze-1200.webp\" media=\"(max-width: 900px)\"><link rel=\"preload\" as=\"image\" href=\"/assets/img/renders/nigeria-bronze-2400.webp\" media=\"(min-width: 901px)\">"}-->
+<!--{"title":"Contact Binchika","description":"Manifesto submissions, data requests, corrections, verifier questions and press. Every message reaches a person.","nav":"contact","path":"/contact/","scripts":["/assets/js/contact.js"],"head":""}-->
 <section class="contact-bleed" id="contact" style="min-height:calc(100vh - var(--head-h))" aria-labelledby="contact-h">
-  <picture class="bg" aria-hidden="true">
-    <source media="(max-width: 900px)" srcset="/assets/img/renders/nigeria-bronze-1200.webp" type="image/webp">
-    <source srcset="/assets/img/renders/nigeria-bronze-2400.webp" type="image/webp">
-    <img src="/assets/img/renders/nigeria-bronze-2400.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
-  </picture>
+  
   <div class="wrap">
     <form class="contact-card" id="contact-form" novalidate>
       <p class="eyebrow" style="color:#F2A672">Contact</p>
@@ -35,8 +31,8 @@
             <label>Organisation website<input type="url" name="org_url" id="c-org-url" maxlength="200" placeholder="https://" inputmode="url"></label>
             <label>Type of organisation<select name="org_type" id="c-org-type"><option value="">Choose…</option><option value="broadcaster">Broadcaster (TV or radio)</option><option value="newsroom">Newspaper or online newsroom</option><option value="agency">News agency or wire service</option><option value="observer">Election observer or civic organisation</option><option value="research">University or research group</option><option value="other">Other media organisation</option></select></label>
             <label>How you will use the feed<select name="use" id="c-use"><option value="">Choose…</option><option value="live_page">Live results page or embed</option><option value="broadcast">On-air graphics</option><option value="analysis">Analysis or research</option><option value="factcheck">Fact-checking or verification</option></select></label>
-            <label class="wide">How often you will check the feed<select name="polling" id="c-polling"><option value="">Choose…</option><option value="15s">Every 15 seconds (the fastest the feed changes)</option><option value="minute">About once a minute</option><option value="hour">About once an hour</option><option value="day">Daily or less often</option></select></label>
-            <label class="wide opt"><input type="checkbox" name="terms" id="c-terms" value="yes"> <span>We will show “Citizen-verified tallies. Only INEC declares results.” beside the figures, credit Binchika, and never present the figures as official results, a projection or a winner.</span></label>
+            <label class="wide">How often you will check the feed<select name="polling" id="c-polling"><option value="">Choose…</option><option value="15s">Every 15 seconds</option><option value="minute">About once a minute</option><option value="hour">About once an hour</option><option value="day">Daily or less often</option></select></label>
+            <label class="wide opt"><input type="checkbox" name="terms" id="c-terms" value="yes"> <span>We will show “Citizen-verified tallies. Only {{BODY}} declares results.” beside the figures, credit Binchika, and never present the figures as official results, a projection or a winner.</span></label>
           </div>
           <p class="source-note">An email address at your organisation's own domain helps us confirm the request. These details are kept only with your message in our mailbox and are deleted after 12 months.</p>
         </fieldset>

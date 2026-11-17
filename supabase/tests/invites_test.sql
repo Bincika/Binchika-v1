@@ -12,13 +12,13 @@ begin
   -- since 0009 only the locked address can be BinchikAdmin: tests use the real record (rolled back)
   select user_id into u_boss from public.verifiers where role = 'superadmin';
   insert into public.verifiers (user_id, role, ops_seat) values (u_ops, 'admin', (select code from public.ops_seats o where not exists (select 1 from public.verifiers v where v.ops_seat = o.code) order by code limit 1));
-  -- a free Lagos seat (tests must not depend on live data)
-  select s.code into seat from public.verifier_seats s where s.state_iso = 'NG-LA' and not exists (select 1 from public.verifiers v where v.seat_code = s.code)
+  -- a free Region LA seat (tests must not depend on live data)
+  select s.code into seat from public.verifier_seats s where s.state_iso = 'XL-LA' and not exists (select 1 from public.verifiers v where v.seat_code = s.code)
     and not exists (select 1 from public.verifier_offers o where o.seat_code = s.code and o.status in ('pending_send','sent','claimed')) order by s.code limit 1;
   insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name)
-    values ('NG-LA','origin','szv','{}',90,'Ade@T.invalid','eligible','Adébáyọ̀ Ọlá-Ojo') returning id into app;
+    values ('XL-LA','origin','szv','{}',90,'Ade@T.invalid','eligible','Adébáyọ̀ Ọlá-Ojo') returning id into app;
   insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name)
-    values ('NG-BA','origin','szv','{}',90,'ba@t.invalid','eligible','Bauchi Person') returning id into app_ba;
+    values ('XL-BA','origin','szv','{}',90,'ba@t.invalid','eligible','Region BA Person') returning id into app_ba;
 
   -- invite creation
   begin perform public.invite_create(seat, app, 'h1', u_ops, 24); res := res || jsonb_build_object('t','OpsAdmin cannot invite','pass', false);
@@ -26,7 +26,7 @@ begin
   begin perform public.invite_create(seat, app_ba, 'h1', u_boss, 24); res := res || jsonb_build_object('t','applicant from another state refused','pass', false);
   exception when others then res := res || jsonb_build_object('t','applicant from another state refused','pass', true); end;
   select * into r from public.invite_create(seat, app, 'h1', u_boss, 24);
-  res := res || jsonb_build_object('t','BinchikAdmin invites eligible applicant to a free seat','pass', r.seat_code = seat and r.email = 'Ade@T.invalid' and r.area = 'Lagos');
+  res := res || jsonb_build_object('t','BinchikAdmin invites eligible applicant to a free seat','pass', r.seat_code = seat and r.email = 'Ade@T.invalid' and r.area = 'Region LA');
   select count(*) into n from public.verifier_applications where id = app and status = 'offered';
   res := res || jsonb_build_object('t','application moves to offered','pass', n = 1);
   begin perform public.invite_create(seat, app, 'h2', u_boss, 24); res := res || jsonb_build_object('t','second live invite on same seat refused','pass', false);
@@ -36,21 +36,21 @@ begin
 
   -- code check + rate limit
   select * into r from public.invite_check('h1', 'ip-a');
-  res := res || jsonb_build_object('t','valid code shows seat and area only','pass', r.result = 'ok' and r.seat_code = seat and r.area = 'Lagos');
+  res := res || jsonb_build_object('t','valid code shows seat and area only','pass', r.result = 'ok' and r.seat_code = seat and r.area = 'Region LA');
   for i in 1..10 loop perform public.invite_check('wrong' || i, 'ip-b'); end loop;
   select * into r from public.invite_check('h1', 'ip-b');
   res := res || jsonb_build_object('t','10 wrong codes from one IP: even a valid code is rate limited','pass', r.result = 'rate_limited');
 
   -- claim checks
-  select * into r from public.invite_claim_check('h1', 'someone@else.invalid', 'NG-LA', 'ip-c');
+  select * into r from public.invite_claim_check('h1', 'someone@else.invalid', 'XL-LA', 'ip-c');
   res := res || jsonb_build_object('t','wrong email refused','pass', r.result = 'email_mismatch');
-  select * into r from public.invite_claim_check('h1', 'ade@t.invalid', 'NG-OG', 'ip-c');
+  select * into r from public.invite_claim_check('h1', 'ade@t.invalid', 'XL-OG', 'ip-c');
   res := res || jsonb_build_object('t','wrong state refused','pass', r.result = 'area_mismatch');
-  select * into r from public.invite_claim_check('h1', '  ADE@t.invalid ', 'NG-LA', 'ip-c');
+  select * into r from public.invite_claim_check('h1', '  ADE@t.invalid ', 'XL-LA', 'ip-c');
   res := res || jsonb_build_object('t','matching email (any case) and state accepted','pass', r.result = 'ok' and r.offer_id is not null);
   select * into r from public.invite_claim_finish(r.offer_id, u_new, 'c1');
   pid := r.public_id;
-  select count(*) into n from public.verifiers where user_id = u_new and seat_code = seat and not active and state_iso = 'NG-LA' and public_id = pid;
+  select count(*) into n from public.verifiers where user_id = u_new and seat_code = seat and not active and state_iso = 'XL-LA' and public_id = pid;
   res := res || jsonb_build_object('t','claim binds seat, issues public ID, stays inactive','pass', n = 1);
   begin perform public.invite_claim_finish((select id from public.verifier_offers where code_hash = 'h1'), u_new2, 'c2'); res := res || jsonb_build_object('t','code works once','pass', false);
   exception when others then res := res || jsonb_build_object('t','code works once','pass', true); end;
@@ -66,7 +66,7 @@ begin
 
   -- pledge
   select * into r from public.pledge_preview('c1');
-  res := res || jsonb_build_object('t','pledge preview renders seat and area','pass', r.version = 'P-2026-2' and r.body like 'I accept seat ' || seat || ' as a volunteer verifier for Lagos.%' and length(r.sha256) = 64);
+  res := res || jsonb_build_object('t','pledge preview renders seat and area','pass', r.version = 'P-2026-2' and r.body like 'I accept seat ' || seat || ' as a volunteer verifier for Region LA.%' and length(r.sha256) = 64);
   select * into r from public.pledge_sign('c1', 'Somebody Else', 'P-2026-2');
   res := res || jsonb_build_object('t','typed name must match the application','pass', r.result = 'name_mismatch');
   select * into r from public.pledge_sign('c1', 'adebayo ola ojo', 'P-2026-2');
@@ -120,9 +120,9 @@ begin
   select count(*) into n from public.seat_board where code = seat and not taken and not pending;
   res := res || jsonb_build_object('t','seat is open again','pass', n = 1);
   insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name)
-    values ('NG-LA','residence','szv','{}',70,'bo@t.invalid','eligible','Bo Second') returning id into app2;
+    values ('XL-LA','residence','szv','{}',70,'bo@t.invalid','eligible','Bo Second') returning id into app2;
   perform public.invite_create(seat, app2, 'h3', u_boss, 6);
-  select * into r from public.invite_claim_check('h3', 'bo@t.invalid', 'NG-LA', 'ip-d');
+  select * into r from public.invite_claim_check('h3', 'bo@t.invalid', 'XL-LA', 'ip-d');
   select * into r from public.invite_claim_finish(r.offer_id, u_new2, 'c3');
   pid2 := r.public_id;
   res := res || jsonb_build_object('t','reassigned seat gets a new public ID (old one retired)','pass', pid2 <> pid);
@@ -136,7 +136,7 @@ begin
   res := res || jsonb_build_object('t','unpledged claim expires and frees the seat','pass', n = 1);
   update public.verifier_applications set status = 'eligible' where id = app2;
   perform public.invite_create(seat, app2, 'h4', u_boss, 24);
-  for i in 1..5 loop perform public.invite_claim_check('h4', 'wrong@t.invalid', 'NG-LA', 'ip-e' || i); end loop;
+  for i in 1..5 loop perform public.invite_claim_check('h4', 'wrong@t.invalid', 'XL-LA', 'ip-e' || i); end loop;
   select count(*) into n from public.verifier_offers where code_hash = 'h4' and status = 'revoked' and attempts = 5;
   res := res || jsonb_build_object('t','5 wrong claim attempts revoke the code','pass', n = 1);
   update public.verifier_offers set expires_at = now() - interval '1 second' where code_hash = 'h1';

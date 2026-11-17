@@ -69,38 +69,38 @@ begin
 
   -- invite codes: OPS seats never; SZV / NRV type codes let the invitee pick an open seat in their area
   insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name)
-    values ('NG-LA','origin','szv','{}',100,'s@t.invalid','eligible','Sade Lagos') returning id into app_s;
+    values ('XL-LA','origin','szv','{}',100,'s@t.invalid','eligible','Sade Region LA') returning id into app_s;
   insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name)
-    values ('NG-OY','origin','nrv','{}',100,'n@t.invalid','eligible','Niyi Oyo') returning id into app_n;
+    values ('XL-OY','origin','nrv','{}',100,'n@t.invalid','eligible','Niyi Region OY') returning id into app_n;
   insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name)
-    values ('NG-LA','origin','szv','{}',100,'s2@t.invalid','eligible','Second Lagos') returning id into app_s2;
+    values ('XL-LA','origin','szv','{}',100,'s2@t.invalid','eligible','Second Region LA') returning id into app_s2;
   begin perform public.invite_create('OPS-1', app_s, 'k0', u_boss, 24, 'seat'); res := res || jsonb_build_object('t','OPS seats can never be offered by code','pass', false);
   exception when others then res := res || jsonb_build_object('t','OPS seats can never be offered by code','pass', sqlerrm like '%never by invite code%'); end;
   begin perform public.invite_create(null, app_s, 'k0', u_boss, 24, 'nrv'); res := res || jsonb_build_object('t','code type must match the application','pass', false);
   exception when others then res := res || jsonb_build_object('t','code type must match the application','pass', true); end;
   select * into r from public.invite_create(null, app_s, 'k1', u_boss, 24, 'szv');
-  res := res || jsonb_build_object('t','SZV code created without a seat','pass', r.seat_code is null and r.kind = 'szv' and r.area = 'Lagos' and r.open_seats between 1 and (select count(*) from public.verifier_seats where role = 'szv' and state_iso = 'NG-LA'));
+  res := res || jsonb_build_object('t','SZV code created without a seat','pass', r.seat_code is null and r.kind = 'szv' and r.area = 'Region LA' and r.open_seats between 1 and (select count(*) from public.verifier_seats where role = 'szv' and state_iso = 'XL-LA'));
   select * into r from public.invite_check('k1', 'ip-l1');
   seats := r.seats;
-  res := res || jsonb_build_object('t','SZV code shows only the Lagos SZV seats','pass', r.result = 'ok' and r.kind = 'szv' and jsonb_array_length(seats) = (select count(*) from public.verifier_seats where role = 'szv' and state_iso = 'NG-LA')
-    and not exists (select 1 from jsonb_array_elements(seats) e join public.verifier_seats s on s.code = e ->> 'code' where s.role <> 'szv' or s.state_iso <> 'NG-LA'));
+  res := res || jsonb_build_object('t','SZV code shows only the Region LA SZV seats','pass', r.result = 'ok' and r.kind = 'szv' and jsonb_array_length(seats) = (select count(*) from public.verifier_seats where role = 'szv' and state_iso = 'XL-LA')
+    and not exists (select 1 from jsonb_array_elements(seats) e join public.verifier_seats s on s.code = e ->> 'code' where s.role <> 'szv' or s.state_iso <> 'XL-LA'));
   select e ->> 'code' into la_open from jsonb_array_elements(seats) e where (e ->> 'open')::boolean order by 1 limit 1;
-  -- take another Lagos seat with a specific-seat code so it shows as taken (greyed)
+  -- take another Region LA seat with a specific-seat code so it shows as taken (greyed)
   select e ->> 'code' into la_taken from jsonb_array_elements(seats) e where (e ->> 'open')::boolean and e ->> 'code' <> la_open order by 1 limit 1;
   perform public.invite_create(la_taken, app_s2, 'k2', u_boss, 24, 'seat');
   select * into r from public.invite_check('k1', 'ip-l1');
   res := res || jsonb_build_object('t','a seat with a live invite shows as not open','pass', exists (select 1 from jsonb_array_elements(r.seats) e where e ->> 'code' = la_taken and not (e ->> 'open')::boolean));
-  select * into r from public.invite_claim_check('k1', 's@t.invalid', 'NG-LA', 'ip-l2');
+  select * into r from public.invite_claim_check('k1', 's@t.invalid', 'XL-LA', 'ip-l2');
   res := res || jsonb_build_object('t','type code needs a chosen seat','pass', r.result = 'seat_required');
-  select * into r from public.invite_claim_check('k1', 's@t.invalid', 'NG-LA', 'ip-l2', la_taken);
+  select * into r from public.invite_claim_check('k1', 's@t.invalid', 'XL-LA', 'ip-l2', la_taken);
   res := res || jsonb_build_object('t','a taken seat cannot be picked','pass', r.result = 'seat_unavailable');
-  select * into r from public.invite_claim_check('k1', 's@t.invalid', 'NG-LA', 'ip-l2', 'SZV-058');
+  select * into r from public.invite_claim_check('k1', 's@t.invalid', 'XL-LA', 'ip-l2', 'SZV-058');
   res := res || jsonb_build_object('t','a seat outside the applicant''s state cannot be picked','pass', r.result = 'seat_unavailable');
-  select * into r from public.invite_claim_check('k1', 's@t.invalid', 'NG-LA', 'ip-l2', la_open);
+  select * into r from public.invite_claim_check('k1', 's@t.invalid', 'XL-LA', 'ip-l2', la_open);
   res := res || jsonb_build_object('t','an open seat in the area can be picked','pass', r.result = 'ok');
   select * into r from public.invite_claim_finish(r.offer_id, u_s, 'cs', la_open);
   pid := r.public_id;
-  select count(*) into n from public.verifiers where user_id = u_s and seat_code = la_open and role = 'szv' and state_iso = 'NG-LA' and not active;
+  select count(*) into n from public.verifiers where user_id = u_s and seat_code = la_open and role = 'szv' and state_iso = 'XL-LA' and not active;
   res := res || jsonb_build_object('t','claim binds the picked seat (inactive until the pledge)','pass', n = 1 and r.seat_code = la_open);
   begin update public.verifiers set seat_code = la_taken where user_id = u_s; res := res || jsonb_build_object('t','a bound seat cannot be swapped','pass', false);
   exception when others then res := res || jsonb_build_object('t','a bound seat cannot be swapped','pass', true); end;

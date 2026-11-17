@@ -1,8 +1,8 @@
 // One accepted snapshot per race, shared by the dashboard and ledger. No UI side effects.
-import { INEC_STATE_CODE, aggregate, aggregateByLga, eligibleStateForRace, leader, spread } from "./results.js";
+import { STATE_CODE, aggregate, aggregateByLga, eligibleStateForRace, leader, spread } from "./results.js";
 
 const RACES = new Set(["president", "senate", "house", "governor", "state-assembly"]);
-const STATES = new Set(Object.values(INEC_STATE_CODE));
+const STATES = new Set(Object.values(STATE_CODE));
 const PARTIES = ["ALPHA", "BRAVO", "CHARLIE", "DELTA", "ECHO", "FOXTROT"];
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const count = (value) => Number.isSafeInteger(value) && value >= 0;
@@ -76,7 +76,7 @@ function validatePayload(data, race) {
       let areaUnits = 0;
       const areaTotals = {};
       for (const [code, area] of Object.entries(areas)) {
-        requireValid(/^\d{2}-\d{2}$/.test(code) && INEC_STATE_CODE[code.slice(0, 2)] === iso);
+        requireValid(/^\d{2}-\d{2}$/.test(code) && STATE_CODE[code.slice(0, 2)] === iso);
         validateArea(area);
         areaUnits += area.units;
         requireValid(count(areaUnits));
@@ -94,12 +94,19 @@ function validatePayload(data, race) {
     ...(byLga === undefined ? {} : { byLga }), spread: spread(Object.fromEntries(Object.entries(byState).map(([iso, area]) => [iso, area.totals]))) });
 }
 
+// Reported counts only: updatedAt moves on every response, so it must not count as a change.
+const sortedTotals = (totals) => Object.entries(totals).sort(([a], [b]) => a.localeCompare(b));
+const sortedAreas = (areas) => Object.keys(areas).sort().map((key) => [key, areas[key].units, sortedTotals(areas[key].totals)]);
+const contentKey = (data) => JSON.stringify([data.units.reported, data.units.total, sortedTotals(data.national.totals), sortedAreas(data.byState),
+  Object.keys(data.byLga ?? {}).sort().map((iso) => [iso, sortedAreas(data.byLga[iso])])]);
+const voteSum = (data) => Object.values(data.national.totals).reduce((sum, votes) => sum + votes, 0);
+
 /** Deterministic fictional counts; jurisdiction codes support the map, no real place names occur. */
 export function createDemoResults(race = "president") {
   if (!RACES.has(race)) return null;
   const raceOffset = [...RACES].indexOf(race);
   const rows = [];
-  for (const code of Object.keys(INEC_STATE_CODE).filter((code) => eligibleStateForRace(race, INEC_STATE_CODE[code]))) for (let lga = 1; lga <= 3; lga++) for (let unit = 1; unit <= 2; unit++) {
+  for (const code of Object.keys(STATE_CODE).filter((code) => eligibleStateForRace(race, STATE_CODE[code]))) for (let lga = 1; lga <= 3; lga++) for (let unit = 1; unit <= 2; unit++) {
     const seed = Number(code) * 17 + lga * 11 + unit * 7 + raceOffset * 13;
     rows.push({ pu_code: `${code}-${String(lga).padStart(2, "0")}-01-${String(unit).padStart(3, "0")}`,
       tally: Object.fromEntries(PARTIES.map((party, index) => [party, 15 + ((seed * (index + 3) + index * 31) % 120)])) });
@@ -114,6 +121,8 @@ export function createDemoResults(race = "president") {
 /** Options: fetchImpl, now, demo; cacheMs (max 30s), timeoutMs (default 12s);
  * autoRefresh (browser default true), documentRef and timer functions allow isolated tests.
  * ensure/watch resolve state, read defaults to the watched race, subscribe emits changed race-tagged states.
+ * State also carries contentRevision (moves only when reported counts change; includes the race), changedAt and delta.
+ * setPaused stops automatic refreshes for every consumer; a user action can still fetch. preload is for likely next races.
  * destroy stops visibility polling. Construction/import starts no timers or requests. */
 export function createResultsFeed(options = {}) {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch?.bind(globalThis);
@@ -131,21 +140,30 @@ export function createResultsFeed(options = {}) {
   let refreshTimer = null;
   let listening = false;
   let destroyed = false;
+  let paused = false;
   const visible = () => !documentRef || (documentRef.visibilityState !== "hidden" && documentRef.hidden !== true);
   const entryFor = (race) => {
-    if (!entries.has(race)) entries.set(race, { state: Object.freeze({ race, data: null, status: race === "local-government" ? "not-connected" : "unavailable", revision: null }), fetchedAt: null, promise: null });
+    if (!entries.has(race)) entries.set(race, { state: Object.freeze({ race, data: null, status: race === "local-government" ? "not-connected" : "unavailable", revision: null, contentRevision: null, changedAt: null, delta: null }), fetchedAt: null, promise: null, attemptedAt: null, failures: 0, contentKey: null, contentCount: 0 });
     return entries.get(race);
   };
-  const publish = (entry, status, data = entry.state.data, revision = entry.state.revision) => {
-    entry.state = Object.freeze({ race: entry.state.race, data, status, revision });
+  const publish = (entry, status, data = entry.state.data, revision = entry.state.revision, content = entry.state) => {
+    entry.state = Object.freeze({ race: entry.state.race, data, status, revision, contentRevision: content.contentRevision, changedAt: content.changedAt, delta: content.delta });
     for (const listener of listeners) { try { listener(entry.state); } catch { /* A consumer must not break the shared request. */ } }
     return entry.state;
+  };
+  const accepted = (entry, data) => {
+    const key = contentKey(data), prior = entry.state.data;
+    if (key === entry.contentKey) return entry.state;
+    entry.contentKey = key;
+    return Object.freeze({ contentRevision: `${entry.state.race}:c${++entry.contentCount}`, changedAt: prior ? now() : null, delta: prior ? Object.freeze({ units: data.units.reported - prior.units.reported, votes: voteSum(data) - voteSum(prior) }) : null });
   };
   const stopTimer = () => { if (refreshTimer !== null) clearTimer(refreshTimer); refreshTimer = null; };
   const schedule = () => {
     stopTimer();
-    if (destroyed || !autoRefresh || !documentRef || !visible() || !RACES.has(activeRace) || options.demo) return;
-    refreshTimer = setTimer(() => { refreshTimer = null; void ensure(activeRace, { force: true }); }, 30_000);
+    if (destroyed || paused || !autoRefresh || !documentRef || !visible() || !RACES.has(activeRace) || options.demo) return;
+    // Failures space out the retries so a struggling ledger is not hit harder: 60 s, 120 s, then 240 s.
+    const delay = 30_000 * 2 ** Math.min(entryFor(activeRace).failures, 3);
+    refreshTimer = setTimer(() => { refreshTimer = null; void ensure(activeRace, { force: true }); }, delay);
   };
 
   function ensure(race = activeRace, { force = false } = {}) {
@@ -154,6 +172,7 @@ export function createResultsFeed(options = {}) {
     if (entry.promise) return entry.promise;
     if (entry.state.status === 'fresh' && entry.state.data && (options.demo || (!force && entry.fetchedAt !== null && now() - entry.fetchedAt < cacheMs))) return Promise.resolve(entry.state);
     if (race === activeRace) stopTimer();
+    entry.attemptedAt = now();
     // Start on a microtask after assigning the promise, including for synchronous test fetches.
     entry.promise = Promise.resolve().then(async () => {
       let timeout;
@@ -172,8 +191,10 @@ export function createResultsFeed(options = {}) {
         }
         requireValid(!entry.state.data || Date.parse(data.updatedAt) >= Date.parse(entry.state.data.updatedAt));
         entry.fetchedAt = now();
-        return publish(entry, "fresh", data, `${race}:${++nextRevision}`);
+        entry.failures = 0;
+        return publish(entry, "fresh", data, `${race}:${++nextRevision}`, accepted(entry, data));
       } catch {
+        entry.failures++;
         return publish(entry, entry.state.data ? "stale" : "unavailable");
       } finally {
         if (timeout !== undefined) clearTimer(timeout);
@@ -187,10 +208,21 @@ export function createResultsFeed(options = {}) {
 
   const onVisibility = () => {
     stopTimer();
-    if (visible() && RACES.has(activeRace)) void ensure(activeRace, { force: true });
+    if (!paused && visible() && RACES.has(activeRace)) void ensure(activeRace, { force: true });
   };
   return Object.freeze({
     ensure,
+    setPaused: (value) => {
+      paused = Boolean(value);
+      if (paused) stopTimer();
+      else if (RACES.has(activeRace)) void ensure(activeRace, { force: true });
+    },
+    isPaused: () => paused,
+    preload: (race) => {
+      const entry = entryFor(race);
+      if (paused || race === activeRace || !RACES.has(race) || (entry.attemptedAt !== null && now() - entry.attemptedAt < cacheMs)) return Promise.resolve(entry.state);
+      return ensure(race);
+    },
     read: (race = activeRace) => entryFor(race).state,
     subscribe: (listener) => { listeners.add(listener); return () => listeners.delete(listener); },
     watch: (race) => {

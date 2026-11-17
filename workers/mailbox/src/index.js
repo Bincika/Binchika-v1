@@ -1,4 +1,4 @@
-// binchika-mailbox: Cloudflare Email Worker for accounts@, ops@ and noreply@binchika.com.
+// binchika-mailbox: Cloudflare Email Worker for accounts@, ops@ and noreply@mail.example.org.
 // 1. Forward to EMAIL_FORWARD_TO, exactly as plain Email Routing did, so the owner's inbox never misses a message.
 // 2. Keep a copy for the BinchikAdmin dashboard: raw .eml in R2 (mail/raw/<id>.eml), parsed fields in D1 mail_messages.
 // 3. Only then, send the sender one automatic reply from noreply@ (AUTO_REPLY="on"; functions/_lib/autoreply.js), recorded in Sent.

@@ -16,8 +16,8 @@ const SHA = "a".repeat(64);
 function setup() {
   const D1 = sqliteD1();
   const add = (id, pu, mediaRef, evidence = "board") => D1.db.prepare("INSERT INTO reports (id, channel, reporter_hash, pu_code, race, media_ref, media_sha256, tally_json, status, evidence, audit_status) VALUES (?, 'web', 'h', ?, 'president', ?, ?, '{\"A\":1}', 'needs_review', ?, 'pending')").run(id, pu, mediaRef, SHA, evidence);
-  add("lagos", "24-09-05-012", "r2:full/2027/24-09-05-012/lagos.jpg");
-  add("kano", "20-01-01-001", "r2:full/2027/20-01-01-001/kano.jpg");
+  add("region_la", "24-09-05-012", "r2:full/2027/24-09-05-012/region_la.jpg");
+  add("region_kn", "20-01-01-001", "r2:full/2027/20-01-01-001/region_kn.jpg");
   add("nomedia", "24-09-05-012", "tg-file:ABC");
   add("mailraw", "24-09-05-012", "r2:mail/raw/x.eml");
   add("sneaky", "24-09-05-012", "r2:full/../mail/raw/x.eml");
@@ -25,8 +25,8 @@ function setup() {
   add("exe", "24-09-05-012", "r2:full/a.bin");
   add("huge", "24-09-05-012", "r2:full/huge.mp4", "video");
   const files = {
-    "full/2027/24-09-05-012/lagos.jpg": { type: "image/jpeg", bytes: new Uint8Array([255, 216, 255, 1, 2, 3]) },
-    "full/2027/20-01-01-001/kano.jpg": { type: "image/jpeg", bytes: new Uint8Array([255, 216, 255]) },
+    "full/2027/24-09-05-012/region_la.jpg": { type: "image/jpeg", bytes: new Uint8Array([255, 216, 255, 1, 2, 3]) },
+    "full/2027/20-01-01-001/region_kn.jpg": { type: "image/jpeg", bytes: new Uint8Array([255, 216, 255]) },
     "full/a.bin": { type: "application/octet-stream", bytes: new Uint8Array([1]) },
     "full/huge.mp4": { type: "video/mp4", bytes: new Uint8Array([0]), size: MAX_MEDIA_BYTES + 1 },
   };
@@ -35,12 +35,12 @@ function setup() {
   return { D1, EVIDENCE, gets };
 }
 // Supabase stand-in: the token names the user; verifiers by user id.
-const VERIFIERS = { szv: { role: "szv", public_id: "V0007", state_iso: "NG-LA", region_id: null }, nrv: { role: "nrv", public_id: "V0042", state_iso: null, region_id: "R6" }, ops: { role: "admin", public_id: "V0002", state_iso: null, region_id: null } };
+const VERIFIERS = { szv: { role: "szv", public_id: "V0007", state_iso: "XL-LA", region_id: null }, nrv: { role: "nrv", public_id: "V0042", state_iso: null, region_id: "R6" }, ops: { role: "admin", public_id: "V0002", state_iso: null, region_id: null } };
 globalThis.fetch = async (url) => {
   const u = String(url);
   if (u.endsWith("/auth/v1/user")) return new Response(JSON.stringify({ id: "szv" }), { status: 200 });
   if (u.includes("/rest/v1/verifiers")) { const id = decodeURIComponent(u.match(/user_id=eq\.([^&]+)/)[1]); return new Response(JSON.stringify(VERIFIERS[id] ? [VERIFIERS[id]] : []), { status: 200 }); }
-  if (u.includes("/rest/v1/region_states")) return new Response(JSON.stringify([{ state_iso: "NG-LA" }, { state_iso: "NG-OG" }, { state_iso: "NG-OY" }]), { status: 200 });
+  if (u.includes("/rest/v1/region_states")) return new Response(JSON.stringify([{ state_iso: "XL-LA" }, { state_iso: "XL-OG" }, { state_iso: "XL-OY" }]), { status: 200 });
   return new Response("{}", { status: 404 });
 };
 const jwt = (claims) => `x.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.y`;
@@ -60,9 +60,9 @@ test("viewer: only r2:full/ keys are evidence; no traversal, no other prefixes",
   for (const bad of ["r2:mail/raw/x.eml", "r2:tmp/x.jpg", "r2:full/../mail/raw/x", "r2:full//x.jpg", "r2:full/./x.jpg", "tg-file:ABC", "full/x.jpg", "", null, "r2:full/x y.jpg"]) assert.equal(mediaKeyOf(bad), null, String(bad));
 });
 
-test("viewer: a Lagos SZV with MFA sees Lagos evidence, privately and unframeable, with the intake fingerprint", quiet(async () => {
+test("viewer: a Region LA SZV with MFA sees Region LA evidence, privately and unframeable, with the intake fingerprint", quiet(async () => {
   const { D1, EVIDENCE } = setup();
-  const r = await call({ ...SUPA, DB: D1, EVIDENCE }, "lagos");
+  const r = await call({ ...SUPA, DB: D1, EVIDENCE }, "region_la");
   assert.equal(r.status, 200);
   assert.equal(r.headers.get("content-type"), "image/jpeg");
   assert.equal(r.headers.get("cache-control"), "private, no-store");
@@ -71,20 +71,20 @@ test("viewer: a Lagos SZV with MFA sees Lagos evidence, privately and unframeabl
   assert.equal(r.headers.get("cross-origin-resource-policy"), "same-origin");
   assert.equal(r.headers.get("x-evidence-sha256"), SHA);
   assert.deepEqual([...new Uint8Array(await r.arrayBuffer())], [255, 216, 255, 1, 2, 3]);
-  assert.equal((await call({ ...SUPA, DB: D1, EVIDENCE }, "lagos", { user: "nrv" })).status, 200, "the South-West NRV can view it too");
+  assert.equal((await call({ ...SUPA, DB: D1, EVIDENCE }, "region_la", { user: "nrv" })).status, 200, "the Group SW NRV can view it too");
 }));
 
 test("viewer: refuses without sign-in, without MFA, for admins, outside the area, and for anything that is not stored evidence", quiet(async () => {
   const { D1, EVIDENCE, gets } = setup();
   const env = { ...SUPA, DB: D1, EVIDENCE };
   const status = async (id, o) => (await call(env, id, o)).status;
-  assert.equal(await status("lagos", { token: false }), 401);
-  assert.equal(await status("lagos", { user: "stranger" }), 403, "not a verifier");
-  assert.equal(await status("lagos", { user: "ops" }), 403, "OpsAdmin is not an auditor");
-  const mfa = await call(env, "lagos", { aal: "aal1" });
+  assert.equal(await status("region_la", { token: false }), 401);
+  assert.equal(await status("region_la", { user: "stranger" }), 403, "not a verifier");
+  assert.equal(await status("region_la", { user: "ops" }), 403, "OpsAdmin is not an auditor");
+  const mfa = await call(env, "region_la", { aal: "aal1" });
   assert.deepEqual([mfa.status, (await mfa.json()).mfa], [403, true], "MFA required");
-  assert.equal(await status("kano"), 403, "Lagos SZV cannot see Kano evidence");
-  assert.equal(await status("kano", { user: "nrv" }), 403, "South-West NRV cannot see Kano evidence");
+  assert.equal(await status("region_kn"), 403, "Region LA SZV cannot see Region KN evidence");
+  assert.equal(await status("region_kn", { user: "nrv" }), 403, "Group SW NRV cannot see Region KN evidence");
   assert.equal(await status("nope"), 404);
   assert.equal(await status("nomedia"), 409, "Telegram file ids are not served");
   assert.equal(await status("mailraw"), 409, "the mailbox prefix is never served");
@@ -93,5 +93,5 @@ test("viewer: refuses without sign-in, without MFA, for admins, outside the area
   assert.equal(await status("exe"), 415);
   assert.equal(await status("huge"), 413);
   assert.equal(gets.some((k) => !k.startsWith("full/")), false, "R2 is only ever read under full/");
-  assert.equal((await call({ DB: D1, EVIDENCE }, "lagos")).status, 503, "unconfigured");
+  assert.equal((await call({ DB: D1, EVIDENCE }, "region_la")).status, 503, "unconfigured");
 }));

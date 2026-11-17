@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS reports (
   id            TEXT PRIMARY KEY,               -- uuid
   channel       TEXT NOT NULL CHECK (channel IN ('telegram','whatsapp','x','instagram','threads','discord','web','sms','other')),
   reporter_hash TEXT NOT NULL,                  -- sha256(salt + channel + handle)
-  pu_code       TEXT,                           -- INEC polling unit code if known, e.g. 24-09-05-012
+  pu_code       TEXT,                           -- EEC polling unit code if known, e.g. 24-09-05-012
   race          TEXT CHECK (race IN ('president','senate','house','governor','state-assembly')),
   media_ref     TEXT,                           -- channel file id / URL (never a person's photo)
   media_sha256  TEXT,
@@ -21,7 +21,7 @@ CREATE INDEX IF NOT EXISTS idx_reports_status ON reports (status);
 CREATE TABLE IF NOT EXISTS official_results (
   pu_code     TEXT NOT NULL,
   race        TEXT NOT NULL,
-  source      TEXT NOT NULL DEFAULT 'IReV',
+  source      TEXT NOT NULL DEFAULT 'ERP',
   tally_json  TEXT,
   document_url TEXT,
   fetched_at  TEXT NOT NULL,
@@ -47,6 +47,6 @@ CREATE TABLE IF NOT EXISTS bulletin (
   title       TEXT NOT NULL,
   body        TEXT NOT NULL,
   source_url  TEXT,
-  scope       TEXT,                             -- e.g. NG-LA or pu code
+  scope       TEXT,                             -- e.g. XL-LA or pu code
   published_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );

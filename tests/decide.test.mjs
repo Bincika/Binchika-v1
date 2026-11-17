@@ -47,7 +47,7 @@ async function decide(flag, { approverId = "V0001", decision = "approve" } = {})
     return { status: r.status, body: await r.json(), patches, ledger };
   } finally { globalThis.fetch = realFetch; }
 }
-const flag = (o) => ({ id: FLAG_ID, pu_code: "24-09-05-012", race: "president", status: "escalated", proposed_tally: { APC: 90, PDP: 95 }, raised_by_public_id: "V0042", nrv_public_id: "V0130", ...o });
+const flag = (o) => ({ id: FLAG_ID, pu_code: "24-09-05-012", race: "president", status: "escalated", proposed_tally: { PA: 90, PB: 95 }, raised_by_public_id: "V0042", nrv_public_id: "V0130", ...o });
 
 test("three separate seats: the correction is written", async () => {
   const r = await decide(flag());

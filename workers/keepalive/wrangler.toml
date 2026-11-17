@@ -10,7 +10,7 @@ crons = ["17 6 */3 * *"]
 # Retention (session 63; docs/RETENTION.md): the periods promised in the privacy notice, section 8. Change a value here
 # and redeploy (node scripts/wr.mjs deploy --config workers/keepalive/wrangler.toml). Invalid values delete nothing.
 [vars]
-GOVERNORSHIP_FINAL_RESULTS = ""        # YYYY-MM-DD: the day INEC declares the final 2027 governorship results; empty = not yet
+GOVERNORSHIP_FINAL_RESULTS = ""        # YYYY-MM-DD: the day EEC declares the final 2027 governorship results; empty = not yet
 APPLICATION_RETENTION_DAYS = "90"      # applications that never became a seat: deleted this many days after that date
 SEAT_HOLDER_RETENTION_MONTHS = "12"    # former seat holders: deleted this many months after their seat was released
 PHOTO_DELETE_FROM = "2028-02-06"       # result-sheet photos and videos: deleted from this day (12 months after 6 Feb 2027)

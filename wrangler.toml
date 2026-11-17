@@ -18,7 +18,9 @@ bucket_name = "binchika-evidence"
 # as in workers/mailbox/wrangler.toml: "off" stops it. Delivery to EMAIL_FORWARD_TO and the Inbox copy are not affected.
 [vars]
 AUTO_REPLY = "on"
-# Contained OCR for Form EC8A photos (session 88; docs/protocol/OCR.md). "off" is the kill switch and the default:
+# Readers of /api/results use the precomputed row built by workers/results-snapshot (session 111). Remove this line to go back to the scan.
+RESULTS_SOURCE = "snapshot"
+# Contained OCR for Form R1 photos (session 88; docs/protocol/OCR.md). "off" is the kill switch and the default:
 # set "workers-ai" only after the owner decides (privacy notice covers AI reading of sheets). Even when on, a reading is
 # only a proposal that a verifier must confirm, and photos not cleared by the people check are never read.
 OCR_ENGINE = "off"

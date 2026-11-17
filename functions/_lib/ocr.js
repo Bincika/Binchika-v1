@@ -1,4 +1,4 @@
-// Contained OCR for Form EC8A photos (session 88; docs/protocol/OCR.md). Off unless OCR_ENGINE = "workers-ai" and the
+// Contained OCR for Form R1 photos (session 88; docs/protocol/OCR.md). Off unless OCR_ENGINE = "workers-ai" and the
 // Workers AI binding (AI) exists. It follows the AI constitution (docs/protocol/AI-GOVERNANCE.md):
 // - suggest, never decide: a reading is only ever a PROPOSAL; it never counts until a verifier confirms it;
 // - no faces: it runs only on photos the people check has cleared ("none"); "unchecked" and "detected" are withheld;
@@ -6,12 +6,13 @@
 // - fail closed: engine errors, unreadable output or a missing field mean "withheld", never a guess;
 // - auditable: model, input SHA-256 and time are logged with the transcript; kill switch: OCR_ENGINE = "off".
 // The Windows reader in sandbox/readiness/ stays a local instrument only.
+import { TENANT } from "./tenant.generated.js";   // country values
 import { sha256Hex } from "./ledger.js";
 
 export const OCR_DEFAULT_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct";
 export const FIELD_CONFIDENCE_MIN = 0.9;
 export const OCR_PROMPT = [
-  "You are reading a photograph of a Nigerian INEC Form EC8A (polling-unit result sheet).",
+  `You are reading a photograph of ${TENANT.text.ocrSheet}.`,
   "Return ONLY one JSON object, no prose, with these keys:",
   '{"puCode":"SS-LL-WW-UUU","parties":{"ACRONYM":votes},"register":n,"accredited":n,"rejected":n,"valid":n,"cast":n,',
   '"confidence":{"puCode":0-1,"parties":0-1,"register":0-1,"accredited":0-1,"rejected":0-1},"transcript":"the figures as written"}',

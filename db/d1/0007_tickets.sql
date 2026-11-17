@@ -1,5 +1,5 @@
 -- Ticketed enquiries, phase 1 (session 78; docs/TICKETED-INQUIRIES-DESIGN.md). No AI. Every contact-form enquiry gets a
--- reference BIN-YYMM-NNNN (month in Lagos time, counter restarts monthly). A ticket holds no personal data: the
+-- reference BIN-YYMM-NNNN (month in Region LA time, counter restarts monthly). A ticket holds no personal data: the
 -- requester's name, address and message stay in mail_messages (BinchikAdmin only, 365-day retention), and the ticket is
 -- deleted with its Inbox message (ON DELETE CASCADE; D1 enforces foreign keys).
 CREATE TABLE IF NOT EXISTS ticket_counters (
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS tickets (
   status     TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'in_progress', 'answered', 'closed')),
   owner_seat TEXT,                                     -- public ID of the seat handling it (e.g. V0001), never a name
   resolution TEXT,                                     -- short note, no personal data (max 500 characters, checked by the API)
-  due_at     TEXT NOT NULL,                            -- two working days after creation (Lagos time)
+  due_at     TEXT NOT NULL,                            -- two working days after creation (Region LA time)
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   closed_at  TEXT

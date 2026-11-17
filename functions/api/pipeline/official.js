@@ -1,9 +1,10 @@
-// POST /api/pipeline/official {puCode, race, tally, documentUrl, source?} — record an official (IReV/INEC) polling-unit
-// result and re-run the unit, so the citizen tally is compared with it (session 88; docs/protocol/IREV-COMPARISON.md).
-// Bearer INGEST_TOKEN only. INEC publishes IReV result sheets as documents, not as an API, so an operator or a reader
-// transcribes each one with its document link; nothing here scrapes INEC. A difference is stored on the unit and on its
+// POST /api/pipeline/official {puCode, race, tally, documentUrl, source?} — record an official (ERP/EEC) polling-unit
+// result and re-run the unit, so the citizen tally is compared with it (session 88; docs/protocol/OFFICIAL-COMPARISON.md).
+// Bearer INGEST_TOKEN only. EEC publishes ERP result sheets as documents, not as an API, so an operator or a reader
+// transcribes each one with its document link; nothing here scrapes EEC. A difference is stored on the unit and on its
 // next ledger entry and shown to verifiers; it does not block the citizen tally (constitution §4).
 import { processUnit } from "../../_lib/pipeline.js";
+import { TENANT } from "../../_lib/tenant.generated.js";
 import { puProblem, NOT_A_PARTY } from "../../_lib/ec8a.js";
 import { methodNotAllowed } from "../../_lib/http.js";
 
@@ -24,8 +25,8 @@ export function parseOfficial(body) {
   const why = puProblem(body?.puCode);
   if (why) errors.push(`puCode: ${why}`);
   if (!RACES.includes(body?.race)) errors.push(`race must be one of ${RACES.join(", ")}`);
-  const source = body?.source ?? "IReV";
-  if (!["IReV", "INEC"].includes(source)) errors.push("source must be IReV or INEC");
+  const source = body?.source ?? TENANT.electoralBody.resultsPortalShort;
+  if (![TENANT.electoralBody.resultsPortalShort, TENANT.electoralBody.short].includes(source)) errors.push(`source must be ${TENANT.electoralBody.resultsPortalShort} or ${TENANT.electoralBody.short}`);
   let url = null;
   try { url = new URL(String(body?.documentUrl ?? "")); } catch {}
   if (!url || url.protocol !== "https:" || String(body.documentUrl).length > 500) errors.push("documentUrl must be the https link of the official document");

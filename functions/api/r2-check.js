@@ -3,18 +3,11 @@
 // gone. No photo, no personal data; it does not open photo intake. Run with: node scripts/r2-check.mjs [base]
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 
-async function safeEqual(a, b) {
-  const enc = new TextEncoder();
-  const [x, y] = await Promise.all([a, b].map((s) => crypto.subtle.digest("SHA-256", enc.encode(s ?? ""))));
-  const u = new Uint8Array(x), v = new Uint8Array(y);
-  let diff = 0;
-  for (let i = 0; i < u.length; i++) diff |= u[i] ^ v[i];
-  return diff === 0;
-}
+import { sameSecret, unauthorised } from "../_lib/http.js";
 
 export async function onRequestPost({ request, env }) {
-  if (!env.INGEST_TOKEN) return json({ error: "not configured" }, 503);
-  if (!(await safeEqual(request.headers.get("authorization") ?? "", `Bearer ${env.INGEST_TOKEN}`))) return json({ error: "unauthorised" }, 401);
+  // Session 151: one refusal whether or not the token is set (functions/_lib/http.js).
+  if (!(await sameSecret(request.headers.get("authorization") ?? "", env.INGEST_TOKEN ? `Bearer ${env.INGEST_TOKEN}` : ""))) return unauthorised();
   if (!env.EVIDENCE) return json({ ok: false, bound: false, error: "EVIDENCE binding missing" }, 500);
   const key = `tmp/healthcheck/${crypto.randomUUID()}.txt`;
   const body = `binchika r2 check ${new Date().toISOString()}`;

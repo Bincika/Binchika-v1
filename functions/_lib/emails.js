@@ -1,3 +1,4 @@
+import { TENANT } from "./tenant.generated.js";   // country values
 // Binchika transactional email templates (table layout + inline styles for Gmail/Outlook; dark-mode friendly).
 // Verifiers are always addressed by their seat number / public ID, never by name.
 // Used by Pages Functions (meeting invites) and scripts/send-email-samples.mjs. Pure string builders.
@@ -20,7 +21,7 @@ function shell({ preheader, title, body, footerNote, logo = BRAND, reason = APPL
 <td><img src="${logo}" width="40" height="40" alt="" style="display:block;border:0"></td>
 <td style="padding-left:10px;font:900 20px/1 Arial,Helvetica,sans-serif;letter-spacing:-.5px" class="ink"><span style="color:#0D0E10" class="ink">Bin</span><span style="color:${ACCENT}">chika</span></td></tr></table></td></tr>
 <tr><td class="card" style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:28px 26px;font:16px/1.55 Arial,Helvetica,sans-serif;color:#0D0E10">${body}</td></tr>
-<tr><td style="padding:16px 6px;font:12px/1.5 Arial,Helvetica,sans-serif;color:#6B6F76" class="muted">${footerNote ?? ""}Binchika is a citizen transparency layer. Only INEC declares election results.<br>${reason} <a href="https://binchika.com/contact/" style="color:#6B6F76">Contact us</a></td></tr>
+<tr><td style="padding:16px 6px;font:12px/1.5 Arial,Helvetica,sans-serif;color:#6B6F76" class="muted">${footerNote ?? ""}Binchika is a citizen transparency layer. Only ${TENANT.electoralBody.short} declares election results.<br>${reason} <a href="https://binchika.com/contact/" style="color:#6B6F76">Contact us</a></td></tr>
 </table></td></tr></table></body></html>`;
 }
 
@@ -176,10 +177,37 @@ export function applicationReceived({ role, area, review = false }) {
         <p style="margin:0">${review ? "Thank you for applying. You answered \"not sure\" to question 7 (flagging a mismatch even if it hurts a party you like), so a person will review your application before screening." : "Thank you for applying. Your answers meet the published screening rules."}</p>
         <ol style="margin:14px 0 0;padding-left:20px">
           <li>Screening uses the same published questions for everyone, plus a regional spread check.</li>
-          <li>If you are selected, a seat code arrives by email from noreply@binchika.com. It is the only way seats are offered.</li>
+          <li>If you are selected, a seat code arrives by email from noreply@mail.example.org. It is the only way seats are offered.</li>
           <li>You then claim the seat at binchika.com/join, confirm your email and sign the verifier pledge with the full name you gave us.</li>
         </ol>
         <p style="margin:14px 0 0;color:#5B5F67" class="muted">To withdraw or to see, correct or delete your data, use the <a href="https://binchika.com/contact/?topic=verifier" style="color:#983F14">contact page</a>. Binchika will never ask for payment, your password, BVN or bank details.</p>`,
+    }),
+  };
+}
+
+/**
+ * Session 134: the outcome of a human review (question 7 answered "not sure"). Sent from noreply@ by the BinchikAdmin's
+ * decision in the portal (functions/_lib/appreview.js). Addressed by role, area and application reference, never by name.
+ * @param {{ decision: "approved" | "rejected", role: "szv" | "nrv", area: string, ref: string }} m
+ */
+export function applicationReviewed({ decision, role, area, ref }) {
+  const ok = decision === "approved";
+  return {
+    subject: "Your Binchika verifier application has been reviewed",
+    html: shell({
+      preheader: ok ? "A person reviewed your answers. Your application goes forward." : "A person reviewed your answers. Here is the outcome.",
+      title: "Application reviewed",
+      body: `<p style="margin:0 0 6px;font:700 13px Arial;letter-spacing:.08em;text-transform:uppercase;color:#983F14">${role === "nrv" ? "Regional Verifier (NRV)" : "State Zone Verifier (SZV)"} · ${esc(area)}</p>
+        <h1 style="margin:0 0 10px;font:800 24px/1.2 Arial,Helvetica,sans-serif" class="ink">${ok ? "Your application goes forward." : "We cannot offer you a verifier seat."}</h1>
+        ${ok
+          ? `<p style="margin:0">Thank you for your patience. A person has reviewed your answers, and your application now meets the published screening rules. It joins the other eligible applications on the same footing.</p>
+        <ol style="margin:14px 0 0;padding-left:20px">
+          <li>Screening uses the same published questions for everyone, plus a regional spread check.</li>
+          <li>If you are selected, a seat code arrives by email from noreply@mail.example.org. It is the only way seats are offered.</li>
+        </ol>`
+          : `<p style="margin:0">Thank you for applying, and for your honesty. A person has reviewed your answer to question 7, which asks whether you would flag a mismatch even if it hurt a party you like. Our published rule is: “Verifiers must report what the sheets show, whoever it helps.” On that rule, we cannot take your application forward for a verifier seat.</p>
+        <p style="margin:14px 0 0">You can still take part as an independent citizen monitor when citizen reporting opens; we will announce it on binchika.com.</p>`}
+        <p style="margin:14px 0 0;color:#5B5F67" class="muted">Application reference: ref ${esc(ref)}. To ask about this decision, or to see, correct or delete your data, use the <a href="https://binchika.com/contact/?topic=verifier" style="color:#983F14">contact page</a> and give the reference. Binchika will never ask for payment, your password, BVN or bank details.</p>`,
     }),
   };
 }

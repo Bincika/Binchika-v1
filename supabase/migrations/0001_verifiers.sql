@@ -2,18 +2,18 @@
 -- Rules enforced here, not just in the UI:
 --   * Volunteers only: anyone answering "expects compensation" is ineligible.
 --   * State of origin/residence is fixed at application. A verifier can only act in that state
---     (SZV) or in the states of their region (NRV). Lagos ≠ Bauchi.
+--     (SZV) or in the states of their region (NRV). Region LA ≠ Region BA.
 --   * First-wave offers last 24 h; an unaccepted slot passes to the next most compatible applicant
 --     from the SAME state with a 6 h window.
 --   * Verifiers never write results. They raise flags. AI re-investigates. Only an admin decides.
---   * No raw ID numbers: PVC/VIN and NIN are stored only as salted hashes + last 4 characters.
+--   * No raw ID numbers: voter card/VIN and NIN are stored only as salted hashes + last 4 characters.
 
 create extension if not exists pgcrypto;
 
 -- ---------- reference data ----------
-create table if not exists public.ng_states (
-  iso text primary key,               -- NG-LA
-  inec_code text unique not null,     -- 24 (prefix of polling-unit codes)
+create table if not exists public.area_states (
+  iso text primary key,               -- XL-LA
+  body_code text unique not null,     -- 24 (prefix of polling-unit codes)
   name text not null,
   zone text not null check (zone in ('NW','NE','NC','SW','SE','SS'))
 );
@@ -23,7 +23,7 @@ create table if not exists public.verifier_regions (
 );
 create table if not exists public.region_states (
   region_id text references public.verifier_regions(id) on delete cascade,
-  state_iso text references public.ng_states(iso) on delete cascade,
+  state_iso text references public.area_states(iso) on delete cascade,
   primary key (region_id, state_iso)
 );
 
@@ -31,14 +31,14 @@ create table if not exists public.region_states (
 create table if not exists public.verifier_applications (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
-  state_iso text not null references public.ng_states(iso),
+  state_iso text not null references public.area_states(iso),
   state_basis text not null check (state_basis in ('origin','residence')),
   role_sought text not null check (role_sought in ('szv','nrv')),
   answers jsonb not null,
   score int,
   ineligible_reasons text[] not null default '{}',
   email text not null,                          -- needed to deliver the one-time code; never public
-  vin_hash text,                                 -- salted sha256 of PVC VIN
+  vin_hash text,                                 -- salted sha256 of voter card VIN
   vin_last4 text check (vin_last4 ~ '^[A-Z0-9]{4}$'),
   nin_hash text,
   status text not null default 'submitted' check (status in ('submitted','eligible','ineligible','offered','accepted','expired','declined','withdrawn')),
@@ -49,7 +49,7 @@ create index if not exists idx_app_state_rank on public.verifier_applications (s
 create table if not exists public.verifier_offers (
   id uuid primary key default gen_random_uuid(),
   application_id uuid not null references public.verifier_applications(id) on delete cascade,
-  state_iso text not null references public.ng_states(iso),
+  state_iso text not null references public.area_states(iso),
   wave int not null default 1,
   window_hours int not null check (window_hours in (24, 6)),
   code_hash text,                                -- sha256 of the one-time code (code itself is only emailed)
@@ -66,7 +66,7 @@ create table if not exists public.verifiers (
   user_id uuid primary key references auth.users(id) on delete cascade,
   application_id uuid unique references public.verifier_applications(id),
   role text not null check (role in ('szv','nrv','admin')),
-  state_iso text references public.ng_states(iso),
+  state_iso text references public.area_states(iso),
   region_id text references public.verifier_regions(id),
   display_name text not null default 'Verifier',
   avatar_url text,
@@ -96,7 +96,7 @@ create trigger trg_verifier_state before insert or update on public.verifiers fo
 
 -- ---------- helpers ----------
 create or replace function public.pu_state(pu text) returns text language sql immutable as $$
-  select iso from public.ng_states where inec_code = left(pu, 2)
+  select iso from public.area_states where body_code = left(pu, 2)
 $$;
 
 create or replace function public.is_admin() returns boolean language sql stable security definer set search_path = public as $$
@@ -109,7 +109,7 @@ create or replace function public.my_states() returns setof text language sql st
   union
   select rs.state_iso from public.verifiers v join public.region_states rs on rs.region_id = v.region_id where v.user_id = auth.uid() and v.active and v.role = 'nrv'
   union
-  select iso from public.ng_states where public.is_admin()
+  select iso from public.area_states where public.is_admin()
 $$;
 
 -- ---------- flags: verifiers raise, AI investigates, admin decides ----------
@@ -163,7 +163,7 @@ begin
 end $$;
 
 -- ---------- RLS ----------
-alter table public.ng_states enable row level security;
+alter table public.area_states enable row level security;
 alter table public.verifier_regions enable row level security;
 alter table public.region_states enable row level security;
 alter table public.verifier_applications enable row level security;
@@ -171,8 +171,8 @@ alter table public.verifier_offers enable row level security;
 alter table public.verifiers enable row level security;
 alter table public.discrepancy_flags enable row level security;
 
-drop policy if exists "public read states" on public.ng_states;
-create policy "public read states" on public.ng_states for select using (true);
+drop policy if exists "public read states" on public.area_states;
+create policy "public read states" on public.area_states for select using (true);
 drop policy if exists "public read regions" on public.verifier_regions;
 create policy "public read regions" on public.verifier_regions for select using (true);
 drop policy if exists "public read region_states" on public.region_states;
@@ -196,8 +196,8 @@ drop policy if exists "flags admin decides" on public.discrepancy_flags;
 create policy "flags admin decides" on public.discrepancy_flags for update to authenticated using (public.is_admin()) with check (public.is_admin());
 
 revoke all on public.verifier_applications, public.verifier_offers from anon, authenticated;
-revoke insert, update, delete on public.ng_states, public.verifier_regions, public.region_states from anon, authenticated;
-grant select on public.ng_states, public.verifier_regions, public.region_states to anon, authenticated;
+revoke insert, update, delete on public.area_states, public.verifier_regions, public.region_states from anon, authenticated;
+grant select on public.area_states, public.verifier_regions, public.region_states to anon, authenticated;
 grant select, insert on public.discrepancy_flags to authenticated;
 grant update (status, ai_summary, proposed_tally, decision_note) on public.discrepancy_flags to authenticated;
 grant select on public.verifiers to authenticated;

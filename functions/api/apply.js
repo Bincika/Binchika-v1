@@ -20,7 +20,7 @@ const MSG = {
 export const onRequestGet = ({ env }) => json(status(env));
 
 export async function onRequestPost({ request, env }) {
-  if (!isOpen(env)) return json({ error: "Applications are not open yet. They open once our privacy notice is published.", ...status(env) }, 403);
+  if (!isOpen(env)) return json({ error: "Applications are not open yet. We will announce the dates at binchika.com/verifiers.", ...status(env) }, 403);
   let b;
   try { b = await request.json(); } catch { return json({ error: "invalid JSON" }, 400); }
   const fullName = String(b?.fullName ?? "").trim().replace(/\s+/g, " ");

@@ -28,7 +28,7 @@ themeBtn?.addEventListener("click", () => {
 // local clock (configurable per country via /data/locale.json)
 const clockEl = document.querySelector("[data-clock-time]");
 const metaEl = document.querySelector("[data-clock-meta]");
-fetch("/data/locale.json").then((r) => r.json()).catch(() => ({ timeZone: "Africa/Lagos", zoneLabel: "WAT", utcOffset: "UTC+1", city: "Abuja", locale: "en-GB" })).then((loc) => {
+fetch("/data/locale.json").then((r) => r.json()).catch(() => ({ timeZone: "Etc/UTC", zoneLabel: "UTC", utcOffset: "UTC+0", city: "", locale: "en-GB" })).then((loc) => {
   const fmt = new Intl.DateTimeFormat(loc.locale, { timeZone: loc.timeZone, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
   const day = new Intl.DateTimeFormat(loc.locale, { timeZone: loc.timeZone, weekday: "short", day: "numeric", month: "short" });
   const draw = () => {
@@ -86,3 +86,7 @@ if (steps.length) {
 
 // shared number formatting (UK English)
 export const nf = new Intl.NumberFormat("en-GB");
+
+// Offline fallback only (site/sw.js, session 142): a page that cannot load shows /offline/ instead of the browser's
+// error page. The worker stores no figures and never answers /api/.
+if ("serviceWorker" in navigator) addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(() => {}); });

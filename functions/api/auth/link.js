@@ -1,4 +1,4 @@
-// POST /api/auth/link { email, reset? } — email a one-time sign-in link from noreply@binchika.com.
+// POST /api/auth/link { email, reset? } — email a one-time sign-in link from noreply@mail.example.org.
 // Always the same answer whether or not the address has an account; 3 per email / 10 per IP per 15 minutes.
 import { supaConfigured, json } from "../../_lib/supa.js";
 import { sendSignInLink } from "../../_lib/authlink.js";

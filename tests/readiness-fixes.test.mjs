@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { LGA_COUNT, puProblem, assessControls, ballotVerdict, BALLOT_CASES, postingGates, NOT_A_PARTY, STATUS_LABEL } from "../functions/_lib/ec8a.js";
 import { parseReport } from "../functions/_lib/report.js";
-import { INEC_STATE_CODE } from "../functions/_lib/results.js";
+import { STATE_CODE } from "../functions/_lib/results.js";
 import { processUnit } from "../functions/_lib/pipeline.js";
 import { reviewReading } from "../functions/_lib/review.js";
 import { interpretOcr, readSheet, ocrReport } from "../functions/_lib/ocr.js";
@@ -26,7 +26,7 @@ function sqliteD1() {
   });
   return { db, prepare: (sql) => stmt(sql) };
 }
-const PU = "24-09-05-012", T = { APC: 47, PDP: 37, LP: 32, NNPP: 8 };          // valid 124
+const PU = "24-09-05-012", T = { PA: 47, PB: 37, PC: 32, PD: 8 };          // valid 124
 const GOOD = { register: 480, accredited: 130, rejected: 5 };                   // cast 129 ≤ 130 ≤ 480
 let n = 0;
 function add(D1, { pu = PU, tally = T, status = "needs_review", controls = GOOD, ok = null, evidence = "ec8a", media = null, face = null } = {}) {
@@ -40,18 +40,18 @@ function add(D1, { pu = PU, tally = T, status = "needs_review", controls = GOOD,
   return id;
 }
 const ledger = (D1) => D1.db.prepare("SELECT body_json FROM ledger_entries ORDER BY seq").all().map((r) => JSON.parse(r.body_json));
-const LAGOS = { role: "szv", public_id: "V0007", states: ["NG-LA"], aal: "aal2" };
+const region_la = { role: "szv", public_id: "V0007", states: ["XL-LA"], aal: "aal2" };
 const NOTE = "Photo checked: every figure matches the sheet.";
 
-test("polling-unit codes: positional check against the real LGA counts; 00-00-00-000 and 99-99-99-999 refused", () => {
+test("polling-unit codes: positional check against the real district counts; 00-00-00-000 and 99-99-99-999 refused", () => {
   const states = Object.fromEntries(JSON.parse(readFileSync(new URL("../site/data/states.json", import.meta.url), "utf8")).states.map((s) => [s.iso, s.lgas]));
-  for (const [code, iso] of Object.entries(INEC_STATE_CODE)) assert.equal(LGA_COUNT[code], states[iso], `LGA count for ${code} (${iso})`);
+  for (const [code, iso] of Object.entries(STATE_CODE)) assert.equal(LGA_COUNT[code], states[iso], `district count for ${code} (${iso})`);
   assert.equal(Object.values(LGA_COUNT).reduce((a, b) => a + b, 0), 774);
   assert.equal(puProblem("24-09-05-012"), null);
-  assert.equal(puProblem("37-06-01-001"), null, "FCT has 6 LGAs");
+  assert.equal(puProblem("37-06-01-001"), null, "Capital Region has 6 districts");
   assert.match(puProblem("37-07-01-001"), /does not exist/);
-  assert.match(puProblem("00-00-00-000"), /not an INEC state/);
-  assert.match(puProblem("99-99-99-999"), /not an INEC state/);
+  assert.match(puProblem("00-00-00-000"), /not an EEC state/);
+  assert.match(puProblem("99-99-99-999"), /not an EEC state/);
   assert.match(puProblem("24-09-00-012"), /ward/);
   assert.match(puProblem("24-09-05-000"), /unit/);
   assert.match(puProblem("24-9-5-12"), /must look like/);
@@ -62,10 +62,10 @@ test("void ballots are never a party; the six /vote/ cases classify; cancelled u
   assert.equal(ballotVerdict({ marks: 1, boxes: 1 }), "valid");
   for (const c of [{ marks: 1, boxes: 2 }, { marks: 2, boxes: 2 }, { marks: 0, boxes: 0 }, { marks: 1, boxes: 1, identifies: true }, { marks: 1, boxes: 0, outside: true }]) assert.equal(ballotVerdict(c), "void");
   for (const k of ["VOID", "REJECTED", "SPOILT", "INVALID"]) assert.ok(NOT_A_PARTY.test(k));
-  const voidParty = parseReport({ channel: "web", handle: "x", puCode: PU, tally: { APC: 3, VOID: 2 } });
+  const voidParty = parseReport({ channel: "web", handle: "x", puCode: PU, tally: { PA: 3, VOID: 2 } });
   assert.equal(voidParty.ok, false);
   assert.match(voidParty.errors.join(), /not a party/);
-  assert.equal(parseReport({ channel: "web", handle: "x", puCode: PU, tally: { APC: 3 }, controls: { cancelled: true } }).ok, false, "cancelled with a tally");
+  assert.equal(parseReport({ channel: "web", handle: "x", puCode: PU, tally: { PA: 3 }, controls: { cancelled: true } }).ok, false, "cancelled with a tally");
   assert.equal(parseReport({ channel: "web", handle: "x", puCode: PU, mediaRef: "m", controls: { cancelled: true } }).ok, true, "cancelled with no tally is fine");
   assert.equal(parseReport({ channel: "web", handle: "x", puCode: PU, tally: T, controls: { register: -1 } }).ok, false);
   assert.equal(parseReport({ channel: "web", handle: "x", puCode: PU, tally: T, controls: { weird: 1 } }).ok, false);
@@ -103,18 +103,18 @@ test("posting gates: an unbalanced sheet or a count above the register holds a h
   assert.equal(postingGates({ puCode: "00-00-00-000", consensus: { status: "high" }, counted: [{ checksOk: true }], baseline: null }).post, false);
 });
 
-test("IReV: a difference is stored, surfaced and does not block the citizen tally (constitution §4)", async () => {
+test("ERP: a difference is stored, surfaced and does not block the citizen tally (constitution §4)", async () => {
   const D1 = sqliteD1();
   for (let i = 0; i < 3; i++) add(D1, { status: "verified" });
-  D1.db.prepare("INSERT INTO official_results (pu_code, race, source, tally_json, document_url, fetched_at) VALUES (?, 'president', 'IReV', ?, 'https://inecelectionresults.ng/x', '2027-01-16T20:00:00Z')").run(PU, JSON.stringify({ ...T, PDP: 40 }));
+  D1.db.prepare("INSERT INTO official_results (pu_code, race, source, tally_json, document_url, fetched_at) VALUES (?, 'president', 'ERP', ?, 'https://results.example/x', '2027-01-16T20:00:00Z')").run(PU, JSON.stringify({ ...T, PB: 40 }));
   const u = await processUnit(D1, PU, "president");
   assert.equal(u.consensus.status, "high");
-  assert.deepEqual(u.discrepancy, { match: false, diffs: [{ party: "PDP", citizen: 37, official: 40, delta: -3 }] });
+  assert.deepEqual(u.discrepancy, { match: false, diffs: [{ party: "PB", citizen: 37, official: 40, delta: -3 }] });
   assert.deepEqual(ledger(D1)[0].discrepancy, u.discrepancy, "on the ledger entry");
-  assert.ok(D1.db.prepare("SELECT discrepancy_json FROM unit_consensus").get().discrepancy_json.includes("PDP"));
-  assert.deepEqual(parseOfficial({ puCode: PU, race: "president", tally: { APC: 1 }, documentUrl: "https://inecelectionresults.ng/doc" }).ok, true);
+  assert.ok(D1.db.prepare("SELECT discrepancy_json FROM unit_consensus").get().discrepancy_json.includes("PB"));
+  assert.deepEqual(parseOfficial({ puCode: PU, race: "president", tally: { PA: 1 }, documentUrl: "https://results.example/doc" }).ok, true);
   for (const bad of [{ puCode: "99-99-99-999" }, { documentUrl: "http://x" }, { tally: { VOID: 3 } }, { race: "winner" }, { source: "Twitter" }])
-    assert.equal(parseOfficial({ puCode: PU, race: "president", tally: { APC: 1 }, documentUrl: "https://inecelectionresults.ng/doc", ...bad }).ok, false, JSON.stringify(bad));
+    assert.equal(parseOfficial({ puCode: PU, race: "president", tally: { PA: 1 }, documentUrl: "https://results.example/doc", ...bad }).ok, false, JSON.stringify(bad));
 });
 
 test("ledger: the chain still verifies and stays append-only after gated posts", async () => {
@@ -122,40 +122,40 @@ test("ledger: the chain still verifies and stays append-only after gated posts",
   for (const pu of ["24-09-05-012", "24-09-05-013"]) { for (let i = 0; i < 3; i++) add(D1, { pu, status: "verified" }); await processUnit(D1, pu, "president"); }
   const rows = D1.db.prepare("SELECT body_json FROM ledger_entries ORDER BY seq").all().map((r) => JSON.parse(r.body_json));
   assert.equal(rows.length, 2);
-  assert.deepEqual(await verifyChain(rows, await genesis("ng-2027")), { ok: true, brokenAt: -1 });
+  assert.deepEqual(await verifyChain(rows, await genesis("example-2099")), { ok: true, brokenAt: -1 });
 });
 
 test("verifier review: MFA, own state, confirm-or-reject only, must balance, once; three confirmations post the unit", async () => {
   const D1 = sqliteD1();
   const a = add(D1), b = add(D1), c = add(D1, { controls: null });
-  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, { ...LAGOS, aal: "aal1" })).status, 403, "needs MFA");
-  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, { ...LAGOS, states: ["NG-KN"] })).status, 403, "other state");
-  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, { ...LAGOS, role: "admin" })).status, 403, "OpsAdmin cannot");
-  assert.equal((await reviewReading(D1, { reportId: a, decision: "edit", note: NOTE }, LAGOS)).status, 422);
-  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: "ok" }, LAGOS)).status, 422, "reason required");
-  const unbalanced = await reviewReading(D1, { reportId: c, decision: "confirm", note: NOTE }, LAGOS);
+  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, { ...region_la, aal: "aal1" })).status, 403, "needs MFA");
+  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, { ...region_la, states: ["XL-KN"] })).status, 403, "other state");
+  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, { ...region_la, role: "admin" })).status, 403, "OpsAdmin cannot");
+  assert.equal((await reviewReading(D1, { reportId: a, decision: "edit", note: NOTE }, region_la)).status, 422);
+  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: "ok" }, region_la)).status, 422, "reason required");
+  const unbalanced = await reviewReading(D1, { reportId: c, decision: "confirm", note: NOTE }, region_la);
   assert.equal(unbalanced.status, 422, "no totals: cannot confirm");
-  assert.equal((await reviewReading(D1, { reportId: c, decision: "confirm", note: NOTE, controls: { register: 480, accredited: 100, rejected: 5 } }, LAGOS)).status, 422, "corrected totals still do not balance");
-  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, LAGOS)).body.unit.status, "low");
-  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, LAGOS)).status, 409, "once");
-  await reviewReading(D1, { reportId: b, decision: "confirm", note: NOTE }, LAGOS);
-  const last = await reviewReading(D1, { reportId: c, decision: "confirm", note: NOTE, controls: GOOD }, LAGOS);
+  assert.equal((await reviewReading(D1, { reportId: c, decision: "confirm", note: NOTE, controls: { register: 480, accredited: 100, rejected: 5 } }, region_la)).status, 422, "corrected totals still do not balance");
+  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, region_la)).body.unit.status, "low");
+  assert.equal((await reviewReading(D1, { reportId: a, decision: "confirm", note: NOTE }, region_la)).status, 409, "once");
+  await reviewReading(D1, { reportId: b, decision: "confirm", note: NOTE }, region_la);
+  const last = await reviewReading(D1, { reportId: c, decision: "confirm", note: NOTE, controls: GOOD }, region_la);
   assert.deepEqual([last.status, last.body.unit.status, last.body.unit.posted], [200, "high", true]);
   const row = D1.db.prepare("SELECT status, audited_by, audit_note FROM reports WHERE id = ?").get(c);
   assert.deepEqual([row.status, row.audited_by, row.audit_note], ["verified", "V0007", NOTE]);
   const d = add(D1, { pu: "24-09-05-013" });
-  assert.equal((await reviewReading(D1, { reportId: d, decision: "reject", note: NOTE }, LAGOS)).body.decision, "reject");
+  assert.equal((await reviewReading(D1, { reportId: d, decision: "reject", note: NOTE }, region_la)).body.decision, "reject");
   assert.equal(D1.db.prepare("SELECT status FROM reports WHERE id = ?").get(d).status, "rejected");
   const alt = add(D1, { evidence: "board" });
-  assert.equal((await reviewReading(D1, { reportId: alt, decision: "confirm", note: NOTE }, LAGOS)).status, 409, "alternatives are audited separately");
+  assert.equal((await reviewReading(D1, { reportId: alt, decision: "confirm", note: NOTE }, region_la)).status, 409, "alternatives are audited separately");
   assert.equal(STATUS_LABEL.needs_review, "Needs a verifier's check");
 });
 
 test("OCR: off by default, withheld without a cleared photo or on any error, and only ever a proposal", async () => {
-  const good = JSON.stringify({ puCode: PU, parties: T, register: 480, accredited: 130, rejected: 5, confidence: { puCode: 0.95, parties: 0.97, register: 0.92, accredited: 0.95, rejected: 0.6 }, transcript: "APC 47 PDP 37 LP 32 NNPP 8" });
+  const good = JSON.stringify({ puCode: PU, parties: T, register: 480, accredited: 130, rejected: 5, confidence: { puCode: 0.95, parties: 0.97, register: 0.92, accredited: 0.95, rejected: 0.6 }, transcript: "PA 47 PB 37 PC 32 PD 8" });
   const r = interpretOcr(`Here you go: ${good} done`);
   assert.deepEqual([r.status, r.tally, r.controls, r.low, r.confidence], ["proposed", T, { register: 480, accredited: 130, rejected: 5 }, ["rejected"], 0.6]);
-  for (const bad of ["no json", "{}", JSON.stringify({ parties: { APC: 1.5 } }), JSON.stringify({ parties: { "A-1": 3 } })]) assert.equal(interpretOcr(bad).status, "withheld", bad);
+  for (const bad of ["no json", "{}", JSON.stringify({ parties: { PA: 1.5 } }), JSON.stringify({ parties: { "A-1": 3 } })]) assert.equal(interpretOcr(bad).status, "withheld", bad);
   const bytes = new Uint8Array([1, 2, 3]);
   assert.equal((await readSheet({}, { bytes, faceCheck: "none" })).status, "off");
   const ai = { run: async () => ({ response: good }) };
@@ -187,14 +187,14 @@ test("ingest: the sheet check is stored with the report; bad codes and void part
   const bad = await (await post({ channel: "web", handle: "b", puCode: PU, race: "president", tally: T, controls: { ...GOOD, accredited: 10 } })).json();
   assert.equal(bad.controls.balanced, false);
   assert.equal((await post({ channel: "web", handle: "c", puCode: "00-00-00-000", race: "president", tally: T })).status, 422);
-  assert.equal((await post({ channel: "web", handle: "c", puCode: PU, race: "president", tally: { APC: 1, REJECTED: 4 } })).status, 422);
+  assert.equal((await post({ channel: "web", handle: "c", puCode: PU, race: "president", tally: { PA: 1, REJECTED: 4 } })).status, 422);
 });
 
 test("press snapshot: aggregates only, no personal or evidence keys, held and lower units out of the totals", () => {
   const units = [
     { pu_code: PU, status: "high", tally: T, irev: { match: false, diffs: [] } },
-    { pu_code: "24-09-05-013", status: "held", tally: { APC: 900 } },
-    { pu_code: "24-09-05-014", status: "lower", tally: { APC: 500 } },
+    { pu_code: "24-09-05-013", status: "held", tally: { PA: 900 } },
+    { pu_code: "24-09-05-014", status: "lower", tally: { PA: 500 } },
     { pu_code: "24-09-05-015", status: "medium", tally: null },
   ];
   const s = buildSnapshot("president", units, { seq: 7, hash: "ab".repeat(32) });

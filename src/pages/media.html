@@ -1,11 +1,28 @@
 <!--{"title":"For newsrooms · Binchika press feed","description":"How newsrooms and civic organisations use Binchika's citizen-verified tallies: the open press feed, the terms of use, and how to register your desk.","nav":"media","path":"/media/","scripts":["/assets/js/media.js"]}-->
-<div class="launch-banner" role="note"><div class="wrap launch-inner"><span class="launch-dot" aria-hidden="true"></span><p><strong>Public launch: Thursday 5 November 2026.</strong> Site readiness testing is ongoing. Until citizen reporting opens (after our privacy notice is in force; the date will be announced here), the feed returns zero counts. This is expected and is not an error.</p></div></div>
+<div class="launch-banner" role="note"><div class="wrap launch-inner"><span class="launch-dot" aria-hidden="true"></span><p><strong>Example site.</strong> Until citizen reporting opens (the date will be announced here), the feed returns zero counts. This is expected and is not an error. The zeros mean no citizen reports have been accepted yet, not that no votes were cast. They are not results. Only EEC declares results.</p></div></div>
 <section class="page-head">
   <div class="wrap" style="max-width:860px">
     <p class="eyebrow">For newsrooms and civic organisations</p>
     <h1>Use our citizen tallies, <span class="grad-text">correctly.</span></h1>
+    <aside aria-labelledby="air-h" style="margin-top:1.25rem;padding:clamp(1rem,3vw,1.5rem);border:2px solid var(--accent);border-radius:16px;background:var(--surface)">
+      <h2 id="air-h" style="margin:0 0 .6rem;font-size:clamp(1.25rem,4vw,1.6rem)">Before this goes on air</h2>
+      <p style="margin:0 0 .5rem"><strong>You may show these figures only with all three lines on screen. On radio or television, also say them aloud.</strong></p>
+      <ul style="margin:0 0 .75rem;padding-left:1.2rem;display:grid;gap:.45rem">
+        <li><strong>Notice:</strong> “Citizen-verified tallies. Only EEC declares results.”</li>
+        <li><strong>Coverage:</strong> “in N of 12,000 polling units” (president, Senate, House) or “from N polling units in the states voting” (governor, state assembly). One state: “from N polling units in Region LA”, never “Region LA governorship result”. N is the number of published units.</li>
+        <li><strong>Source and time:</strong> “Source: Binchika (binchika.com). Feed time 21:05 XLT.” Use the time your developer reads from the feed, not the studio clock. Never “as of 21:05”: the figures can be older.</li>
+      </ul>
+      <p style="margin:0 0 .75rem"><strong>Never present the figures as official results, a projection or a winner.</strong> Only EEC declares election results in Exampleland. Do not call the party with the most votes “leading”, “ahead” or “trending”, and do not highlight, colour or tick it. Published units are not a random sample.</p>
+      <ul style="margin:0 0 .75rem;padding-left:1.2rem;display:grid;gap:.45rem">
+        <li><strong>Percentages and bars:</strong> allowed only as well as those three lines, with this label beside them: “Citizen-verified vote shares from published units only. Not results, projections or winners.” If sorted by votes, also label the list “by citizen-verified votes so far”. Do not use party brand colours.</li>
+        <li><strong>Frozen or stopped feed:</strong> ask your developer to build the 12-minute check, which the code examples include. If it fires, or the feed fails, add “These figures may be out of date” beside the feed time. Without that check, always add those words.</li>
+        <li><strong>Zero published units:</strong> do not show zeros as votes. Say: “No citizen-verified tallies have been published yet. Only EEC declares results. Source: Binchika (binchika.com).”</li>
+        <li><strong>Figures can go down</strong> after a correction, or if a unit is held after a failed check.</li>
+      </ul>
+      <p class="source-note" style="margin:0"><a href="#age-h" style="display:inline-block;padding:.3rem 0">How old the figures are</a> · <a href="#terms-h" style="display:inline-block;padding:.3rem 0">Full terms of use</a></p>
+    </aside>
     <p class="lede">Binchika publishes citizen-verified polling-unit tallies as an open, read-only feed. Any newsroom can use it today, without a key. Registered desks also get a named contact for corrections and notice before the feed changes.</p>
-    <p class="source-note"><strong>These are not results.</strong> Only INEC declares election results in Nigeria. Binchika never declares a winner and never projects one.</p>
+    <p class="source-note"><strong>These are not results.</strong> Only EEC declares election results in Exampleland. Binchika never declares a winner and never projects one.</p>
   </div>
 </section>
 
@@ -14,59 +31,148 @@
     <h2 id="feed-h">What the feed is</h2>
     <ul class="tick-list">
       <li>Vote totals from polling units whose citizen tally passed every check: at least three separate citizen reports of the same posted result sheet, at least 85% agreement, confirmed by a trained Binchika volunteer (a verifier), and figures on the sheet that add up. Units that fail a check appear in the unit counts but not in the vote totals.</li>
-      <li>Aggregates only: national and per-state totals, unit counts, and how many units have a citizen tally that does not match the result sheet INEC published on IReV, INEC's online result-viewing portal. A difference is not proof of wrongdoing: report it as “does not match”, never as fraud. No photographs, no names, no personal data.</li>
+      <li>Aggregates only: national and per-state totals, unit counts, and how many units have a citizen tally that does not match the result sheet EEC published on ERP, EEC's online result-viewing portal. A difference is not proof of wrongdoing: report it as “does not match”, never as fraud. No photographs, no names, no personal data.</li>
       <li>Every published unit is in the public, tamper-evident <a href="/ledger/">ledger</a>, so you can check any figure yourself.</li>
-      <li>Local government elections are run by the State Independent Electoral Commissions (SIECs), not INEC. They are not in the feed.</li>
+      <li>Local government elections are run by the State Independent Electoral Commissions (local election boards), not EEC. They are not in the feed.</li>
     </ul>
 
     <h2 id="connect-h" style="margin-top:2rem">Connect</h2>
-    <p>One address per race: <code>president</code>, <code>senate</code>, <code>house</code>, <code>governor</code> or <code>state-assembly</code>. JSON, open to any origin, refreshed at most every 15 seconds. Checking more often returns the same copy.</p>
+    <p>One address per race: <code>president</code>, <code>senate</code>, <code>house</code>, <code>governor</code> or <code>state-assembly</code>. JSON, open to any origin. The figures update at most once a minute. A new copy of the JSON is made at most every 15 seconds, so checking more often returns the same copy, and checking every 30–60 seconds is enough. See <a href="#age-h">how old the figures are</a>.</p>
     <pre class="code" tabindex="0" aria-label="Example request"><code>GET https://binchika.com/api/press/snapshot?race=president</code></pre>
     <details style="margin-top:.75rem"><summary style="cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center">Example in JavaScript and Python</summary>
-<pre class="code" tabindex="0" aria-label="JavaScript example"><code>const r = await fetch("https://binchika.com/api/press/snapshot?race=president");
-const feed = await r.json();
-// Always show feed.notice next to the figures. It is the required line:
-// "Citizen-verified tallies. Only INEC declares results."
-console.log(feed.notice, feed.units.published, feed.national.totals);</code></pre>
+<pre class="code" tabindex="0" aria-label="JavaScript example"><code>const lastGood = {};    // one copy per race; keep it between checks
+const lastMoved = {};   // when each race's updatedAt last changed
+const TWELVE_MINUTES = 12 * 60 * 1000, TWO_MINUTES = 2 * 60 * 1000;
+
+// stale is true when this check failed or the figures look frozen or stuck. feed is your last good copy, or undefined if you have none.
+async function check(race = "president") {
+  let failed = true;
+  try {
+    const r = await fetch(`https://binchika.com/api/press/snapshot?race=${race}`, { signal: AbortSignal.timeout(10000) });
+    if (r.ok) {
+      const next = await r.json();
+      if (next.updatedAt !== lastGood[race]?.updatedAt) lastMoved[race] = Date.now();
+      lastGood[race] = next;
+      failed = false;
+    }
+    // 503 or other 5xx: keep lastGood and try again in 15–60 seconds. 400 or 404: fix the address.
+    else console.warn("Feed answered", r.status);
+  } catch (error) { console.warn("Feed not reached", error.name); }   // the same: keep lastGood
+  const feed = lastGood[race];
+  // The 12-minute check. Both times come from our clock, so yours cannot cause a false alarm. Up to about 10 minutes apart is normal when nothing has changed.
+  const frozen = Boolean(feed) && Date.parse(feed.updatedAt) - Date.parse(feed.figuresBuiltAt) > TWELVE_MINUTES;
+  // A copy stuck on its way to you: updatedAt has not moved for 2 minutes while you keep checking.
+  const stuck = Boolean(feed) && Date.now() - lastMoved[race] > TWO_MINUTES;
+  return { feed, stale: failed || frozen || stuck };
+}
+
+const { feed, stale } = await check();
+if (feed) {
+  if (feed.units.published === 0) {
+    console.log("No citizen-verified tallies have been published yet. Only EEC declares results. Source: Binchika (binchika.com).");
+  } else {
+    // Always show feed.notice next to the figures. It is the required line:
+    // "Citizen-verified tallies. Only EEC declares results."
+    // Take the feed time from the copy you hold, never your own clock.
+    const time = new Date(feed.updatedAt).toLocaleTimeString("en-GB", { timeZone: "Etc/GMT-1", hour: "2-digit", minute: "2-digit" });
+    // This coverage line is for president, Senate and House. See the terms of use for the other races.
+    console.log(feed.notice, `In ${feed.units.published} of 12,000 polling units`, feed.national.totals);
+    console.log(`Source: Binchika (binchika.com). Feed time ${time} XLT.`);
+  }
+  if (stale) console.log("These figures may be out of date.");
+}</code></pre>
 <pre class="code" tabindex="0" aria-label="Python example"><code>import requests
-feed = requests.get("https://binchika.com/api/press/snapshot",
-                    params={"race": "president"}, timeout=10).json()
-print(feed["notice"], feed["units"]["published"], feed["national"]["totals"])</code></pre>
+from datetime import datetime, timedelta, timezone
+from time import monotonic
+
+last_good = {}   # one copy per race; keep it between checks
+last_moved = {}  # when each race's updatedAt last changed
+
+def utc(text):
+    return datetime.fromisoformat(text.replace("Z", "+00:00"))
+
+# stale is True when this check failed or the figures look frozen or stuck. feed is your last good copy, or None if you have none.
+def check(race="president"):
+    failed = True
+    try:
+        r = requests.get("https://binchika.com/api/press/snapshot",
+                         params={"race": race}, timeout=10)
+        r.raise_for_status()
+        new = r.json()
+        if new["updatedAt"] != last_good.get(race, {}).get("updatedAt"):
+            last_moved[race] = monotonic()
+        last_good[race] = new
+        failed = False
+    except requests.RequestException as error:
+        # 503 or other 5xx, or no connection: keep last_good and try again in 15-60 seconds.
+        # 400 or 404: fix the address.
+        print("Feed problem:", error)
+    feed = last_good.get(race)
+    # The 12-minute check. Both times come from our clock, so yours cannot cause a false alarm. Up to about 10 minutes apart is normal when nothing has changed.
+    frozen = bool(feed) and utc(feed["updatedAt"]) - utc(feed["figuresBuiltAt"]) > timedelta(minutes=12)
+    # A copy stuck on its way to you: updatedAt has not moved for 2 minutes while you keep checking.
+    stuck = bool(feed) and monotonic() - last_moved[race] > 120
+    return feed, failed or frozen or stuck
+
+feed, stale = check()
+if feed:
+    if feed["units"]["published"] == 0:
+        print("No citizen-verified tallies have been published yet. Only EEC declares results. Source: Binchika (binchika.com).")
+    else:
+        # Take the feed time from the copy you hold, never your own clock.
+        wat = utc(feed["updatedAt"]).astimezone(timezone(timedelta(hours=1)))
+        # This coverage line is for president, Senate and House. See the terms of use for the other races.
+        print(feed["notice"], f'In {feed["units"]["published"]:,} of 12,000 polling units', feed["national"]["totals"])
+        print(f"Source: Binchika (binchika.com). Feed time {wat:%H:%M} XLT.")
+    if stale:
+        print("These figures may be out of date.")</code></pre>
     </details>
     <details style="margin-top:.75rem"><summary style="cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center">Example response and errors</summary>
 <pre class="code" tabindex="0" aria-label="Example response"><code>{
-  "notice": "Citizen-verified tallies. Only INEC declares results.",
+  "notice": "Citizen-verified tallies. Only EEC declares results.",
   "race": "president",
-  "updatedAt": "2026-11-01T12:05:41.043Z",
+  "updatedAt": "2099-03-01T20:05:41.043Z",
+  "figuresBuiltAt": "2099-03-01T20:04:18.187Z",
   "ledger": { "head": null, "count": 0, "verify": "https://binchika.com/ledger/" },
   "units": { "published": 0, "lowerConfidence": 0, "held": 0, "notYetHigh": 0,
-             "denominator": 176846, "denominatorSource": "INEC 2023 polling units" },
+             "denominator": 12000, "denominatorSource": "Example figure: fictional" },
   "national": { "totals": {} },
   "byState": {},
   "irev": { "compared": 0, "mismatches": 0 },
   "rules": "Lower-confidence and held units are not in the totals. ..."
 }</code></pre>
       <ul class="source-note" style="padding-left:1.2rem;display:grid;gap:.3rem">
-        <li><code>national.totals</code>: party acronym → votes, from published units only.</li>
-        <li><code>byState</code>: one entry per ISO 3166-2 state code (<code>NG-AB</code> … <code>NG-ZA</code>; the FCT is <code>NG-FC</code>), each <code>{ "units": n, "totals": { … } }</code>, where <code>units</code> is the number of published units in that state.</li>
+        <li><code>national.totals</code>: party acronym → votes, from published units only. The feed gives no shares. For a percentage, divide a party's votes by all parties' votes in the same totals, and add the label given in the <a href="#air-h">box at the top of this page</a>.</li>
+        <li><code>byState</code>: one entry per ISO 3166-2 state code (<code>XL-AB</code> … <code>XL-ZA</code>; the Capital Region is <code>XL-FC</code>), each <code>{ "units": n, "totals": { … } }</code>, where <code>units</code> is the number of published units in that state.</li>
         <li><code>units.published</code>: units in the totals. <code>lowerConfidence</code>: agreement too low to count. <code>held</code>: failed a posting check (for example totals that do not add up). <code>notYetHigh</code>: still waiting for enough reports. Only <code>published</code> units are in the votes.</li>
-        <li><strong>Coverage.</strong> The denominator is INEC's 2023 national count of polling units (176,846). Use “<code>units.published</code> of 176,846” only for the president, Senate and House races. Not every state elects a governor on the same day, and the FCT has no State House of Assembly, so for governor and state-assembly races state the count instead: “from 1,240 polling units in the states voting”. The feed has no per-state polling-unit total, so for a state also state the count: “from 312 polling units in Lagos”.</li>
-        <li>For Senate, House, governor and state-assembly races, <code>national.totals</code> adds up party votes across constituencies or states. It is not seats and not a result for any constituency or state. In those races each <code>byState</code> entry adds up the published units from every constituency in that state that has any, so label it that way, for example “all Senate districts in Lagos combined”, never as if the state were one contest.</li>
+        <li><strong>Coverage.</strong> The denominator is EEC's count of polling stations (12,000). Use “<code>units.published</code> of 12,000” only for the president, Senate and House races. Not every state elects a governor on the same day, and the Capital Region has no State House of Assembly, so for governor and state-assembly races state the count instead: “from 1,240 polling units in the states voting”. The feed has no per-state polling-unit total, so for a state also state the count: “from 312 polling units in Region LA”.</li>
+        <li>For Senate, House, governor and state-assembly races, <code>national.totals</code> adds up party votes across constituencies or states. It is not seats and not a result for any constituency or state. In Senate, House and state-assembly races each <code>byState</code> entry adds up the published units from every constituency in that state that has any, so label it that way, for example “all Senate districts in Region LA combined”, never as if the state were one contest. In a governor race each <code>byState</code> entry is that state's one contest, from published units only: label it “from N polling units in Region LA”, never as that state's result.</li>
         <li><code>byState</code> lists only states with at least one published unit. A missing <code>race</code> means <code>president</code>.</li>
-        <li><code>ledger.head</code> is <code>null</code> until the first unit is published. Show the time from <code>updatedAt</code> (UTC; add one hour for WAT), for example “as of 21:05 WAT”.</li>
-        <li>Errors: <code>400</code> for an unknown race; <code>404</code> for a wrong URL path; <code>5xx</code> means try again after 15–60 seconds and keep showing your last good copy.</li>
+        <li><code>ledger.head</code> is <code>null</code> until the first unit is published. The ledger head and count are read when the copy is made, so they can include units that are not in the totals yet.</li>
+        <li><code>updatedAt</code> (UTC; add one hour for XLT) is when this copy of the JSON was made. Show it from the copy you hold, never your own clock, as “Source: Binchika (binchika.com). Feed time 21:05 XLT.”</li>
+        <li><code>figuresBuiltAt</code> (UTC) is when our last update built these figures. The two times can be up to about 10 minutes apart when nothing has changed. If <code>figuresBuiltAt</code> is more than about 12 minutes older than <code>updatedAt</code>, our update has stopped or is delayed: show “These figures may be out of date”. This is the 12-minute check. Compare these two times, not your own clock. If <code>updatedAt</code> itself has not moved for about 2 minutes while you keep checking, treat that the same way.</li>
+        <li>Errors: <code>400</code> for an unknown race; <code>404</code> for a wrong URL path; <code>5xx</code> means try again after 15–60 seconds and keep showing your last good copy, labelled as described under <a href="#age-h">how old the figures are</a>. If you have no good copy yet, show no figures.</li>
+        <li><code>503</code> with <code>{"error":"results temporarily unavailable"}</code> means the figures for that race are missing or more than 20 minutes old.</li>
       </ul>
     </details>
 
+    <h2 id="age-h" style="margin-top:2rem">How old the figures are</h2>
+    <ul class="tick-list">
+      <li><strong>Normally:</strong> up to about 75–90 seconds old, counted from when a polling unit passes its checks: up to a minute until our next update, and up to about 15–30 seconds to build and serve it. Add the time since you last checked the feed. Reports and checks before that take longer, and this page gives no figure for them.</li>
+      <li><strong>If our scheduled update stops:</strong> the figures stop changing, but the feed keeps answering and its feed time keeps moving. So figures can be up to about 12 minutes old, plus the time since you last checked, before anything shows it. Your developer can spot a stoppage, because the feed also says when its figures were built: ask them to build this check, which the code examples include. When that is more than about 12 minutes before the feed time, show “These figures may be out of date” beside the feed time. A gap of up to about 10 minutes is normal: when nothing has changed, we rebuild the figures only every 10 minutes. After 20 minutes the feed returns an error, rather than keep presenting old figures as current.</li>
+      <li><strong>The time to show:</strong> “Source: Binchika (binchika.com). Feed time 21:05 XLT.” Feed time is when the feed made the copy you are showing, in Exampleland time. It is not the studio clock and not the moment you pulled the figures. On radio or television, say it aloud. Do not say “as of 21:05”: the figures can be older than that. Never describe them as up to the minute or just updated.</li>
+      <li><strong>If the feed returns an error or cannot be reached:</strong> keep your last figures up only with that same time and the words “These figures may be out of date”. They get older for as long as the problem lasts, and how long to keep them up is your editorial decision. If you have no earlier figures, show none.</li>
+    </ul>
+
     <h2 id="terms-h" style="margin-top:2rem">Terms of use</h2>
     <ol>
-      <li>Show “Citizen-verified tallies. Only INEC declares results.” beside the figures, every time.</li>
+      <li>Show “Citizen-verified tallies. Only EEC declares results.” beside the figures, every time.</li>
       <li>Credit Binchika (binchika.com).</li>
       <li>Never present the figures as official results, a projection or a winner.</li>
-      <li>Always state coverage. President, Senate and House: “in N of 176,846 polling units”. Governor and state assembly: “from N polling units in the states voting”. One state: “from N polling units in Lagos”.</li>
-      <li>Senate, House and state assembly: the figures add up votes from many separate contests. They are not seats and not a result for any constituency or state. Say “party votes across all Senate districts with published units” or “all Senate districts in Lagos combined”, never “Lagos Senate result”.</li>
+      <li>Always state coverage. President, Senate and House: “in N of 12,000 polling units”. Governor and state assembly: “from N polling units in the states voting”. One state: “from N polling units in Region LA”.</li>
+      <li>Senate, House, governor and state assembly: the figures add up votes from many separate contests. They are not seats and not a result for any constituency or state. Say “party votes across all Senate districts with published units” or “all Senate districts in Region LA combined”, never “Region LA Senate result”. For governor, one state's figures are one contest: say “from N polling units in Region LA”, never “Region LA governorship result”.</li>
     </ol>
-    <p><strong>Say</strong>, for example, for the presidential race: “In 1,240 of 176,846 polling units, citizen-verified tallies show Party X with 52,310 votes and Party Y with 48,920. Only INEC declares results.” <strong>Don't say:</strong> “Party X leads”, “X is winning” or “projected winner”, and do not call the party with the most votes “leading”, “ahead” or “trending”. Published units are not a random sample and do not show the national picture. On screen, do not highlight, colour or tick the party with the most votes; if you sort parties by votes, label the list “by citizen-verified votes so far”. Always state coverage. On radio or television, say the notice aloud.</p>
+    <p><strong>Say</strong>, for example, for the presidential race: “In 1,240 of 12,000 polling units, citizen-verified tallies show Party X with 52,310 votes and Party Y with 48,920. Only EEC declares results. Source: Binchika (binchika.com). Feed time 21:05 XLT.” <strong>Don't say:</strong> “Party X leads”, “X is winning” or “projected winner”, and do not call the party with the most votes “leading”, “ahead” or “trending”. Published units are not a random sample and do not show the national picture. On screen, do not highlight, colour or tick the party with the most votes; if you sort parties by votes, label the list “by citizen-verified votes so far”. If you show percentages or bars, add this label as well as the required lines: “Citizen-verified vote shares from published units only. Not results, projections or winners.” Do not use party brand colours. Always state coverage. On radio or television, say the notice aloud.</p>
     <p class="source-note">The same terms apply to every outlet: no exclusives, no paid tier, no early access.</p>
   </div>
 </section>
@@ -86,7 +192,7 @@ print(feed["notice"], feed["units"]["published"], feed["national"]["totals"])</c
         <label>Your work email<input type="email" name="email" id="m-email" required autocomplete="email"></label>
         <label>Technical contact email (optional)<input type="email" name="tech_email" id="m-tech" maxlength="320"></label>
         <label>How you will use the feed<select name="use" id="m-use" required><option value="">Choose…</option><option value="live_page">Live election-night page or embed</option><option value="broadcast">On-air graphics</option><option value="analysis">Analysis or research</option><option value="factcheck">Fact-checking or verification</option></select></label>
-        <label class="wide">How often you will check the feed<select name="polling" id="m-polling" required><option value="">Choose…</option><option value="15s">Every 15 seconds (the fastest the feed changes)</option><option value="minute">About once a minute</option><option value="hour">About once an hour</option><option value="day">Daily or less often</option></select></label>
+        <label class="wide">How often you will check the feed<select name="polling" id="m-polling" required><option value="">Choose…</option><option value="15s">Every 15 seconds</option><option value="minute">About once a minute</option><option value="hour">About once an hour</option><option value="day">Daily or less often</option></select></label>
         <label class="wide">Short description (where the figures will appear, and anything else we should know)<textarea name="message" id="m-message" required minlength="20" maxlength="5000"></textarea></label>
         <label class="wide opt"><input type="checkbox" name="terms" id="m-terms" value="yes" required> <span>We accept the terms of use above.</span></label>
         <label class="hp" aria-hidden="true">Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>

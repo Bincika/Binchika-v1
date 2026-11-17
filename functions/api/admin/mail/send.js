@@ -1,4 +1,4 @@
-// POST /api/admin/mail/send { from: "ops"|"accounts"|"noreply", to, cc?, subject, body, replyToId?, attachments?: [{ filename,
+// POST /api/admin/mail/send { from: "ops"|"accounts"|"noreply", to, cc?, bcc?, subject, body, replyToId?, attachments?: [{ filename,
 // contentType, content (base64) }], dryRun? } — BinchikAdmin + MFA only. Limits in functions/_lib/mailbox.js.
 // Sends the admin's plain text inside the branded template (functions/_lib/emails.js general()) through Resend, and
 // records it for the Sent view. The "From" choices live in functions/_lib/mailbox.js (MAILBOXES).

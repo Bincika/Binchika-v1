@@ -6,20 +6,18 @@ Binchika is a citizen transparency layer for elections. Citizens report the resu
 
 **Binchika never declares results.** Only the electoral body does. Every page, feed and API response says so.
 
-This repository is the open-source tree of the Nigeria deployment at [binchika.com](https://binchika.com), dual-licensed under **MIT or Apache 2.0** so any civic-tech group in Africa (or anywhere) can fork it and run it for its own election.
+This repository ships with **Exampleland, a fictional country**, so that a fresh copy builds and runs. Every area, party, date and figure in it is invented. It is dual-licensed under **MIT or Apache 2.0** so any civic-tech group can fork it and run it for its own election. It began as the build behind a real deployment, which is a separate, private repository and is not built from here.
 
 ## Reconfigure it for your country
-Country values live in one place:
-- `tenant_config.json` names the active tenant (`"tenant": "ng"`);
-- `tenants/<id>/tenant.json` holds the country, electoral body, notice, time zone, polling-station code format and count, and the paths to the country data;
+- `tenant_config.json` names the active tenant (`"tenant": "example"`);
+- `tenants/<id>/tenant.json` holds the country, electoral body, notice, time zone, polling-station code format and count, rules and wording;
 - the schema is `tenants/tenant.schema.json`;
-- a blank to fill in is `tenants/_template/tenant.json`.
+- a blank to fill in is `tenants/_template/tenant.json`, which the build refuses until it is complete.
 
-The build generates the module the server and browser code read, so core logic does not change between countries.
+The build generates the module the server and browser code read. You also replace the data in `site/data/` and the text in `src/pages/`.
 
 - **How the config works and what is still country-specific:** [`docs/TENANT-CONFIG.md`](docs/TENANT-CONFIG.md)
 - **A 48-hour path from fork to a running site:** [`docs/protocol/FORKING.md`](docs/protocol/FORKING.md)
-- **Measure what still names the example country:** `node scripts/tenant-audit.mjs --files`
 
 ## Run it
 ```bash

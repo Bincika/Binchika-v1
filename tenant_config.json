@@ -1,4 +1,4 @@
 {
-  "$comment": "Which country this deployment serves. A fork changes only this line and its tenants/<id>/ folder (plus that country's data and page text). See docs/TENANT-CONFIG.md.",
-  "tenant": "ng"
+  "$comment": "Which country this deployment serves. Exampleland is fictional: replace it. See docs/TENANT-CONFIG.md.",
+  "tenant": "example"
 }

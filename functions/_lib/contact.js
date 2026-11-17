@@ -1,16 +1,16 @@
 // Contact form validation and routing. Pure; shared by the API and tests.
 
 export const NATURES = {
-  manifesto: { label: "Party manifesto or motto submission", from: "Binchika Accounts <accounts@binchika.com>" },
-  party: { label: "Party communication", from: "Binchika Accounts <accounts@binchika.com>" },
-  data: { label: "Data request", from: "Binchika Accounts <accounts@binchika.com>" },
-  error: { label: "Report an error in our data", from: "Binchika Ops <ops@binchika.com>" },
-  verifier: { label: "Verifier question", from: "Binchika Ops <ops@binchika.com>" },
-  technical: { label: "Website or technical issue", from: "Binchika Ops <ops@binchika.com>" },
-  press: { label: "Press and media", from: "Binchika <noreply@binchika.com>" },
+  manifesto: { label: "Party manifesto or motto submission", from: "Binchika Accounts <accounts@mail.example.org>" },
+  party: { label: "Party communication", from: "Binchika Accounts <accounts@mail.example.org>" },
+  data: { label: "Data request", from: "Binchika Accounts <accounts@mail.example.org>" },
+  error: { label: "Report an error in our data", from: "Binchika Ops <ops@mail.example.org>" },
+  verifier: { label: "Verifier question", from: "Binchika Ops <ops@mail.example.org>" },
+  technical: { label: "Website or technical issue", from: "Binchika Ops <ops@mail.example.org>" },
+  press: { label: "Press and media", from: "Binchika <noreply@mail.example.org>" },
   // Session 91: a newsroom asks to be registered for the press feed (functions/_lib/media.js). Reviewed under Tickets.
-  media_access: { label: "Media access request (press feed)", from: "Binchika Ops <ops@binchika.com>" },
-  other: { label: "Something else", from: "Binchika <noreply@binchika.com>" },
+  media_access: { label: "Media access request (press feed)", from: "Binchika Ops <ops@mail.example.org>" },
+  other: { label: "Something else", from: "Binchika <noreply@mail.example.org>" },
 };
 export const MAX_FILES = 5;
 export const MAX_TOTAL_BYTES = 10 * 1024 * 1024;

@@ -1,4 +1,4 @@
-// Verifier audit of alternative evidence (used when Form EC8A is not available: a video, handwritten numbers or a photo
+// Verifier audit of alternative evidence (used when Form R1 is not available: a video, handwritten numbers or a photo
 // of the results board). An SZV or NRV for the unit's state approves or rejects it with a reason someone else can check;
 // the unit is then re-evaluated. Approved evidence can make a unit "lower" (lower-confidence) at most, never "high"
 // (unitConsensus in consensus.js). Used by POST /api/portal/evidence. Session 55; docs/EVIDENCE-AUDIT.md.

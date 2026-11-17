@@ -12,7 +12,7 @@ Goal: no single platform, API change or shutdown can silence intake. Everything 
                                     ▼  consumer Worker
        photo → R2 (sha256 key, EXIF stripped) → CIDv1 computed → OCR (Workers AI vision) → tally_json
                                     ▼
-                  /api/pipeline/unit → consensus (≥85% of ≥3) → IReV compare → baseline check → ledger
+                  /api/pipeline/unit → consensus (≥85% of ≥3) → ERP compare → baseline check → ledger
                                     ▼  high-confidence only
                   hourly state bundle (CAR) → Pinata / Storacha pin → bundle CID into the ledger + GitHub mirror
 ```
@@ -27,4 +27,4 @@ Goal: no single platform, API change or shutdown can silence intake. Everything 
 
 ## Status (25 Oct 2026)
 - Live: `/api/reports` (token), `/api/telegram` (needs a bot token), the consensus pipeline and the append-only ledger.
-- Next: **enable R2**, then the Queue + consumer Worker, the WhatsApp Cloud API adapter, the web upload with Turnstile, and SMS.
+- Next: **enable R2**, then the Queue + consumer Worker, the WhatsApp Cloud API adapter, the web upload with Turnstile, and SMS. _(Status, 10 November 2026: Turnstile is planned and not built, here and on the forms; citizen reporting is closed.)_

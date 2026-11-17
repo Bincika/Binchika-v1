@@ -287,14 +287,14 @@ export async function sendCampaign(env, input, sender) {
 
 // Loop-back marker: <send id>.<HMAC signature>. Our own campaign copies come back to the From address; the mailbox
 // Worker accepts them quietly before forwarding (no Inbox copy, no forward, no automatic reply). Only a message from
-// @binchika.com with a genuine marker for a send of the last 3 days is skipped; anything else goes through as before.
+// @mail.example.org with a genuine marker for a send of the last 3 days is skipped; anything else goes through as before.
 const campaignMarker = async (key, id) => `${id}.${b64url(await hmac(key, `campaign:v1:${id}`)).slice(0, 32)}`;
 /** Mailbox Worker: is this incoming message one of our own campaign copies coming back to the From address? `from` is the
  * From header (the envelope sender is Resend's bounce address). Never throws. */
 export async function isCampaignLoopback(env, from, headers) {
   try {
     const m = /^([0-9a-f-]{36})\.([A-Za-z0-9_-]{32})$/.exec(String(headers?.get?.("x-binchika-campaign") ?? "").trim());
-    if (!m || !env.UNSUBSCRIBE_KEY || !env.DB || !/@binchika\.com>?$/i.test(String(from ?? "").trim())) return false;
+    if (!m || !env.UNSUBSCRIBE_KEY || !env.DB || !/@mail\.example\.org>?$/i.test(String(from ?? "").trim())) return false;
     if (!same(await campaignMarker(env.UNSUBSCRIBE_KEY, m[1]), m[0])) return false;
     return Boolean(await env.DB.prepare("SELECT id FROM campaign_sends WHERE id = ?1 AND at > strftime('%Y-%m-%dT%H:%M:%fZ','now','-3 days')").bind(m[1]).first());
   } catch { return false; }

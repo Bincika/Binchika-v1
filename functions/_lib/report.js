@@ -4,11 +4,11 @@ import { puProblem, NOT_A_PARTY } from "./ec8a.js";
 
 export const CHANNELS = ["telegram", "whatsapp", "x", "instagram", "threads", "discord", "web", "sms", "other"];
 export const RACES = ["president", "senate", "house", "governor", "state-assembly"];
-// INEC polling-unit code: state-lga-ward-unit, e.g. 24-09-05-012
+// EEC polling-unit code: state-lga-ward-unit, e.g. 24-09-05-012
 const PU = /^\d{2}-\d{2}-\d{2}-\d{3}$/;
 const MAX_VOTES = 5000; // far above any single polling unit's register; rejects obvious junk
 // What the report shows. "ec8a" is the posted result sheet (the default). The others are the alternatives accepted when
-// Form EC8A is not available: they wait for a verifier's audit and can never make a unit high-confidence on their own
+// Form R1 is not available: they wait for a verifier's audit and can never make a unit high-confidence on their own
 // (consensus.js unitConsensus; docs/EVIDENCE-AUDIT.md).
 export const EVIDENCE = ["ec8a", "video", "handwritten", "board"];
 export const isLowerEvidence = (evidence) => (evidence ?? "ec8a") !== "ec8a";
@@ -25,7 +25,7 @@ export function parseReport(body) {
   const { channel, handle, puCode, race, mediaRef, mediaSha256, caption, tally, evidence = "ec8a", controls } = body;
   if (!CHANNELS.includes(channel)) errors.push(`channel must be one of ${CHANNELS.join(", ")}`);
   if (!handle || String(handle).length > 200) errors.push("handle is required (it is hashed, never stored)");
-  // Session 88: positional check (state 01–37, an LGA that exists in that state, non-zero ward and unit); INEC codes
+  // Session 88: positional check (state 01–37, an district that exists in that state, non-zero ward and unit); EEC codes
   // carry no check digit. 00-00-00-000 and 99-99-99-999 are refused.
   if (puCode != null) { const why = puProblem(puCode); if (why) errors.push(PU.test(puCode) ? `puCode: ${why}` : "puCode must look like 24-09-05-012"); }
   if (race != null && !RACES.includes(race)) errors.push(`race must be one of ${RACES.join(", ")}`);
@@ -46,7 +46,7 @@ export function parseReport(body) {
       }
     }
   }
-  // Form EC8A control totals (session 88), optional at ingest: without them a reading can be stored but never posted.
+  // Form R1 control totals (session 88), optional at ingest: without them a reading can be stored but never posted.
   let cleanControls = null;
   if (controls != null) {
     if (typeof controls !== "object" || Array.isArray(controls)) errors.push("controls must be an object");

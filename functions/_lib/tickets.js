@@ -5,25 +5,26 @@
 export const TICKET_STATUSES = ["new", "in_progress", "answered", "closed"];
 export const TICKET_DUE_WORKING_DAYS = 2;   // proposed in the design; an owner decision may change it
 export const RESOLUTION_MAX = 500;
+import { TENANT } from "./tenant.generated.js";
 export const REF_RE = /^BIN-\d{4}-\d{4,}$/;
 
-const LAGOS_MS = 60 * 60 * 1000;            // West Africa Time is UTC+1 all year (no daylight saving)
-const lagos = (d) => new Date(d.getTime() + LAGOS_MS);
+const OFFSET_MS = Number(/UTC([+-]\d+)/.exec(TENANT.locale.utcOffset)?.[1] ?? 0) * 60 * 60 * 1000;   // the tenant's fixed offset
+const localDate = (d) => new Date(d.getTime() + OFFSET_MS);
 
-/** "2611" for a time in November 2026, Lagos time. */
-export const yymmOf = (d = new Date()) => { const l = lagos(d); return `${String(l.getUTCFullYear()).slice(2)}${String(l.getUTCMonth() + 1).padStart(2, "0")}`; };
+/** "2611" for a time in November 2026, Region LA time. */
+export const yymmOf = (d = new Date()) => { const l = localDate(d); return `${String(l.getUTCFullYear()).slice(2)}${String(l.getUTCMonth() + 1).padStart(2, "0")}`; };
 export const refOf = (yymm, n) => `BIN-${yymm}-${String(n).padStart(4, "0")}`;
 
-/** The same time of day, N working days (Monday to Friday, Lagos time) later. Public holidays are not counted yet. */
+/** The same time of day, N working days (Monday to Friday, Region LA time) later. Public holidays are not counted yet. */
 export function dueAfter(d = new Date(), days = TICKET_DUE_WORKING_DAYS) {
-  const t = lagos(d);
+  const t = localDate(d);
   let left = days;
   while (left > 0) {
     t.setUTCDate(t.getUTCDate() + 1);
     const wd = t.getUTCDay();
     if (wd !== 0 && wd !== 6) left--;
   }
-  return new Date(t.getTime() - LAGOS_MS);
+  return new Date(t.getTime() - OFFSET_MS);
 }
 
 /** Reserve the next reference for this month. One atomic statement, so two enquiries can never share a number. */

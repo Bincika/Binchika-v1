@@ -1,6 +1,6 @@
 /* Session 83. All dashboard rules are scoped; the existing monitor stays intact. */
 .rd-section { --rd-white: #fff; --rd-ink: #152842; }
-.rd-rules { padding: .9rem 1.5rem; border-bottom: 1px solid #d2deec; background: #fff; color: #152842; }
+.rd-rules { padding: .9rem 1.5rem; border-top: 1px solid #d2deec; background: #fff; color: #152842; }
 .rd-rules h4 { font-size: 1rem; margin: 0 0 .3rem; color: #152842; }
 .rd-rules p { margin: .25rem 0; font-size: .85rem; max-width: 95ch; }
 .rd-rules #rd-rule-note { color: #40516b; }
@@ -27,8 +27,16 @@
 .rd-seg button[data-rd="local-government"][aria-selected="true"] { background: #08616b; }
 .rd-sync { font-size: .875rem; font-weight: 600; color: var(--muted); }
 .rd-sync::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #66768a; margin-right: .45rem; }
-.rd-sync[data-state="fresh"]::before { background: #08704c; }
-.rd-sync[data-state="stale"]::before { background: #a54a0c; }
+.rd-sync[data-shown="fresh"]::before { background: #08704c; }
+.rd-sync[data-shown="stale"]::before { background: #a54a0c; }
+.rd-section { scroll-margin-top: 120px; }
+.rd-nav > #rd-pause { margin-left: auto; }
+.rd-fresh, .rd-change { flex: 1 0 100%; margin: 0; font-size: .85rem; color: var(--muted); }
+.rd-fresh:empty, .rd-change:empty, .rd-phase-areas:empty { display: none; }
+.rd-phase { display: grid; gap: .3rem; padding: .85rem 1.5rem; border-bottom: 1px solid #d2deec; background: #fff; color: #152842; }
+.rd-phase-chip { justify-self: start; padding: .2rem .6rem; border-radius: 6px; background: #152842; color: #fff; font: 700 .8rem/1.35 var(--f-body); }
+.rd-phase p { margin: 0; font-size: .9rem; max-width: 95ch; }
+.rd-phase .rd-phase-areas { color: #40516b; font-size: .85rem; }
 .rd-selection { border-left: 4px solid var(--accent); padding: .7rem 1rem; background: var(--surface); }
 .rd-card { padding: 0; border: 1px solid #ffffff45; background: var(--rd-a, #123b78); color: #fff; box-shadow: 0 16px 38px -25px #102b4c88; border-radius: 22px; }
 .rd-card::before { content: ""; position: absolute; top: 0; right: 110px; width: 180px; height: 120px; opacity: .08; pointer-events: none; background: repeating-linear-gradient(60deg, transparent 0 15px, #fff 15px 17px, transparent 17px 30px); }
@@ -106,7 +114,9 @@
 .page-monitor .race-tile b { font-size: 1.05rem; }
 .race-tile b, .race-tile > span:last-child { position: relative; }
 @media (max-width: 760px) {
-  .rd-rules, .rd-geography { padding-inline: 1rem; }
+  .rd-rules, .rd-geography, .rd-phase { padding-inline: 1rem; }
+  .race-tile .race-civic-art { height: 76px; margin-bottom: .55rem; }
+  .page-monitor .race-tile { min-height: 0; }
   .rd-chart-head { flex-wrap: wrap; }
   .rd-chart-head #rd-measure { width: 100%; }
   .rd-seg { grid-template-columns: repeat(3,minmax(0,1fr)); }

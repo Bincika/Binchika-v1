@@ -1,17 +1,9 @@
-// GET /api/news — election headlines from established Nigerian/African outlets (headline + link only).
+// GET /api/news — election headlines from established Exampleland/African outlets (headline + link only).
 // Fetched at the edge and cached for 10 minutes; a dead feed never breaks the others.
 import { parseFeed, electionOnly, mergeLatest } from "../_lib/rss.js";
+import { TENANT } from "../_lib/tenant.generated.js";
 
-const FEEDS = [
-  ["Premium Times", "https://www.premiumtimesng.com/feed"],
-  ["TheCable", "https://www.thecable.ng/feed"],
-  ["Channels TV", "https://www.channelstv.com/feed/"],
-  ["Punch", "https://punchng.com/feed/"],
-  ["Vanguard", "https://www.vanguardngr.com/feed/"],
-  ["The Guardian Nigeria", "https://guardian.ng/feed/"],
-  ["BBC News Pidgin", "https://feeds.bbci.co.uk/pidgin/rss.xml"],
-  ["Africa Check", "https://africacheck.org/rss.xml"],
-];
+const FEEDS = TENANT.news.feeds;
 const TTL = 600;
 
 export async function onRequestGet({ request, waitUntil }) {

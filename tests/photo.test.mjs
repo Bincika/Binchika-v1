@@ -140,7 +140,7 @@ test("pipeline: stores the cleaned file under full/ with its fingerprint, and th
   assert.equal(row.face_check, "detected");
   assert.ok(JSON.parse(row.media_removed).includes("EXIF (camera, location, time)") && row.media_processed_at);
   assert.equal(mediaKeyOf(row.media_ref), "full/2027/24-09-05-012/rep-1.jpg");
-  const view = await evidenceMedia(D1, EVIDENCE, "rep-1", { role: "szv", public_id: "V0007", states: ["NG-LA"], aal: "aal2" });
+  const view = await evidenceMedia(D1, EVIDENCE, "rep-1", { role: "szv", public_id: "V0007", states: ["XL-LA"], aal: "aal2" });
   assert.equal(view.status, 200);
   assert.equal(await sha256Hex(view.object.body), row.media_sha256, "the viewer serves exactly the stored, fingerprinted file");
   assert.equal(view.report.face_check, "detected");

@@ -4,41 +4,40 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Live public ledger of citizen-verified tallies · Binchika</title>
-<meta name="description" content="A live, hash-chained, append-only ledger of every processed polling-unit tally: confidence levels, discrepancies with IReV and a full audit trail you can verify in your own browser.">
-<link rel="canonical" href="https://binchika.com/ledger/">
+<meta name="description" content="A live, hash-chained, append-only ledger of every processed polling-unit tally: confidence levels, discrepancies with {{PORTAL}} and a full audit trail you can verify in your own browser.">
+<link rel="canonical" href="https://example.org/ledger/">
 <meta name="theme-color" content="#F6F5F1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0A0B0D" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Binchika · Africa's First Decentralised Election Ledger">
 <meta property="og:locale" content="en_GB">
 <meta property="og:title" content="Live public ledger of citizen-verified tallies · Binchika">
-<meta property="og:description" content="A live, hash-chained, append-only ledger of every processed polling-unit tally: confidence levels, discrepancies with IReV and a full audit trail you can verify in your own browser.">
-<meta property="og:url" content="https://binchika.com/ledger/">
-<meta property="og:image" content="https://binchika.com/assets/img/brand/agogo-1024.png">
+<meta property="og:description" content="A live, hash-chained, append-only ledger of every processed polling-unit tally: confidence levels, discrepancies with {{PORTAL}} and a full audit trail you can verify in your own browser.">
+<meta property="og:url" content="https://example.org/ledger/">
+<meta property="og:image" content="https://example.org/assets/img/brand/agogo-1024.png">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="/assets/img/brand/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="/assets/img/brand/agogo-256.png" sizes="256x256" type="image/png">
 <link rel="apple-touch-icon" href="/assets/img/brand/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/vendor/fonts/v12-9Bt23C1KxNDXMspQ1lPyU89-1h6ONRlW45G04pIo.woff2">
-<link rel="stylesheet" href="/assets/vendor/fonts.css?v=mvzj869s">
-<link rel="stylesheet" href="/assets/css/main.css?v=mvzj869s">
-<link rel="stylesheet" href="/assets/css/v3.css?v=mvzj869s">
+<link rel="stylesheet" href="/assets/vendor/fonts.css?v=mwkn6vgz">
+<link rel="stylesheet" href="/assets/css/main.css?v=mwkn6vgz">
+<link rel="stylesheet" href="/assets/css/v3.css?v=mwkn6vgz">
 
-<script src="/assets/js/theme-init.js?v=mvzj869s"></script>
+<script src="/assets/js/theme-init.js?v=mwkn6vgz"></script>
 </head>
 <body class="page-ledger">
 <a class="skip" href="#main">Skip to content</a>
 <header class="masthead">
   <div class="notice" role="note"><div class="wrap">
-    <span><strong>Not official results.</strong> Only <a href="https://www.inecnigeria.org/" rel="noopener">INEC</a> declares election results in Nigeria. Binchika is a citizen transparency layer.</span>
-    <span class="pledge-line">No party ads · equal space for all 22 parties · <a href="/about/#rules">our rules</a></span>
+    <span><strong>Not official results.</strong> Only <a href="https://example.org/" rel="noopener">EEC</a> declares election results in Exampleland. Binchika is a citizen transparency layer.</span>
+    <span class="pledge-line">No party ads · equal space for all 6 parties · <a href="/about/#rules">our rules</a></span>
   </div></div>
   <div class="bar"><div class="wrap">
     <a class="brand" href="/" aria-label="Binchika home"><img src="/assets/img/brand/agogo-128.webp" alt="" width="42" height="42"><span class="wordmark wm-sm" aria-label="Binchika"><span aria-hidden="true">Bin</span><span class="wm-hot" aria-hidden="true">chika</span></span></a>
     <nav class="nav" id="nav" aria-label="Main">
       <a href="/tally/">Live Tally Ledger</a>
-      <a href="/map/">Nigeria map</a>
       <a href="/parties/">Parties</a>
       <a href="/ledger/" aria-current="page">Ledger</a>
       <a href="/verifiers/">Verifiers</a>
@@ -46,7 +45,7 @@
       <a href="/about/">About</a>
       <a class="nav-portal" href="/portal/">Verifier &amp; admin sign-in</a>
     </nav>
-    <div class="clock" data-clock aria-label="Local time in Nigeria"><span class="clock-time" data-clock-time>--:--:--</span><span class="clock-meta" data-clock-meta>Abuja · WAT (UTC+1)</span></div>
+    <div class="clock" data-clock aria-label="Local time in Exampleland"><span class="clock-time" data-clock-time>--:--:--</span><span class="clock-meta" data-clock-meta>Example City · XLT (UTC+1)</span></div>
     <a class="icon-btn portal-btn" href="/portal/" aria-label="Verifier and admin sign-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/></svg></a>
     <button class="icon-btn theme-btn" type="button" data-theme-toggle aria-label="Switch colour theme"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.6A8.5 8.5 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1Z"/></svg></button>
     <button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -57,7 +56,7 @@
   <div class="wrap">
     <p class="eyebrow">Public ledger · append-only · hash-chained</p>
     <h1>Don't trust us. <span class="grad-text">Check us.</span></h1>
-    <p class="lede">Citizens photograph or report the posted result sheet. Binchika compares those reports with INEC's IReV uploads and writes high-agreement tallies to a public hash-chained ledger. Only INEC declares results. Each high-agreement polling-unit tally appears here within seconds. Each row is chained to the one before it by a SHA-256 hash, so any edit to history breaks the chain. You can verify the whole chain in your own browser with one click.</p>
+    <p class="lede">Citizens photograph or report the posted result sheet. Binchika compares those reports with EEC's ERP uploads and writes high-agreement tallies to a public hash-chained ledger. Only EEC declares results. Each high-agreement polling-unit tally appears here within seconds. Each row is chained to the one before it by a SHA-256 hash, so any edit to history breaks the chain. You can verify the whole chain in your own browser with one click.</p>
   </div>
 </section>
 
@@ -67,7 +66,7 @@
     <div class="kpis" aria-live="polite">
       <div class="kpi k1"><b id="k-entries">0</b><span>Ledger entries</span></div>
       <div class="kpi k2"><b id="k-high">0</b><span>High-confidence units</span></div>
-      <div class="kpi k3"><b id="k-disc">0</b><span>Mismatches with IReV</span></div>
+      <div class="kpi k3"><b id="k-disc">0</b><span>Mismatches with ERP</span></div>
       <div class="kpi k4"><b id="k-states">0</b><span>States reporting</span></div>
     </div>
 
@@ -103,8 +102,8 @@
           <th scope="col">Confidence</th>
           <th scope="col">Largest reported share</th>
           <th scope="col" class="num"><button type="button" data-sort="total">Votes</button></th>
-          <th scope="col">vs IReV</th>
-          <th scope="col"><button type="button" data-sort="recordedAt">Recorded (WAT)</button></th>
+          <th scope="col">vs ERP</th>
+          <th scope="col"><button type="button" data-sort="recordedAt">Recorded (XLT)</button></th>
           <th scope="col">Hash</th>
         </tr></thead>
         <tbody id="ledger-body"><tr><td colspan="11">Loading…</td></tr></tbody>
@@ -120,17 +119,28 @@
     <div class="flow" data-scroll-lit style="margin-top:1rem">
       <div class="lit-step panel"><strong>1 · Photo</strong><p class="muted" style="margin:.3rem 0 0">A citizen photographs or reports the posted result sheet. Their handle becomes a one-way hash.</p></div>
       <div class="lit-step panel"><strong>2 · Read</strong><p class="muted" style="margin:.3rem 0 0">Machine reading extracts each party's votes; uncertain reads go to people.</p></div>
-      <div class="lit-step panel"><strong>3 · Agree</strong><p class="muted" style="margin:.3rem 0 0">At least 85% of at least 3 independent reports must match for high confidence.</p></div>
-      <div class="lit-step panel"><strong>4 · Compare</strong><p class="muted" style="margin:.3rem 0 0">The tally is checked against INEC's IReV upload and the pre-election register.</p></div>
+      <div class="lit-step panel"><strong>3 · Agree</strong><p class="muted" style="margin:.3rem 0 0">At least 85% of at least 3 photos read by a person must match, and every group of two or more witnesses must have had a photo read.</p></div>
+      <div class="lit-step panel"><strong>4 · Compare</strong><p class="muted" style="margin:.3rem 0 0">The tally is checked against EEC's ERP upload and the pre-election register.</p></div>
       <div class="lit-step panel"><strong>5 · Chain</strong><p class="muted" style="margin:.3rem 0 0">A new entry is hashed onto the chain. Nothing can be edited, only added.</p></div>
     </div>
     <div class="pledge" style="margin-top:2.5rem" data-scroll-lit>
-      <div><h3>High confidence</h3><p>At least 85% of independent reports agree on every party's count, from at least 3 reporters. Only these reach the ledger as tallies.</p></div>
-      <div><h3>Mismatch with IReV</h3><p>The consensus citizen tally differs from INEC's IReV upload. The flag shows each party's difference. It is not an accusation.</p></div>
+      <div><h3>High confidence</h3><p>At least 85% of the reports whose photo has been read agree on every party's count, from at least 3 reporters, and every set of figures sent by two or more witnesses has had a photo read. Only these reach the ledger as tallies.</p></div>
+      <div><h3>Mismatch with ERP</h3><p>The consensus citizen tally differs from EEC's ERP upload. The flag shows each party's difference. It is not an accusation.</p></div>
       <div><h3>Correction</h3><p>A verifier raised a flag, a different Regional Verifier escalated it, AI re-investigated it and the BinchikAdmin recorded the correction. Corrections are new entries, so history is never edited.</p></div>
-      <div><h3>No result sheet</h3><p class="ec8a-rule"><strong>If Form EC8A is not available:</strong> other evidence, such as a video, handwritten numbers or a photo of the results board, is accepted only after a verifier has audited it, and it is marked as lower-confidence. It never appears here as a high-agreement tally on its own.</p></div>
+      <div><h3>No result sheet</h3><p class="ec8a-rule"><strong>If Form R1 is not available:</strong> other evidence, such as a video, handwritten numbers or a photo of the results board, is accepted only after a verifier has audited it, and it is marked as lower-confidence. It never appears here as a high-agreement tally on its own.</p></div>
     </div>
     <p class="source-note">The rules are code, not opinion: <a href="https://github.com/Bincika/Binchika-v1/blob/main/functions/_lib/consensus.js" rel="noopener">consensus.js</a> and <a href="https://github.com/Bincika/Binchika-v1/blob/main/functions/_lib/ledger.js" rel="noopener">ledger.js</a>. The browser verification uses the same ledger.js file.</p>
+
+    <h2 id="rule-changes" style="font-size:clamp(1.6rem,3vw,2.4rem);margin-top:3rem">Rule changes</h2>
+    <article class="panel" style="margin-top:1rem" aria-labelledby="rule-change-example">
+      <h3 id="rule-change-example" style="margin-top:0">What "high confidence" means</h3>
+      <p>A polling unit's figures reach this ledger only at <strong>high confidence</strong>, which needs two things:</p>
+      <ol>
+        <li><strong>At least 3 photos of the result sheet have been read by a person, and at least 85% of them show the same figures.</strong></li>
+        <li><strong>No group of people has been ignored.</strong> If at least two people have sent the same different figures for a unit, someone must read one of their photos before the unit can be posted. If none of them sends a photo when asked (three requests, none answered), the unit can be posted and the ledger says so.</li>
+      </ol>
+      <p class="source-note" style="margin-bottom:0">Each later change to these rules is listed here, with its date.</p>
+    </article>
   </div>
 </section>
 
@@ -151,12 +161,12 @@
     </ul>
     <p class="foot-line">© 2026 Oruanyi. All rights reserved. <span class="sep" aria-hidden="true">|</span> Designed and maintained by
       <a class="oru" href="https://oruanyi.com/" rel="noopener"><picture><source srcset="/assets/img/brand/oruanyi.webp" type="image/webp"><img src="/assets/img/brand/oruanyi.png" alt="Oruanyi" width="97" height="36"></picture></a></p>
-    <p class="foot-small foot-pipeline">Citizens photograph or report the posted result sheet. Binchika compares those reports with INEC's IReV uploads and writes high-agreement tallies to a public hash-chained ledger. Only INEC declares results.</p>
-    <p class="foot-small"><a href="/help/">Help</a> · <a href="/contact/">Contact</a> · <a href="/media/">For newsrooms</a> · <a href="/governance/">AI governance</a> · <a href="/sources/">Sources &amp; licences</a> · <a href="https://github.com/Bincika/Binchika-v1" rel="noopener">Open source (MIT)</a></p>
+    <p class="foot-small foot-pipeline">Citizens photograph or report the posted result sheet. Binchika compares those reports with EEC's ERP uploads and writes high-agreement tallies to a public hash-chained ledger. Only EEC declares results.</p>
+    <p class="foot-small"><a href="/help/">Help</a> · <a href="/contact/">Contact</a> · <a href="/media/">For newsrooms</a> · <a href="/governance/">AI governance</a> · <a href="/sources/">Sources &amp; licences</a> · <a href="https://github.com/Bincika/Binchika-v1" rel="noopener">Open source (MIT OR Apache-2.0)</a></p>
   </div>
 </footer>
-<script src="/assets/js/site.js?v=mvzj869s" type="module"></script>
-<script src="/assets/js/ledger.js?v=mvzj869s" type="module"></script>
-<script src="/assets/js/scroll-lit.js?v=mvzj869s" type="module"></script>
+<script src="/assets/js/site.js?v=mwkn6vgz" type="module"></script>
+<script src="/assets/js/ledger.js?v=mwkn6vgz" type="module"></script>
+<script src="/assets/js/scroll-lit.js?v=mwkn6vgz" type="module"></script>
 </body>
 </html>

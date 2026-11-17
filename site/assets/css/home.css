@@ -13,6 +13,12 @@
 .home-pipeline { max-width: 55ch; font-size: 1rem; line-height: 1.65; color: var(--ink-2); margin: 0 0 1.25rem; }
 .home-readiness { max-width: 58ch; margin: -.25rem 0 1.3rem; color: var(--ink-2); font-size: .84rem; line-height: 1.5; }
 .home-intro .cta-row { gap: .6rem; }
+/* App placeholder (session 141): nothing is in a store yet, so the buttons are real disabled buttons with no link. */
+.home-app { max-width: 58ch; margin-top: 1.75rem; padding: 1rem 1.1rem 1.1rem; border: 1px solid var(--line-2); border-radius: 14px; }
+.home-app-text { margin: 0 0 .85rem; font-size: .92rem; line-height: 1.5; color: var(--ink-2); }
+.home-app-text strong { color: var(--ink); }
+.home-app-btns { display: flex; flex-wrap: wrap; gap: .6rem; }
+.home-app-btn[disabled] { min-height: 44px; border-style: dashed; color: var(--ink-2); cursor: not-allowed; opacity: 1; transform: none; box-shadow: none; }
 .home-intro .btn, .home-next .btn { gap: .75rem; }
 .home-audit { font-size: .85rem; color: var(--ink-2); margin: 1rem 0 0; }
 .home-evidence { min-width: 0; padding-top: .25rem; }

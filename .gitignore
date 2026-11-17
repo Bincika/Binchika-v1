@@ -9,7 +9,18 @@ node_modules/
 Thumbs.db
 # raw scrapes can be large; keep manifests only
 data/raw/**/*.geojson
-data/raw/inec/**/*.pdf
+data/raw/body/**/*.pdf
 !data/raw/**/manifest.json
 __pycache__/
 .venv/
+# Android build (session 142): toolchain, signing material and build output never go into git
+.toolchain/
+.signing/
+*.jks
+*.keystore
+*.p12
+keystore.properties
+android-twa/.gradle/
+android-twa/**/build/
+android-twa/local.properties
+android-twa/release/

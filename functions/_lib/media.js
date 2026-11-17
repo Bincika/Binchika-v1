@@ -21,11 +21,13 @@ export const MEDIA_USES = {
   factcheck: "Fact-checking or verification",
 };
 export const MEDIA_POLLING = {
-  "15s": "Every 15 seconds (the fastest the feed changes)",
+  "15s": "Every 15 seconds",
   minute: "About once a minute",
   hour: "About once an hour",
   day: "Daily or less often",
 };
+// Requests logged before session 114 carry this earlier wording. Read only, never offered.
+const EARLIER_15S_LABEL = "Every 15 seconds (the fastest the feed changes)";
 export const MEDIA_TERMS = `Show “${TENANT.notice}” beside the figures, credit Binchika, and never present the figures as official results, a projection or a winner.`;
 export const FEED_URL = "https://binchika.com/api/press/snapshot?race=president";
 // Free mail providers: the address cannot show that the sender works for the organisation.
@@ -129,7 +131,7 @@ export function mediaChecks(text) {
   const line = (k) => (t.match(new RegExp(`^${k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}: (.*)$`, "m")) ?? [])[1]?.trim() ?? "";
   const type = Object.entries(MEDIA_TYPES).find(([, l]) => l === line("Type"))?.[0] ?? null;
   const use = Object.entries(MEDIA_USES).find(([, l]) => l === line("Intended use"))?.[0] ?? null;
-  const polling = Object.entries(MEDIA_POLLING).find(([, l]) => l === line("Checking the feed"))?.[0] ?? null;
+  const polling = Object.entries(MEDIA_POLLING).find(([, l]) => l === line("Checking the feed"))?.[0] ?? (line("Checking the feed") === EARLIER_15S_LABEL ? "15s" : null);
   const checks = {
     request: /^Media access request$/m.test(t),
     website: Boolean(hostOf(line("Website"))),
@@ -174,7 +176,7 @@ export function mediaDecisionOf(resolution) {
 
 /** The paragraph added to the automatic reply for a media access request. */
 export function mediaAutoReplyText() {
-  return `Your media access request is logged for review. We aim to reply within two working days.\n\nYou do not need to wait to start: the public press feed is open to everyone without a key at ${FEED_URL} (other races: senate, house, governor, state-assembly). It carries citizen-verified tallies only. Wherever you show the figures, please show "Citizen-verified tallies. Only INEC declares results." beside them.`;
+  return `Your media access request is logged for review. We aim to reply within two working days.\n\nYou do not need to wait to start: the public press feed is open to everyone without a key at ${FEED_URL} (other races: senate, house, governor, state-assembly). It carries citizen-verified tallies only. Wherever you show the figures, please show "${TENANT.notice}" beside them.`;
 }
 
 /** Draft replies for the reviewer to read, edit and send from the dashboard. Nothing is sent automatically. */
@@ -188,7 +190,9 @@ Thank you for your request. Your organisation is now registered for the Binchika
 
 How to connect
 - Address: ${FEED_URL}. The other races are senate, house, governor and state-assembly.
-- The feed is JSON and changes at most every 15 seconds; checking more often returns the same copy. No key is needed.
+- The feed is JSON. The figures update at most once a minute and can be up to about 75-90 seconds old under normal conditions. A new copy of the JSON is made at most every 15 seconds, so checking more often returns the same copy. No key is needed.
+- updatedAt is when this copy of the JSON was made. Show it as "Source: Binchika (binchika.com). Feed time 21:05 ${TENANT.locale.zoneLabel}.", not "as of".
+- figuresBuiltAt is when our last update built the figures. If it is more than about 12 minutes older than updatedAt, our update has stopped or is delayed: show "These figures may be out of date". If the update stays stopped, the feed answers 503 once the figures are more than 20 minutes old: keep your last figures up only with their feed time and those same words. The guide is at https://binchika.com/media/.
 - To check the figures yourself, read https://binchika.com/api/ledger and verify the hash chain with our open-source code (https://github.com/Bincika/Binchika-v1).
 
 The terms you accepted

@@ -1,4 +1,4 @@
-# Contained OCR for Form EC8A (session 88)
+# Contained OCR for Form R1 (session 88)
 
 **Status:** built, tested, deployed **switched off** (`OCR_ENGINE = "off"` in `wrangler.toml`). Turning it on is an owner decision (see the end).
 

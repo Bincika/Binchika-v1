@@ -6,7 +6,8 @@ import { postingGates } from "./ec8a.js";
 import { makeEntry, genesis } from "./ledger.js";
 import { stateOfPu } from "./results.js";
 
-export const CYCLE = "ng-2027";
+import { TENANT as CYCLE_TENANT } from "./tenant.generated.js";
+export const CYCLE = CYCLE_TENANT.ledgerCycle;
 
 export async function ledgerHead(db) {
   const row = await db.prepare("SELECT seq, hash FROM ledger_entries ORDER BY seq DESC LIMIT 1").first();
@@ -34,7 +35,7 @@ export async function appendEntry(db, body) {
  * AND every posting gate passes (ec8a.js postingGates).
  * Which readings count (session 88, docs/protocol/AI-GOVERNANCE.md): a result-sheet reading counts only once a verifier
  * has confirmed it ("verified") or a calibrated machine reading cleared every field ("ocr_done"). "needs_review" no
- * longer counts. Alternative evidence (no Form EC8A) counts only once a verifier has approved it, and can only make a
+ * longer counts. Alternative evidence (no Form R1) counts only once a verifier has approved it, and can only make a
  * unit "lower", never "high" (unitConsensus in consensus.js), so it never reaches the ledger on its own.
  * A unit that is high but fails a gate is stored as "held": it is not posted and is not in the public totals.
  */

@@ -1,6 +1,6 @@
 # Verifier invite-code flow
 
-_Status: **built (session 6, 26 Oct 2026)**: migration `0007_invites_pledges.sql`, `functions/_lib/invites.js`, `/api/join/*`, `/api/admin/invites`, `/api/admin/release`, `/join/`, `/join/pledge/` and portal Seats/Account. It is inert until applications open, because every invite needs a screened application (constitution §5: no applications before the privacy notice). It extends the existing `verifier_offers` table (24 h first wave, 6 h backfill), the seat binding (`0004_seats.sql`) and the hierarchy guards (`0003`). Display names: **BinchikAdmin** (role key `superadmin`) and **OpsAdmin** (role key `admin`)._
+_Status: **built (session 6, 26 Oct 2026)**: migration `0007_invites_pledges.sql`, `functions/_lib/invites.js`, `/api/join/*`, `/api/admin/invites`, `/api/admin/release`, `/join/`, `/join/pledge/` and portal Seats/Account. It stays inert while applications are closed, because every invite needs a screened application (constitution §5: no applications before the privacy notice). It extends the existing `verifier_offers` table (24 h first wave, 6 h backfill), the seat binding (`0004_seats.sql`) and the hierarchy guards (`0003`). Display names: **BinchikAdmin** (role key `superadmin`) and **OpsAdmin** (role key `admin`)._
 
 ## 1. The flow at a glance
 
@@ -19,7 +19,7 @@ BinchikAdmin                 Invitee (SZV / NRV)                     Server (Pag
                                                                       create Auth user (unconfirmed);
                                                                       verifiers row: seat bound, active = false
                               4. Branded confirmation email ◀──────   Supabase admin "generate link" (signup)
-                                 from noreply@binchika.com            sent through Resend with our template
+                                 from noreply@mail.example.org            sent through Resend with our template
                               5. Click link → /join/pledge/
                                  type full name, tick, sign ─────▶   store pledge (version, text hash, typed
                                                                       name, server timestamp); active = true;
@@ -37,8 +37,9 @@ BinchikAdmin                 Invitee (SZV / NRV)                     Server (Pag
 - Window: **24 h** for first-wave offers, **6 h** for backfill (constitution §4a). `expire_and_backfill()` already handles both.
 
 ### Step 2: enter the code
-- `/join/` asks for the code only. `POST /api/join/check { code }` returns the seat number and area (for example "SZV-073 · Lagos"), nothing else.
-- Five wrong attempts per code, or 10 per IP address per 15 minutes, then a cool-down. Error messages are generic ("That code isn't valid or has expired"). Cloudflare Turnstile on the form keeps bots out.
+- `/join/` asks for the code only. `POST /api/join/check { code }` returns the seat number and area (for example "SZV-073 · Region LA"), nothing else.
+- Five wrong attempts per code, or 10 per IP address per 15 minutes, then a cool-down. Error messages are generic ("That code isn't valid or has expired").
+- Cloudflare Turnstile is **not** on this form. It was planned and has not been built (section 5; section 6, step 4). The limits above are the only automated guard. _Corrected 10 November 2026 (session 136): this step used to say Turnstile was on the form._
 
 ### Step 3: email, password, state or region
 - Fields: email, password (minimum 12 characters, checked against common-password lists), confirm password, and **state** (SZV) or **region** (NRV).
@@ -47,16 +48,16 @@ BinchikAdmin                 Invitee (SZV / NRV)                     Server (Pag
 - The server creates the Supabase Auth user through the admin API (public sign-ups stay **off**), then inserts the `verifiers` row with `seat_code` bound and `active = false`. The public ID (V0002, V0003…) is issued now.
 
 ### Step 4: branded confirmation email
-- The server asks Supabase for a confirmation link (admin "generate link", type `signup`) and sends it through Resend from **noreply@binchika.com** with a new `seatConfirmation({ seat, publicId, link })` template in `functions/_lib/emails.js`: the dash icon, "Confirm seat SZV-073", one button, and expiry in 24 hours.
+- The server asks Supabase for a confirmation link (admin "generate link", type `signup`) and sends it through Resend from **noreply@mail.example.org** with a new `seatConfirmation({ seat, publicId, link })` template in `functions/_lib/emails.js`: the dash icon, "Confirm seat SZV-073", one button, and expiry in 24 hours.
 - Supabase's own mailer is not used for this step, so branding and sender stay consistent.
 
 ### Step 5: typed-name pledge
 - The confirmation link lands on `/join/pledge/`. The page shows the pledge (section 4), its version and its SHA-256.
 - The invitee types their **full name** and ticks "I have read and accept the Binchika verifier pledge".
-- The server stores `verifier_pledges (user_id, seat_code, public_id, pledge_version, pledge_sha256, typed_name, signed_at default now())`. The timestamp is the server's, shown in WAT.
+- The server stores `verifier_pledges (user_id, seat_code, public_id, pledge_version, pledge_sha256, typed_name, signed_at default now())`. The timestamp is the server's, shown in XLT.
 - The typed name is stored privately, with no client access, readable only by the BinchikAdmin. It is never shown to other verifiers or the public.
 - Then `active = true`, the welcome packet goes out, and the seat board shows the seat as taken.
-- The public record gets a **seat event** that carries no name: "SZV-073 · V0002 · pledge P-2026-2 signed 2026-12-07 14:05 WAT".
+- The public record gets a **seat event** that carries no name: "SZV-073 · V0002 · pledge P-2026-2 signed 2026-12-07 14:05 XLT".
 
 ### Step 6: remove and reassign (BinchikAdmin only)
 - **Release seat** needs a written reason. It sets `active = false` and `seat_code = null`, ends the person's sessions (Auth admin sign-out, and a ban so the account can't sign back in), and appends a `seat_events` row. That table is append-only, blocked from UPDATE and DELETE like the ledger.
@@ -87,10 +88,10 @@ _P-2026-2 (27 Oct 2026) is P-2026-1 with the top role renamed from "BinchikaAdmi
 > 4. **My area only.** I will act only for the state or region of my seat.
 > 5. **Anonymity.** I will use only my seat number and public ID in meetings and messages. I will not share any verifier's identity, including my own, and I will not share a phone number on Binchika channels.
 > 6. **Confidentiality.** I will keep reporters' data, unpublished flags and internal discussions private, and use them only for verifying.
-> 7. **INEC declares.** I will never present Binchika's work as an official result or declare a winner.
+> 7. **EEC declares.** I will never present Binchika's work as an official result or declare a winner.
 > 8. **Stepping down.** If I can no longer meet this pledge, I will tell Binchika and give up my seat. I accept that the BinchikAdmin may release my seat if I break it.
 >
-> Typed name: ________________ · Signed (server time, WAT): ________________ · Pledge P-2026-2, SHA-256 ________________
+> Typed name: ________________ · Signed (server time, XLT): ________________ · Pledge P-2026-2, SHA-256 ________________
 
 This wording needs review by a data-protection professional together with the privacy notice before applications open (constitution §5). Any change creates a new version; nobody is ever shown as having signed wording they did not see.
 
@@ -113,7 +114,7 @@ This wording needs review by a data-protection professional together with the pr
 1. Migration 0007 and its tests.
 2. `/api/admin/invites`, `/api/join/check`, `/api/join/claim` and `/api/join/pledge`, plus the `seatConfirmation` email template.
 3. The `/join/` and `/join/pledge/` pages, then Release and Reassign in the portal Seats section.
-4. Turnstile and the rate limits.
+4. Turnstile and the rate limits. _(Status, 10 November 2026: the rate limits are built. Turnstile is not built.)_
 5. An end-to-end test on a preview deployment with a test inbox, before production.
 
 ## 7. Session 8 additions (27 Oct 2026): code types, OpsAdmin seats, locks
@@ -124,9 +125,11 @@ Built in migration `0009_admin_lock_ops_seats_flexible_codes.sql`, with tests in
 
 | Type | What the invitee sees at `/join/` | When to use it |
 |---|---|---|
-| **SZV code** | The three SZV seats of the state they applied for. Open seats can be picked; taken or reserved seats are greyed out. | The normal case: let the volunteer pick. |
+| **SZV code** | The SZV seats of the state they applied for: 3, 5 or 7, depending on the state (see the note below). Open seats can be picked; taken or reserved seats are greyed out. | The normal case: let the volunteer pick. |
 | **NRV code** | The three NRV seats of the region containing their state, shown the same way. | The normal case for NRVs. |
 | **Specific seat** | One exact seat. | Backfilling a particular seat. |
+
+_Corrected 10 November 2026 (session 136): the SZV row used to say "the three SZV seats". Since migration `0010_szv_recalibration.sql` (session 54) a state has 3, 5 or 7 SZV seats, 129 in all. A region still has three NRV seats, 24 in all._
 
 - **Area rule.** A code never shows seats outside the applicant's area (constitution §4a). The database refuses such a seat even if someone sends one by hand.
 - **Picking a seat.** The seat is chosen at claim time and locked in the database, so two invitees can never take the same seat. If one gets there first, the other is told the seat has just been taken and the list refreshes.

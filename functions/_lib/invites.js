@@ -54,7 +54,7 @@ export async function sendEmail(env, to, mail) {
   if (!env.RESEND_API_KEY) return false;
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST", headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({ from: "Binchika <noreply@binchika.com>", to: [to], subject: (env.EMAIL_SUBJECT_PREFIX ?? "") + mail.subject, html: mail.html }),
+    body: JSON.stringify({ from: "Binchika <noreply@mail.example.org>", to: [to], subject: (env.EMAIL_SUBJECT_PREFIX ?? "") + mail.subject, html: mail.html }),
   });
   return r.ok;
 }

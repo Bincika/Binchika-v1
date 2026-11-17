@@ -1,5 +1,5 @@
 // POST /api/portal/evidence {reportId, decision: "approved"|"rejected", note} — a signed-in SZV or NRV audits one piece
-// of alternative evidence (no Form EC8A) from their own state or region. Lower-confidence by design; see
+// of alternative evidence (no Form R1) from their own state or region. Lower-confidence by design; see
 // functions/_lib/evidence.js and docs/EVIDENCE-AUDIT.md. Reporter identities are never returned.
 import { userFromRequest, verifierFor, rest, supaConfigured, json } from "../../_lib/supa.js";
 import { auditEvidence } from "../../_lib/evidence.js";

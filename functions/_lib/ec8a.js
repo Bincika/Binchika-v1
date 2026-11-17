@@ -1,25 +1,22 @@
-// Form EC8A rules applied on ingest and before the ledger (session 88; docs/reports/2026-11-01-production-readiness.md).
+import { TENANT } from "./tenant.generated.js";   // area table, code example, body name
+// Form R1 rules applied on ingest and before the ledger (session 88; docs/reports/2026-11-01-production-readiness.md).
 // Promoted from the session 87 sandbox (sandbox/readiness/ec8a-rules.mjs) into the live pipeline. Pure; shared by the
 // API, the pipeline, scripts and tests. Fail closed: anything these rules cannot confirm stays out of the count.
 
 // ---------- Polling-unit codes ----------
-// INEC codes are state-lga-ward-unit (24-09-05-012). They carry no check digit, so the equivalent check is positional:
-// the state must be 01–37, the LGA must exist in that state (INEC numbers a state's LGAs 01…N), and ward and unit must
-// be non-zero. LGA counts per INEC state code, from site/data/states.json (774 in all); a unit test keeps them in step.
-export const LGA_COUNT = {
-  "01": 17, "02": 21, "03": 31, "04": 21, "05": 20, "06": 8, "07": 23, "08": 27, "09": 18, "10": 25, "11": 13, "12": 18,
-  "13": 16, "14": 17, "15": 11, "16": 27, "17": 27, "18": 23, "19": 44, "20": 34, "21": 21, "22": 21, "23": 16, "24": 20,
-  "25": 13, "26": 25, "27": 20, "28": 18, "29": 30, "30": 33, "31": 17, "32": 23, "33": 23, "34": 16, "35": 17, "36": 14, "37": 6,
-};
+// EEC codes are state-lga-ward-unit (24-09-05-012). They carry no check digit, so the equivalent check is positional:
+// the state must be 01–37, the district must exist in that state (EEC numbers a state's districts 01…N), and ward and unit must
+// be non-zero. district counts per EEC state code, from site/data/states.json (774 in all); a unit test keeps them in step.
+export const LGA_COUNT = TENANT.pollingUnits.areaCount;
 const PU = /^\d{2}-\d{2}-\d{2}-\d{3}$/;
 
-/** null when the code is a plausible INEC polling unit; otherwise a short reason for the person who sent it. */
+/** null when the code is a plausible EEC polling unit; otherwise a short reason for the person who sent it. */
 export function puProblem(code) {
   const t = String(code ?? "");
-  if (!PU.test(t)) return "must look like 24-09-05-012";
+  if (!PU.test(t)) return `must look like ${TENANT.pollingUnits.codeExample}`;
   const [state, lga, ward, unit] = t.split("-");
-  if (!LGA_COUNT[state]) return `state ${state} is not an INEC state code (01–37)`;
-  if (Number(lga) < 1 || Number(lga) > LGA_COUNT[state]) return `LGA ${lga} does not exist in state ${state} (01–${String(LGA_COUNT[state]).padStart(2, "0")})`;
+  if (!LGA_COUNT[state]) return `state ${state} is not an ${TENANT.electoralBody.short} state code (01–${Object.keys(LGA_COUNT).sort().at(-1)})`;
+  if (Number(lga) < 1 || Number(lga) > LGA_COUNT[state]) return `${TENANT.text.areaLabel} ${lga} does not exist in state ${state} (01–${String(LGA_COUNT[state]).padStart(2, "0")})`;
   if (Number(ward) < 1) return "ward cannot be 00";
   if (Number(unit) < 1) return "unit cannot be 000";
   return null;
@@ -48,7 +45,7 @@ export function ballotVerdict({ marks, boxes, identifies = false, outside = fals
 const whole = (n) => Number.isInteger(n) && n >= 0;
 
 /**
- * The control totals of one Form EC8A against its party tally.
+ * The control totals of one Form R1 against its party tally.
  * controls: { register, accredited, rejected, spoiled?, valid?, cast?, cancelled? }
  * Rules: a cancelled unit has no tally; party votes are whole numbers and never include void ballots; valid = sum of
  * parties (if the sheet states it); cast = valid + rejected (if stated); cast ≤ accredited ≤ register.
@@ -79,14 +76,14 @@ export function assessControls(controls, tally) {
 
 // ---------- Posting gates: what may reach the ledger ----------
 /**
- * Every gate must pass before a unit's tally is posted. IReV agreement is deliberately not a gate: a difference is
+ * Every gate must pass before a unit's tally is posted. ERP agreement is deliberately not a gate: a difference is
  * stored on the entry and the citizen tally is still published (constitution §4); it is shown as a mismatch.
  * @param {{ puCode: string, consensus: { status: string }, counted: { checksOk: boolean }[], baseline: { severity: string } | null }} u
  * @returns {{ post: boolean, score: number, gates: { id: string, pass: boolean, why: string }[] }}
  */
 export function postingGates({ puCode, consensus, counted, baseline }) {
   const gates = [
-    { id: "polling-unit", pass: puProblem(puCode) === null, why: "a real INEC polling-unit position" },
+    { id: "polling-unit", pass: puProblem(puCode) === null, why: `a real ${TENANT.electoralBody.short} polling-unit position` },
     { id: "consensus", pass: consensus?.status === "high", why: "at least three independent reports agreeing at 85% or more" },
     { id: "human-or-confident", pass: counted.length > 0, why: "every counted reading confirmed by a verifier (or a confident machine reading)" },
     { id: "control-totals", pass: counted.length > 0 && counted.every((r) => r.checksOk), why: "every counted sheet balances: cast = valid + rejected ≤ accredited ≤ register" },

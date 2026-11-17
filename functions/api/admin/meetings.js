@@ -33,7 +33,7 @@ export async function onRequestPost({ request, env }) {
       (v.role === "szv" && (aud.states?.includes(v.state_iso) || regionStates.includes(v.state_iso)))));
     label = aud.regions?.length || aud.states?.length ? [...(aud.regions ?? []), ...(aud.states ?? [])].join(", ") : "All verifiers";
   }
-  const whenWAT = new Date(b.when).toLocaleString("en-GB", { timeZone: TENANT.locale.timeZone, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) + " WAT";
+  const whenWAT = new Date(b.when).toLocaleString("en-GB", { timeZone: TENANT.locale.timeZone, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) + "" + " " + TENANT.locale.zoneLabel;
   if (b.dryRun) return json({ recipients: picked.length, selected: aud.seats?.length ?? null, seats: picked.map((v) => v.seat_code ?? v.public_id) });
 
   const msgs = [];
@@ -41,7 +41,7 @@ export async function onRequestPost({ request, env }) {
     const u = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users/${v.user_id}`, { headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` } }).then((r) => r.json()).catch(() => null);
     if (!u?.email) continue;
     const mail = meetingInvite({ seat: v.seat_code ?? v.public_id, title: b.title, whenWAT, link: b.link, agenda: (b.agenda ?? []).slice(0, 12), audience: label, channel });
-    msgs.push({ from: "Binchika <noreply@binchika.com>", to: [u.email], subject: mail.subject, html: mail.html });
+    msgs.push({ from: "Binchika <noreply@mail.example.org>", to: [u.email], subject: mail.subject, html: mail.html });
   }
   let sent = 0;
   for (let i = 0; i < msgs.length; i += 100) {

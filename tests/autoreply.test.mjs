@@ -14,9 +14,9 @@ function fakeDB(firstAnswers = []) {
     },
   };
 }
-const RAW = ["From: Ada <ada@example.org>", "To: ops@binchika.com", "Subject: Seat question", "Message-ID: <m-1@example.org>", "Content-Type: text/plain", "", "Hello Ops.", ""].join("\r\n");
+const RAW = ["From: Ada <ada@example.org>", "To: ops@mail.example.org", "Subject: Seat question", "Message-ID: <m-1@example.org>", "Content-Type: text/plain", "", "Hello Ops.", ""].join("\r\n");
 // An incoming message as the Email Worker sees it; log records the order of forward, store and send.
-function incoming(log, { from = "ada@example.org", to = "ops@binchika.com", headers = {}, forwardFails = false } = {}) {
+function incoming(log, { from = "ada@example.org", to = "ops@mail.example.org", headers = {}, forwardFails = false } = {}) {
   return {
     from, to, raw: new TextEncoder().encode(RAW),
     headers: new Headers({ subject: "Seat question", "message-id": "<m-1@example.org>", ...headers }),
@@ -36,8 +36,8 @@ test("auto-reply: answers people, never robots, lists, bounces, failed authentic
     [{ from: "" }, "no usable sender"],
     [{ from: "<>" }, "no usable sender"],
     [{ from: "a@b@c.org" }, "no usable sender"],
-    [{ from: "ops@binchika.com" }, "own domain"],
-    [{ from: "x@mail.binchika.com" }, "own domain"],
+    [{ from: "ops@mail.example.org" }, "own domain"],
+    [{ from: "x@mail.mail.example.org" }, "own domain"],
     [{ from: "noreply@bank.example" }, "automated sender"],
     [{ from: "no-reply@bank.example" }, "automated sender"],
     [{ from: "MAILER-DAEMON@mx.example" }, "automated sender"],
@@ -61,18 +61,18 @@ test("auto-reply: answers people, never robots, lists, bounces, failed authentic
 
 test("auto-reply: the message thanks them, comes from noreply@, Reply-To the address they wrote to, and quotes nothing", () => {
   const m = autoReplyMail({ mailbox: "accounts", subject: "Manifesto <b>request</b>\r\nBcc: x@evil.test", messageId: "<p-1@example.org>" });
-  assert.equal(m.from, "Binchika <noreply@binchika.com>");
-  assert.equal(m.replyTo, "accounts@binchika.com");
+  assert.equal(m.from, "Binchika <noreply@mail.example.org>");
+  assert.equal(m.replyTo, "accounts@mail.example.org");
   assert.equal(m.subject, "Re: Manifesto <b>request</b> Bcc: x@evil.test", "no header injection");
-  assert.match(m.text, /^Thank you for contacting Binchika\. This is an automatic reply to confirm that your message to accounts@binchika\.com has arrived\./);
+  assert.match(m.text, /^Thank you for contacting Binchika\. This is an automatic reply to confirm that your message to accounts@mail\.example\.org has arrived\./);
   assert.match(m.text, /The Binchika team will get in touch soon\./);
   assert.match(m.html, /agogo-128\.png/);
   assert.match(m.html, /Manifesto &lt;b&gt;request/, "subject is escaped in the HTML");
-  assert.match(m.html, /Only INEC declares election results/);
+  assert.match(m.html, /Only EEC declares election results/);
   assert.deepEqual(m.headers, { "Auto-Submitted": "auto-replied", "X-Auto-Response-Suppress": "All", "In-Reply-To": "<p-1@example.org>", References: "<p-1@example.org>" });
   const bare = autoReplyMail({ mailbox: "elsewhere", subject: "", messageId: "not an id" });
   assert.equal(bare.subject, "We have received your message");
-  assert.equal(bare.replyTo, "noreply@binchika.com");
+  assert.equal(bare.replyTo, "noreply@mail.example.org");
   assert.equal(bare.headers["In-Reply-To"], undefined);
 });
 
@@ -84,16 +84,16 @@ test("worker: forwards, then stores, then sends one auto-reply recorded in Sent"
   assert.deepEqual(log, ["forward", "store", "reply"], "forwarding and the Inbox copy come first");
   const b = sent[0].body;
   assert.equal(sent[0].url, "https://api.resend.com/emails");
-  assert.equal(b.from, "Binchika <noreply@binchika.com>");
+  assert.equal(b.from, "Binchika <noreply@mail.example.org>");
   assert.deepEqual(b.to, ["ada@example.org"]);
-  assert.equal(b.reply_to, "ops@binchika.com");
+  assert.equal(b.reply_to, "ops@mail.example.org");
   assert.equal(b.subject, "Re: Seat question");
   assert.equal(b.headers["Auto-Submitted"], "auto-replied");
   const check = DB.calls.find((c) => /SELECT COUNT/.test(c.sql));
   assert.deepEqual(check.args, ['["ada@example.org"]', AUTO_REPLY_SENDER]);
   const row = DB.calls.findLast((c) => /INSERT INTO mail_messages/.test(c.sql));
   assert.match(row.sql, /VALUES \(\?1, 'out', 'noreply'/);
-  assert.equal(row.args[1], "noreply@binchika.com");
+  assert.equal(row.args[1], "noreply@mail.example.org");
   assert.equal(row.args[3], '["ada@example.org"]');
   assert.equal(row.args[7], "<m-1@example.org>");
   assert.equal(row.args[8], "re_auto");

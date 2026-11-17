@@ -20,18 +20,18 @@ function sqliteD1() {
 }
 const mailRow = (D1, id) => D1.db.prepare("INSERT INTO mail_messages (id, direction, mailbox, from_addr, to_addrs, subject) VALUES (?, 'in', 'ops', 'a@example.org', '[]', 's')").run(id);
 
-test("references use the month in Lagos time and pad to four digits", () => {
+test("references use the month in Region LA time and pad to four digits", () => {
   assert.equal(yymmOf(new Date("2026-10-31T22:30:00Z")), "2610");
-  assert.equal(yymmOf(new Date("2026-10-31T23:30:00Z")), "2611", "00:30 on 1 Nov in Lagos is November");
+  assert.equal(yymmOf(new Date("2026-10-31T23:30:00Z")), "2611", "00:30 on 1 Nov in Region LA is November");
   assert.equal(refOf("2611", 42), "BIN-2611-0042");
   assert.equal(refOf("2611", 12345), "BIN-2611-12345");
 });
 
-test("due dates skip weekends (two working days, Lagos time)", () => {
+test("due dates skip weekends (two working days, Region LA time)", () => {
   assert.equal(dueAfter(new Date("2026-11-02T09:00:00Z")).toISOString(), "2026-11-04T09:00:00.000Z", "Monday → Wednesday");
   assert.equal(dueAfter(new Date("2026-11-06T09:00:00Z")).toISOString(), "2026-11-10T09:00:00.000Z", "Friday → Tuesday");
   assert.equal(dueAfter(new Date("2026-11-07T09:00:00Z")).toISOString(), "2026-11-10T09:00:00.000Z", "Saturday → Tuesday");
-  assert.equal(dueAfter(new Date("2026-11-06T23:30:00Z")).toISOString(), "2026-11-09T23:30:00.000Z", "Friday 23:30 UTC is Saturday 00:30 in Lagos → Tuesday 00:30 Lagos");
+  assert.equal(dueAfter(new Date("2026-11-06T23:30:00Z")).toISOString(), "2026-11-09T23:30:00.000Z", "Friday 23:30 UTC is Saturday 00:30 in Region LA → Tuesday 00:30 Region LA");
 });
 
 test("numbers run in order and restart each month; never shared", async () => {
@@ -85,7 +85,7 @@ test("updates: validated, closing stamps closed_at, reopening clears it, the act
 });
 
 test("subject and automatic reply carry the reference; email without one is unchanged", () => {
-  const f = { nature: "data", message: "Please send the data behind the Lagos register figures today." };
+  const f = { nature: "data", message: "Please send the data behind the Region LA register figures today." };
   assert.match(subjectFor(f, "BIN-2611-0042"), /^\[BIN-2611-0042 · Data request\] Please send/);
   assert.match(subjectFor(f), /^\[Binchika · Data request\]/);
   const withRef = autoReplyMail({ mailbox: "accounts", subject: "x", messageId: null, reference: "BIN-2611-0042" });

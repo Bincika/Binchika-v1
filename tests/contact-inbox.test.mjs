@@ -36,7 +36,7 @@ function setup({ resendFails = false } = {}) {
   };
   return { env, sent, restore: () => { globalThis.fetch = real; } };
 }
-function form({ nature = "data", name = "Ada Obi", email = "ada@example.org", message = "Please send the data behind the Lagos register figures.", files = [], ip = "1.2.3.4" } = {}) {
+function form({ nature = "data", name = "Ada Obi", email = "ada@example.org", message = "Please send the data behind the Region LA register figures.", files = [], ip = "1.2.3.4" } = {}) {
   const fd = new FormData();
   for (const [k, v] of Object.entries({ nature, name, email, message, website: "", renderedAt: String(Date.now() - 10_000) })) fd.append(k, v);
   for (const f of files) fd.append("files", f);
@@ -56,8 +56,8 @@ test("an enquiry reaches the owner first, then the Inbox, then the sender gets t
     assert.equal(s.sent[0].reply_to, "ada@example.org");
     assert.equal(s.sent[0].attachments.length, 1);
     assert.deepEqual(s.sent[1].to, ["ada@example.org"], "then the automatic reply to the sender");
-    assert.match(s.sent[1].from, /noreply@binchika\.com/);
-    assert.equal(s.sent[1].reply_to, "accounts@binchika.com", "replies go to the mailbox for that kind of enquiry");
+    assert.match(s.sent[1].from, /noreply@mail\.example\.org/);
+    assert.equal(s.sent[1].reply_to, "accounts@mail.example.org", "replies go to the mailbox for that kind of enquiry");
     assert.equal(s.sent[1].headers["Auto-Submitted"], "auto-replied");
 
     const [inn] = rows(s.env, "in");
@@ -75,7 +75,7 @@ test("an enquiry reaches the owner first, then the Inbox, then the sender gets t
     assert.equal(t.mail_id, inn.id);
     assert.equal(t.status, "new");
     assert.equal(t.mailbox, "accounts");
-    assert.match(inn.body_text, /Lagos register figures/);
+    assert.match(inn.body_text, /Region LA register figures/);
     assert.deepEqual(JSON.parse(inn.attachments).map((a) => [a.filename, a.size]), [["evidence.pdf", 8]]);
     const raw = s.env.EVIDENCE.m.get(inn.raw_key);
     const parsed = await PostalMime.parse(raw);
@@ -120,7 +120,7 @@ test("if the owner's copy cannot be sent, nothing is stored and no reply goes ou
 test("our own domain is stored but never auto-answered (no loops)", async () => {
   const s = setup();
   try {
-    const r = await quiet(() => onRequestPost({ request: form({ email: "ops@binchika.com" }), env: s.env }));
+    const r = await quiet(() => onRequestPost({ request: form({ email: "ops@mail.example.org" }), env: s.env }));
     assert.equal(r.status, 200);
     assert.equal(rows(s.env, "in").length, 1);
     assert.equal(rows(s.env, "out").length, 0);
@@ -139,14 +139,14 @@ test("AUTO_REPLY off: stored, not answered", async () => {
 });
 
 test("non-ASCII names, subjects and file names survive the round trip", async () => {
-  const raw = contactEml({ mailbox: "ops", name: "Ọlá \"Ade\"", email: "ola@example.org", subject: "[Binchika · Verifier question] Ìbéèrè nípa ìjókòó", text: "Ẹ káàsán.\nLine two.", messageId: "<contact-1@binchika.com>",
+  const raw = contactEml({ mailbox: "ops", name: "Ọlá \"Ade\"", email: "ola@example.org", subject: "[Binchika · Verifier question] Ìbéèrè nípa ìjókòó", text: "Ẹ káàsán.\nLine two.", messageId: "<contact-1@mail.example.org>",
     files: [{ filename: "fọ́tò.png", type: "image/png", bytes: new Uint8Array([137, 80, 78, 71]) }] });
   const p = await PostalMime.parse(raw);
   assert.equal(p.from.address, "ola@example.org");
   assert.equal(p.from.name, "Ọlá  Ade");
   assert.equal(p.subject, "[Binchika · Verifier question] Ìbéèrè nípa ìjókòó");
   assert.equal(p.text.trim(), "Ẹ káàsán.\nLine two.");
-  assert.equal(p.to[0].address, "ops@binchika.com");
+  assert.equal(p.to[0].address, "ops@mail.example.org");
   assert.equal(p.attachments[0].filename, "fọ́tò.png");
   assert.equal(p.attachments[0].content.byteLength, 4);
 });

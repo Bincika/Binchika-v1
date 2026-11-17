@@ -8,27 +8,27 @@ declare seq_keep record;
   boss text := (select public_id from public.verifiers where role = 'superadmin' limit 1);
 begin
   select last_value, is_called into seq_keep from public.verifier_public_seq;
-  select code into s1 from public.seat_board where role = 'szv' and state_iso = 'NG-LA' and not taken order by ordinal limit 1;
-  select code into s2 from public.seat_board where role = 'szv' and state_iso = 'NG-LA' and not taken and code <> s1 order by ordinal limit 1;
-  select code into s3 from public.seat_board where role = 'szv' and state_iso = 'NG-LA' and not taken and code not in (s1, s2) order by ordinal limit 1;
-  select code into s4 from public.seat_board where role = 'szv' and state_iso = 'NG-LA' and not taken and code not in (s1, s2, s3) order by ordinal limit 1;
+  select code into s1 from public.seat_board where role = 'szv' and state_iso = 'XL-LA' and not taken order by ordinal limit 1;
+  select code into s2 from public.seat_board where role = 'szv' and state_iso = 'XL-LA' and not taken and code <> s1 order by ordinal limit 1;
+  select code into s3 from public.seat_board where role = 'szv' and state_iso = 'XL-LA' and not taken and code not in (s1, s2) order by ordinal limit 1;
+  select code into s4 from public.seat_board where role = 'szv' and state_iso = 'XL-LA' and not taken and code not in (s1, s2, s3) order by ordinal limit 1;
 
   insert into auth.users (id, aud, role, email) values (u_old,'authenticated','authenticated','old@t.invalid'), (u_new,'authenticated','authenticated','new@t.invalid'),
     (u_live,'authenticated','authenticated','live@t.invalid'), (u_claim,'authenticated','authenticated','claim@t.invalid');
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name) values ('NG-LA','origin','szv','{}',80,'old@t.invalid','accepted','Old Holder') returning id into a_old;
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name) values ('NG-LA','origin','szv','{}',80,'new@t.invalid','accepted','New Holder') returning id into a_new;
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name) values ('NG-LA','origin','szv','{}',80,'live@t.invalid','accepted','Live Holder') returning id into a_live;
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name) values ('NG-LA','origin','szv','{}',80,'claim@t.invalid','accepted','Never Pledged') returning id into a_claim;
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('NG-LA','origin','szv','{}',70,'none@t.invalid','eligible') returning id into a_none;
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('NG-KN','residence','nrv','{}',60,'none2@t.invalid','expired') returning id into a_none2;
-  insert into public.verifiers (user_id, application_id, role, state_iso, seat_code, pledged_at) values (u_old, a_old, 'szv', 'NG-LA', s1, now() - interval '20 months') returning public_id into pid_old;
-  insert into public.verifiers (user_id, application_id, role, state_iso, seat_code, pledged_at) values (u_new, a_new, 'szv', 'NG-LA', s2, now() - interval '3 months') returning public_id into pid_new;
-  insert into public.verifiers (user_id, application_id, role, state_iso, seat_code, pledged_at) values (u_live, a_live, 'szv', 'NG-LA', s3, now() - interval '20 months') returning public_id into pid_live;
-  insert into public.verifiers (user_id, application_id, role, state_iso, seat_code) values (u_claim, a_claim, 'szv', 'NG-LA', s4) returning public_id into pid_claim;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name) values ('XL-LA','origin','szv','{}',80,'old@t.invalid','accepted','Old Holder') returning id into a_old;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name) values ('XL-LA','origin','szv','{}',80,'new@t.invalid','accepted','New Holder') returning id into a_new;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name) values ('XL-LA','origin','szv','{}',80,'live@t.invalid','accepted','Live Holder') returning id into a_live;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status,full_name) values ('XL-LA','origin','szv','{}',80,'claim@t.invalid','accepted','Never Pledged') returning id into a_claim;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('XL-LA','origin','szv','{}',70,'none@t.invalid','eligible') returning id into a_none;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('XL-KN','residence','nrv','{}',60,'none2@t.invalid','expired') returning id into a_none2;
+  insert into public.verifiers (user_id, application_id, role, state_iso, seat_code, pledged_at) values (u_old, a_old, 'szv', 'XL-LA', s1, now() - interval '20 months') returning public_id into pid_old;
+  insert into public.verifiers (user_id, application_id, role, state_iso, seat_code, pledged_at) values (u_new, a_new, 'szv', 'XL-LA', s2, now() - interval '3 months') returning public_id into pid_new;
+  insert into public.verifiers (user_id, application_id, role, state_iso, seat_code, pledged_at) values (u_live, a_live, 'szv', 'XL-LA', s3, now() - interval '20 months') returning public_id into pid_live;
+  insert into public.verifiers (user_id, application_id, role, state_iso, seat_code) values (u_claim, a_claim, 'szv', 'XL-LA', s4) returning public_id into pid_claim;
   insert into public.verifier_pledges (user_id, seat_code, public_id, pledge_version, pledge_sha256, typed_name)
     select u, s, p, t.version, t.sha256, nm from (values (u_old, s1, pid_old, 'Old Holder'), (u_new, s2, pid_new, 'New Holder'), (u_live, s3, pid_live, 'Live Holder')) x(u, s, p, nm),
     (select version, sha256 from public.pledge_texts order by version desc limit 1) t;
-  insert into public.discrepancy_flags (pu_code, race, reason, created_by) values ('24-01-01-001','president','IReV total exceeds photo by 30 votes', u_old) returning id into f;
+  insert into public.discrepancy_flags (pu_code, race, reason, created_by) values ('24-01-01-001','president','ERP total exceeds photo by 30 votes', u_old) returning id into f;
   -- release two seats: one 13 months ago, one 1 month ago; the never-pledged claim is deactivated without a release
   update public.verifiers set active = false, seat_code = null where user_id in (u_old, u_new, u_claim);
   insert into public.seat_events (seat_code, event, public_id, actor_public_id, reason, at) values

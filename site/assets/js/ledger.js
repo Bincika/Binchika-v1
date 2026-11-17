@@ -1,6 +1,7 @@
 // Live ledger dashboard: polling, filters, sort, CSV, in-browser chain verification, clearly-labelled demo data.
 import { TENANT } from "./lib/tenant.generated.js";   // country values (tenants/<id>/tenant.json; session 98)
 import { verifyChain, makeEntry, genesis } from "./lib/ledger.js";
+import { pollWhileVisible, onResume, checkedAt, clockTime } from "./lib/freshness.js";   // session 147
 
 const $ = (id) => document.getElementById(id);
 const nf = new Intl.NumberFormat("en-GB");
@@ -22,19 +23,43 @@ const lead = (t) => Object.entries(t ?? {}).sort((a, b) => b[1] - a[1])[0];
 // Demo rows are never attached to a real state, so a screenshot cannot pass as real results.
 const stateOf = (e) => (e.pu_code?.startsWith("DEMO") ? null : CODE[e.pu_code?.slice(0, 2)] ?? null);
 
+// Session 147: one load in flight at a time; an entry is added only if it is newer than the last one held; an answer
+// from before a demo switch is dropped. "Last checked" is the server's own Date header, never this device's clock.
+let loading = null, epoch = 0, lastChecked = null;
+const setLive = (failed) => {
+  $("live").textContent = `${failed ? "Could not update" : "Live · updates every 15 s"}${lastChecked ? ` · last checked ${clockTime(lastChecked, TENANT.locale.timeZone, TENANT.locale.zoneLabel)}` : ""}`;
+};
 async function load() {
   if (demo) return;
-  try {
-    let after = entries.at(-1)?.seq ?? 0;
-    for (let i = 0; i < 20; i++) {
-      const page = await fetch(`/api/ledger?after=${after}&limit=1000`).then((r) => r.json());
-      gen = page.genesis;
-      entries.push(...page.entries);
-      if (page.entries.length < 1000) break;
-      after = page.entries.at(-1).seq;
+  if (loading) return loading;
+  const started = epoch;
+  const mine = (async () => {
+    try {
+      let last = entries.at(-1)?.seq ?? 0, seen = null, g = gen;
+      const fresh = [];
+      for (let i = 0; i < 20; i++) {
+        const r = await fetch(`/api/ledger?after=${last}&limit=1000`);
+        if (!r.ok) throw new Error("ledger refused");
+        const page = await r.json();
+        g = page.genesis;
+        for (const e of page.entries) if (e.seq > last) { fresh.push(e); last = e.seq; }
+        seen = checkedAt(r);
+        if (page.entries.length < 1000) break;
+      }
+      if (started !== epoch) return;
+      gen = g;
+      entries.push(...fresh);
+      if (seen !== null) lastChecked = Math.max(lastChecked ?? 0, seen);
+      setLive(false);
+      render();
+    } catch {
+      if (started !== epoch) return;
+      setLive(true);
+      if (!entries.length) $("ledger-body").innerHTML = `<tr><td colspan="11">The ledger could not be loaded. Retrying…</td></tr>`;
     }
-    render();
-  } catch { $("ledger-body").innerHTML = `<tr><td colspan="11">The ledger could not be loaded. Retrying…</td></tr>`; }
+  })().finally(() => { if (loading === mine) loading = null; });
+  loading = mine;
+  return loading;
 }
 
 function filtered() {
@@ -75,7 +100,7 @@ function openEntry(seq) {
   const e = entries.find((x) => x.seq === Number(seq));
   if (!e) return;
   $("entry-title").textContent = `#${e.seq} · ${e.pu_code} · ${e.race}`;
-  const diffs = e.discrepancy?.diffs?.length ? `<table class="data" style="margin:.5rem 0"><thead><tr><th>Party</th><th class="num">Citizen</th><th class="num">IReV</th><th class="num">Δ</th></tr></thead><tbody>${e.discrepancy.diffs.map((d) => `<tr><td class="mono">${esc(d.party)}</td><td class="num">${d.citizen}</td><td class="num">${d.official}</td><td class="num">${d.delta > 0 ? "+" : ""}${d.delta}</td></tr>`).join("")}</tbody></table>` : "";
+  const diffs = e.discrepancy?.diffs?.length ? `<table class="data" style="margin:.5rem 0"><thead><tr><th>Party</th><th class="num">Citizen</th><th class="num">${TENANT.electoralBody.resultsPortalShort}</th><th class="num">Δ</th></tr></thead><tbody>${e.discrepancy.diffs.map((d) => `<tr><td class="mono">${esc(d.party)}</td><td class="num">${d.citizen}</td><td class="num">${d.official}</td><td class="num">${d.delta > 0 ? "+" : ""}${d.delta}</td></tr>`).join("")}</tbody></table>` : "";
   $("entry-body").innerHTML = `${diffs}<p class="hash" style="word-break:break-all">prev ${esc(e.prev)}<br>hash ${esc(e.hash)}</p><pre class="code" tabindex="0">${esc(JSON.stringify(e, null, 2))}</pre>`;
   $("entry-dialog").showModal();
 }
@@ -93,7 +118,7 @@ $("verify").addEventListener("click", async () => {
   out.textContent = "Verifying…";
   const t0 = performance.now();
   const ordered = [...entries].sort((a, b) => a.seq - b.seq);
-  const r = await verifyChain(ordered, gen ?? (await genesis("ng-2027")));
+  const r = await verifyChain(ordered, gen ?? (await genesis(TENANT.ledgerCycle)));
   out.innerHTML = r.ok
     ? `<strong style="color:var(--ok)">Chain intact.</strong> ${nf.format(ordered.length)} entries re-hashed in your browser in ${Math.round(performance.now() - t0)} ms. Head: <span class="hash">${esc(ordered.at(-1)?.hash ?? gen)}</span>`
     : `<strong style="color:var(--bad)">Chain broken at entry #${ordered[r.brokenAt].seq}.</strong> Please <a href="/contact/?topic=error">report it</a>.`;
@@ -111,7 +136,7 @@ $("csv").addEventListener("click", () => {
 
 // Demo: fictional parties DEMO-A…D and PU codes DEMO-…, chained with the real ledger code.
 $("demo").addEventListener("click", async () => {
-  demo = !demo;
+  demo = !demo; epoch++; loading = null;   // any load still in flight belongs to the other mode and is dropped
   $("demo").setAttribute("aria-pressed", String(demo));
   $("demo-banner").hidden = !demo;
   $("live").hidden = demo;
@@ -134,4 +159,5 @@ $("demo").addEventListener("click", async () => {
 });
 
 await load();
-setInterval(load, 15000);
+const poll = pollWhileVisible(load, 15000);   // no requests while the page is hidden
+onResume(() => poll.kick());   // back to the front, or the network returns: ask now

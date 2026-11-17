@@ -7,7 +7,7 @@ import { AUTO_REPLY_SENDER } from "./autoreply.js";
 
 export const DAILY_LIMIT = 100;   // safety cap on dashboard sends per 24 hours (automatic replies have their own cap)
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const lagos = (t) => new Date(t).toLocaleString("en-GB", { timeZone: TENANT.locale.timeZone, day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) + " WAT";
+const localTime = (t) => new Date(t).toLocaleString("en-GB", { timeZone: TENANT.locale.timeZone, day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) + ` ${TENANT.locale.zoneLabel}`;
 
 /** @returns {{ status: number, body: object }} */
 export async function sendFromDashboard(env, input, sender) {
@@ -23,26 +23,27 @@ export async function sendFromDashboard(env, input, sender) {
   if (!v.ok || !att.ok) return { status: 422, body: { error: [...v.errors, ...att.errors].join("; ") } };
   const m = v.mail, box = MAILBOXES[m.from];
   const manifest = att.files.map(({ filename, contentType, size }) => ({ filename, mimeType: contentType, size }));
-  const quoteHead = original ? `On ${lagos(original.at)}, ${original.from_name ? `${original.from_name} <${original.from_addr}>` : original.from_addr} wrote:` : null;
+  const quoteHead = original ? `On ${localTime(original.at)}, ${original.from_name ? `${original.from_name} <${original.from_addr}>` : original.from_addr} wrote:` : null;
   const quoteText = original ? String(original.body_text ?? "").slice(0, 4000) : null;
   const mail = general({
     subject: m.subject, bodyHtml: textToHtml(m.body), signOff: box.name, from: box.address,
     quoted: original ? `${esc(quoteHead)}<br>${esc(quoteText).replace(/\n/g, "<br>")}` : null,
   });
   const text = `${m.body}\n\n${box.name}\nbinchika.com · ${box.address}${original ? `\n\n${quoteHead}\n${quoteText.split("\n").map((l) => `> ${l}`).join("\n")}` : ""}`;
-  if (input?.dryRun) return { status: 200, body: { preview: mail.html, from: fromHeader(m.from), to: m.to, cc: m.cc, subject: m.subject, attachments: manifest } };   // "Preview" button: nothing sent or stored
+  if (input?.dryRun) return { status: 200, body: { preview: mail.html, from: fromHeader(m.from), to: m.to, cc: m.cc, bcc: m.bcc, subject: m.subject, attachments: manifest } };   // "Preview" button: nothing sent or stored
   // Automatic replies and unsubscribe confirmations (session 96) have their own caps and do not use up this one.
   const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM mail_messages WHERE direction = 'out' AND COALESCE(sent_by, '') NOT IN (?1, ?2) AND at > strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 day')").bind(AUTO_REPLY_SENDER, "unsubscribe").first();
   if ((recent?.n ?? 0) >= DAILY_LIMIT) return { status: 429, body: { error: `Daily limit of ${DAILY_LIMIT} dashboard emails reached. Try again tomorrow.` } };
   const headers = m.inReplyTo ? { "In-Reply-To": m.inReplyTo, References: m.inReplyTo } : undefined;
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST", headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({ from: fromHeader(m.from), to: m.to, cc: m.cc.length ? m.cc : undefined, subject: m.subject, html: mail.html, text, headers,
+    body: JSON.stringify({ from: fromHeader(m.from), to: m.to, cc: m.cc.length ? m.cc : undefined, bcc: m.bcc.length ? m.bcc : undefined, subject: m.subject, html: mail.html, text, headers,
       attachments: att.files.length ? att.files.map((a) => ({ filename: a.filename, content: a.content, content_type: a.contentType })) : undefined }),
   });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) return { status: 502, body: { error: `The email provider refused the message (${r.status}${j?.message ? `: ${String(j.message).slice(0, 160)}` : ""}). Nothing was sent.` } };
   const id = crypto.randomUUID();
+  // BCC addresses (session 141) go to the provider only. They are not stored here, logged or returned.
   await env.DB.prepare(`INSERT INTO mail_messages (id, direction, mailbox, from_addr, from_name, to_addrs, cc_addrs, subject, body_text, body_html, in_reply_to, provider_id, sent_by, read_at, attachments)
     VALUES (?1, 'out', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, strftime('%Y-%m-%dT%H:%M:%fZ','now'), ?13)`).bind(
     id, m.from, box.address, box.name, JSON.stringify(m.to), JSON.stringify(m.cc), m.subject, text, mail.html, m.inReplyTo, j.id ?? null, sender ?? null, JSON.stringify(manifest),

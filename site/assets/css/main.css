@@ -86,7 +86,7 @@ a:hover { color: var(--accent-ink); }
 .wrap { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; }
 .num, .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
 
-/* ---------- Masthead (sticky, translucent, always shows the INEC notice) ---------- */
+/* ---------- Masthead (sticky, translucent, always shows the EEC notice) ---------- */
 .masthead { position: sticky; top: 0; z-index: 100; background: var(--glass); -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%); border-bottom: 1px solid var(--line); }
 @media (prefers-reduced-transparency: reduce) { .masthead { background: var(--bg); backdrop-filter: none; } }
 .notice { font: 700 .78rem/1.35 var(--f-body); letter-spacing: .01em; background: var(--ink); color: var(--bg); }
@@ -294,7 +294,7 @@ section { padding-block: clamp(3.5rem, 8vw, 6.5rem); position: relative; }
 .civic-card p { font: 800 1.45rem/1.15 var(--f-display); letter-spacing: -.02em; margin: 0; max-width: 22ch; }
 .civic-card small { font: 600 .75rem var(--f-mono); opacity: .85; margin-top: .6rem; }
 
-/* ---------- Nigeria map page ---------- */
+/* ---------- Exampleland map page ---------- */
 .ng-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr); gap: 1.25rem; align-items: start; }
 @media (max-width: 1000px) { .ng-layout { grid-template-columns: 1fr; } }
 .ng-map { position: relative; height: clamp(420px, 68vh, 720px); border-radius: var(--r-xl); overflow: hidden; border: 1px solid var(--line); background: radial-gradient(100% 80% at 50% 0%, color-mix(in oklab, var(--signal) 8%, var(--surface)), var(--surface)); box-shadow: var(--shadow-2); }

@@ -1,1 +1,1 @@
-select (select count(*) from public.ng_states) states, (select count(*) from public.region_states) region_states, (select count(*) from public.verifier_applications) apps, (select count(*) from auth.users where email like '%test.invalid') test_users;
+select (select count(*) from public.area_states) states, (select count(*) from public.region_states) region_states, (select count(*) from public.verifier_applications) apps, (select count(*) from auth.users where email like '%test.invalid') test_users;

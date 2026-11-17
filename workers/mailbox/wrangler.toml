@@ -3,7 +3,7 @@ main = "src/index.js"
 compatibility_date = "2026-09-01"
 workers_dev = false
 
-# Receives mail for accounts@, ops@ and noreply@binchika.com from Cloudflare Email Routing (rule action "worker").
+# Receives mail for accounts@, ops@ and noreply@mail.example.org from Cloudflare Email Routing (rule action "worker").
 # It forwards every message to EMAIL_FORWARD_TO first (secret), then keeps a copy for the dashboard's Inbox & Sent tab,
 # then sends the sender one automatic reply.
 # Deploy: node ../../scripts/wr.mjs deploy  (from this folder). Routing: node scripts/mailbox-routing.mjs. Guide: docs/EMAIL-GUIDE.md.
@@ -17,7 +17,7 @@ AUTO_REPLY = "on"
 MAIL_RETENTION_DAYS = "365"
 
 [triggers]
-crons = ["41 3 * * *"]   # 03:41 UTC (04:41 in Lagos) every day
+crons = ["41 3 * * *"]   # 03:41 UTC (04:41 in Region LA) every day
 
 [[d1_databases]]
 binding = "DB"

@@ -182,7 +182,7 @@
 .src-list li span { font-size: .875rem; color: var(--ink-2); }
 .src-list .lic { font: 600 .75rem var(--f-mono); color: var(--ink-3); }
 
-/* header fit on phones: portal moves into the menu; logo, wordmark, WAT clock and theme stay visible */
+/* header fit on phones: portal moves into the menu; logo, wordmark, XLT clock and theme stay visible */
 .nav-portal { display: none !important; }
 @media (max-width: 960px) { .portal-btn { display: none !important; } .nav.open .nav-portal { display: block !important; } }
 @media (max-width: 420px) { .bar .wrap { gap: .45rem; } .brand { gap: .35rem; } .brand img { width: 34px; height: 34px; } .clock { padding: .25rem .45rem; } .clock-time { font-size: .9rem; } }
@@ -201,6 +201,26 @@
 .officials dl { display: grid; gap: .4rem; margin: .4rem 0 0; }
 .officials dt { font: 700 .66rem var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
 .officials dd { margin: 0; color: var(--ink-2); }
+
+/* manifesto summaries: one line on every card, one closed block per summary below the cards */
+.status.status-next { margin-top: 0; border-top: 0; padding-top: 0; }
+.msum-section { margin-top: 2.5rem; }
+.msum { border: 1px solid var(--line-2); border-radius: var(--r-m); background: var(--surface); padding: .9rem 1.1rem; margin-top: 1rem; scroll-margin-top: 9.5rem; overflow-wrap: anywhere; }
+.msum summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.msum summary h3 { margin: 0; font-size: 1.15rem; }
+.msum summary::before { content: "+"; font-weight: 700; flex: none; width: 1.3rem; }
+.msum[open] summary::before { content: "\2212"; }
+.msum h4 { font-size: 1.05rem; margin: 1.6rem 0 .5rem; }
+.msum h5 { font: 700 .72rem var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin: 1rem 0 .3rem; }
+.msum ul { margin: 0; padding-left: 1.2rem; display: grid; gap: .45rem; }
+.msum p, .msum li { color: var(--ink-2); max-width: 75ch; }
+.msum p { margin: .6rem 0 0; }
+.msum-cite { font-size: .8125rem; color: var(--ink-3); }
+.msum-cite a { color: inherit; }
+.msum-facts { display: grid; gap: .55rem; margin: .8rem 0 0; }
+.msum-facts dt { font: 700 .66rem var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.msum-facts dd { margin: 0; color: var(--ink-2); max-width: 75ch; }
+.msum-hash { display: block; margin-top: .3rem; font-size: .75rem; color: var(--ink-3); }
 
 .social.soon { opacity: .38; cursor: default; }
 .social.soon:hover { transform: none; color: inherit; }
@@ -348,7 +368,7 @@
 .nfs-x path { fill: none; stroke: #E5251B; stroke-width: 14; stroke-linecap: round; filter: drop-shadow(0 0 2px rgb(255 255 255 / .85)) drop-shadow(0 3px 6px rgb(0 0 0 / .45)); }
 .nfs-stamp { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-12deg); font: 900 clamp(.95rem, 2.6vw, 1.35rem)/1 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: #fff; background: #C8160D; border: 3px solid #fff; padding: .45rem .8rem; border-radius: 6px; box-shadow: 0 4px 14px rgb(0 0 0 / .45); white-space: nowrap; }
 .nfs-sub { color: #fff; margin-top: 1.6rem; }
-/* /vote/ "Check your name" (links to INEC only; no lookup) */
+/* /vote/ "Check your name" (links to EEC only; no lookup) */
 .reg-grid { display: grid; gap: 1rem; margin-top: 1rem; }
 @media (min-width: 860px) { .reg-grid { grid-template-columns: 1fr 1fr; } }
 .reg-steps { padding-left: 1.3rem; display: grid; gap: .45rem; margin: .4rem 0 .8rem; }
@@ -410,13 +430,13 @@
 .mail-del { color: #B42318; border-color: color-mix(in oklab, #B42318 45%, var(--line)); }
 :root[data-theme="dark"] .mail-del { color: #F97066; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mail-del { color: #F97066; } }
-/* Session 44: /monitor/ register analysis, open questions for INEC */
-.inec-q { display: grid; gap: 1rem; padding-left: 1.3rem; }
-.inec-q > li { padding-left: .2rem; }
-.inec-q .q { margin: .45rem 0 .2rem; padding: .55rem .8rem; border-left: 3px solid var(--accent); background: var(--surface-2); border-radius: 0 10px 10px 0; }
-.inec-q .source-note { margin: .2rem 0 0; }
+/* Session 44: /monitor/ register analysis, open questions for EEC */
+.body-q { display: grid; gap: 1rem; padding-left: 1.3rem; }
+.body-q > li { padding-left: .2rem; }
+.body-q .q { margin: .45rem 0 .2rem; padding: .55rem .8rem; border-left: 3px solid var(--accent); background: var(--surface-2); border-radius: 0 10px 10px 0; }
+.body-q .source-note { margin: .2rem 0 0; }
 
-/* Session 53: 1 Nov launch banner, standard pipeline line, EC8A rule, citizen-monitor icon */
+/* Session 53: 1 Nov launch banner, standard pipeline line, R1 rule, citizen-monitor icon */
 .launch-banner { background: linear-gradient(90deg, var(--accent-soft, #FBE7D8), color-mix(in oklab, var(--accent-soft, #FBE7D8) 55%, var(--surface))); border-bottom: 1px solid var(--line); }
 .launch-inner { display: flex; align-items: center; gap: .7rem; padding-block: .7rem; }
 .launch-inner p { margin: 0; font-size: .95rem; line-height: 1.45; }
@@ -468,7 +488,7 @@
 }
 @media (prefers-reduced-motion: no-preference) { .rd-track span { transition: width .6s var(--spring, ease); } }
 
-/* Session 55: alternative evidence (no Form EC8A) in the verifier portal */
+/* Session 55: alternative evidence (no Form R1) in the verifier portal */
 .pill-lower { display: inline-block; margin-left: .3rem; padding: .05rem .5rem; border-radius: 999px; font: 600 .75rem var(--f-mono); background: color-mix(in oklab, #B26B00 18%, transparent); color: var(--ink); border: 1px solid color-mix(in oklab, #B26B00 45%, transparent); }
 .audit-btns { display: inline-flex; gap: .35rem; margin-left: .4rem; vertical-align: middle; }
 .audit-box { margin: 0 0 1rem; }

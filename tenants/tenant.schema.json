@@ -17,7 +17,7 @@
       "properties": {
         "lang": { "type": "string", "description": "BCP 47, e.g. en-GB or fr-SN" },
         "timeZone": { "type": "string", "description": "IANA zone, e.g. Africa/Accra" },
-        "zoneLabel": { "type": "string", "description": "Shown after times, e.g. GMT, WAT, EAT" },
+        "zoneLabel": { "type": "string", "description": "Shown after times, e.g. GMT, XLT, EAT" },
         "utcOffset": { "type": "string" },
         "city": { "type": "string" }
       }
@@ -36,7 +36,8 @@
     "site": {
       "type": "object",
       "required": ["origin", "sourceRepo"],
-      "properties": { "origin": { "type": "string" }, "sourceRepo": { "type": "string", "description": "Public source code link in the footer and guides." } }
+      "properties": { "origin": { "type": "string" }, "sourceRepo": { "type": "string", "description": "Public source code link in the footer and guides." },
+        "social": { "type": "object", "description": "Optional. Community links shown as footer icons. Leave a key out and its icon stays a dimmed placeholder.", "properties": { "discord": { "type": "string", "description": "Invite link for this deployment's own community server." } } } }
     },
     "geography": { "type": "object" },
     "pollingUnits": {

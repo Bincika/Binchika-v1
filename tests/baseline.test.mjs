@@ -28,7 +28,3 @@ test("missing baseline never flags", () => {
   assert.equal(checkAgainstBaseline(undefined, { registered: 5 }).severity, "none");
 });
 
-test("LGA name normalisation bridges INEC and GRID3 spellings", () => {
-  assert.equal(lgaKey("KOLOKUMA/ OPOKUMA"), lgaKey("Kolokuma/Opokuma"));
-  assert.equal(lgaKey("Owerri Municipal LGA"), lgaKey("OWERRI MUNICIPAL"));
-});

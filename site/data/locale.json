@@ -1,9 +1,9 @@
 {
-  "country": "NG",
-  "countryName": "Nigeria",
-  "timeZone": "Africa/Lagos",
-  "zoneLabel": "WAT",
+  "country": "XL",
+  "countryName": "Exampleland",
+  "timeZone": "Etc/GMT-1",
+  "zoneLabel": "XLT",
   "utcOffset": "UTC+1",
-  "city": "Abuja",
+  "city": "Example City",
   "locale": "en-GB"
 }

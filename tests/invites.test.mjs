@@ -36,7 +36,7 @@ test("passwords: length, obvious choices and the email name are refused", () => 
   assert.match(passwordProblem("aaaaaaaaaaaaaa", "a@b.c"), /easy/);
   assert.match(passwordProblem("Password1234", "a@b.c"), /easy/);
   assert.match(passwordProblem("adebayo-is-me-2027", "adebayo@example.com"), /email/);
-  assert.equal(passwordProblem("green mango under lagos rain", "adebayo@example.com"), null);
+  assert.equal(passwordProblem("green mango under region_la rain", "adebayo@example.com"), null);
 });
 
 test("names: accents, case, spaces and hyphens are ignored (mirror of public.norm_name)", () => {
@@ -46,11 +46,11 @@ test("names: accents, case, spaces and hyphens are ignored (mirror of public.nor
 });
 
 test("emails: invite code first in the subject, link to /join/, no name", () => {
-  const m = inviteCode({ code: "K7QM-4XPD", seat: "SZV-073", area: "Lagos", hours: 24, link: "https://binchika.com/join/" });
+  const m = inviteCode({ code: "K7QM-4XPD", seat: "SZV-073", area: "Region LA", hours: 24, link: "https://binchika.com/join/" });
   assert.match(m.subject, /^K7QM-4XPD is your Binchika seat code$/);
   assert.match(m.html, /https:\/\/binchika\.com\/join\//);
   assert.match(m.html, /SZV-073/);
-  const c = seatConfirmation({ seat: "SZV-073", publicId: "V0002", area: "Lagos", link: "https://binchika.com/join/pledge/#t=abc" });
+  const c = seatConfirmation({ seat: "SZV-073", publicId: "V0002", area: "Region LA", link: "https://binchika.com/join/pledge/#t=abc" });
   assert.match(c.subject, /^Confirm seat SZV-073/);
   assert.match(c.html, /#t=abc/);
   assert.doesNotMatch(signInLink({ link: "https://x", reset: true }).html, /no passwords/);

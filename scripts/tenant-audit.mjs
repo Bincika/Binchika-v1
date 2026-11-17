@@ -6,7 +6,7 @@
 //   data     site/data/, data/                        (country data a fork replaces)
 //   content  src/pages/, src/kb/, docs/               (page text a fork rewrites)
 //   code     functions/, workers/, site/assets/js/, scripts/, supabase/, db/, src/ other   (should trend to zero)
-//   tests    tests/                                   (Nigeria fixtures for the example tenant)
+//   tests    tests/                                   (Exampleland fixtures for the example tenant)
 // Generated files (*.generated.js, built site/*.html) are skipped.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";

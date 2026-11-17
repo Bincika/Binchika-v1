@@ -1,5 +1,5 @@
 // POST /api/portal/review {reportId, decision: "confirm"|"reject", note, controls?} — a signed-in SZV or NRV with an
-// MFA-verified (aal2) session confirms or rejects one Form EC8A reading from their own state or region, after looking at
+// MFA-verified (aal2) session confirms or rejects one Form R1 reading from their own state or region, after looking at
 // the photo beside the transcript. Only confirmed readings count toward consensus (session 88). Numbers are never
 // edited here. See functions/_lib/review.js. Reporter identities are never returned.
 import { userFromRequest, verifierFor, rest, supaConfigured, claimsOf, json } from "../../_lib/supa.js";

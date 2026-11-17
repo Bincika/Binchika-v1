@@ -9,10 +9,10 @@ begin
   select last_value, is_called into seq_keep from public.verifier_public_seq;
   insert into auth.users (id, aud, role, email) values (u_szv,'authenticated','authenticated','cs@t.invalid'),(u_nrv,'authenticated','authenticated','cn@t.invalid'),(u_nrv2,'authenticated','authenticated','cn2@t.invalid'),(u_admin,'authenticated','authenticated','ca@t.invalid');
   select user_id into u_super from public.verifiers where role = 'superadmin';
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('NG-LA','origin','szv','{}',80,'cs@t.invalid','accepted') returning id into a1;
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('NG-OY','origin','nrv','{}',80,'cn@t.invalid','accepted') returning id into a2;
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('NG-OG','origin','nrv','{}',80,'cn2@t.invalid','accepted') returning id into a3;
-  insert into public.verifiers (user_id, application_id, role, state_iso) values (u_szv, a1, 'szv', 'NG-LA');
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('XL-LA','origin','szv','{}',80,'cs@t.invalid','accepted') returning id into a1;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('XL-OY','origin','nrv','{}',80,'cn@t.invalid','accepted') returning id into a2;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('XL-OG','origin','nrv','{}',80,'cn2@t.invalid','accepted') returning id into a3;
+  insert into public.verifiers (user_id, application_id, role, state_iso) values (u_szv, a1, 'szv', 'XL-LA');
   insert into public.verifiers (user_id, application_id, role, region_id) values (u_nrv, a2, 'nrv', 'R6');
   insert into public.verifiers (user_id, application_id, role, region_id) values (u_nrv2, a3, 'nrv', 'R6');
   insert into public.verifiers (user_id, role, ops_seat) values (u_admin, 'admin', (select code from public.ops_seats o where not exists (select 1 from public.verifiers v where v.ops_seat = o.code) order by code limit 1));

@@ -10,10 +10,10 @@ begin
   insert into auth.users (id, aud, role, email) values (u_szv,'authenticated','authenticated','s@t.invalid'),(u_nrv,'authenticated','authenticated','n@t.invalid'),(u_nrv_other,'authenticated','authenticated','o@t.invalid'),(u_admin,'authenticated','authenticated','a@t.invalid');
   -- since 0009 only the locked address can be BinchikAdmin: tests use the real record (rolled back)
   select user_id into u_super from public.verifiers where role = 'superadmin';
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('NG-LA','origin','szv','{}',80,'s@t.invalid','accepted') returning id into a1;
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('NG-OY','origin','nrv','{}',80,'n@t.invalid','accepted') returning id into a2;
-  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('NG-KN','origin','nrv','{}',80,'o@t.invalid','accepted') returning id into a3;
-  insert into public.verifiers (user_id, application_id, role, state_iso) values (u_szv, a1, 'szv', 'NG-LA') returning public_id into pid;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('XL-LA','origin','szv','{}',80,'s@t.invalid','accepted') returning id into a1;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('XL-OY','origin','nrv','{}',80,'n@t.invalid','accepted') returning id into a2;
+  insert into public.verifier_applications (state_iso,state_basis,role_sought,answers,score,email,status) values ('XL-KN','origin','nrv','{}',80,'o@t.invalid','accepted') returning id into a3;
+  insert into public.verifiers (user_id, application_id, role, state_iso) values (u_szv, a1, 'szv', 'XL-LA') returning public_id into pid;
   insert into public.verifiers (user_id, application_id, role, region_id) values (u_nrv, a2, 'nrv', 'R6') returning public_id into pid2;
   insert into public.verifiers (user_id, application_id, role, region_id) values (u_nrv_other, a3, 'nrv', 'R2');
   insert into public.verifiers (user_id, role, ops_seat) values (u_admin, 'admin', (select code from public.ops_seats o where not exists (select 1 from public.verifiers v where v.ops_seat = o.code) order by code limit 1));
@@ -22,7 +22,7 @@ begin
 
   execute 'set local role authenticated';
   perform set_config('request.jwt.claims', json_build_object('sub', u_szv, 'role','authenticated')::text, true);
-  insert into public.discrepancy_flags (pu_code, race, reason) values ('24-01-01-001','president','IReV total exceeds photo by 30 votes') returning id into f;
+  insert into public.discrepancy_flags (pu_code, race, reason) values ('24-01-01-001','president','ERP total exceeds photo by 30 votes') returning id into f;
   select count(*) into n from public.verifier_flags_public where id = f and raised_by_public_id = pid;
   res := res || jsonb_build_object('t','flag stamped with raiser public id (no account id in public view)','pass', n = 1);
   begin update public.discrepancy_flags set status = 'escalated' where id = f; get diagnostics n = row_count; res := res || jsonb_build_object('t','szv cannot escalate own flag','pass', n = 0);
@@ -30,7 +30,7 @@ begin
 
   perform set_config('request.jwt.claims', json_build_object('sub', u_nrv_other, 'role','authenticated')::text, true);
   update public.discrepancy_flags set status = 'escalated' where id = f; get diagnostics n = row_count;
-  res := res || jsonb_build_object('t','NRV of another region cannot touch Lagos flag','pass', n = 0);
+  res := res || jsonb_build_object('t','NRV of another region cannot touch Region LA flag','pass', n = 0);
 
   perform set_config('request.jwt.claims', json_build_object('sub', u_nrv, 'role','authenticated')::text, true);
   update public.discrepancy_flags set status = 'escalated', nrv_findings = '3 SZVs disagree; photos show 412 not 442' where id = f; get diagnostics n = row_count;

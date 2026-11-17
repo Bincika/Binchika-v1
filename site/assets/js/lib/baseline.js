@@ -1,3 +1,4 @@
+import { TENANT } from "./tenant.generated.js";   // area name suffix and spelling aliases
 // Pre-election baseline checks. The register is frozen before polling, so on election day the
 // announced "registered voters" for an area should match the baseline, and no count of accredited
 // voters or votes cast can exceed it. Pure; shared by API, scripts and tests.
@@ -6,7 +7,7 @@ export const MATERIAL_PCT = 0.5;   // % change in a frozen register that is "mat
 export const MATERIAL_ABS = 500;   // …or this many voters, whichever is larger
 
 /**
- * @param {number} baseline registered voters before the election (INEC, timestamped)
+ * @param {number} baseline registered voters before the election (EEC, timestamped)
  * @param {{registered?: number, accredited?: number, votesCast?: number}} announced figures on/after election day
  * @returns {{severity: 'none'|'material'|'critical', findings: {field:string, baseline:number, announced:number, delta:number, pct:number, reason:string}[]}}
  */
@@ -30,18 +31,12 @@ export function checkAgainstBaseline(baseline, announced) {
   return { severity, findings };
 }
 
-/** Normalises LGA names across INEC documents and GRID3 boundaries (e.g. "OGORI MANGOGO" ≈ "Ogori/Magongo"). */
+/** Normalises district names across EEC documents and GRID3 boundaries (e.g. "OGORI MANGOGO" ≈ "Ogori/Magongo"). */
+const AREA_SUFFIX = new RegExp(TENANT.rules.areaNameSuffix, "g");
 export function lgaKey(name) {
-  const k = String(name).toUpperCase().replace(/LOCAL GOVERNMENT( AREA)?|\bLGA\b/g, "").replace(/[^A-Z]/g, "");
+  const k = String(name).toUpperCase().replace(AREA_SUFFIX, "").replace(/[^A-Z]/g, "");
   return LGA_ALIASES[k] ?? k;
 }
 
-// Known spelling differences between INEC documents and GRID3 boundaries (INEC key → GRID3 key).
-export const LGA_ALIASES = {
-  YENEGOA: "YENAGOA",
-  MBATOLI: "MBAITOLI",
-  EZINIHITTE: "EZINIHITTEMBAISE",
-  OGORIMANGOGO: "OGORIMAGONGO",
-  KOGIKK: "KOGI",
-  MOPAMURO: "MOPAMORO",
-};
+// Known spelling differences between EEC documents and GRID3 boundaries (EEC key → GRID3 key).
+export const LGA_ALIASES = TENANT.rules.areaNameAliases;

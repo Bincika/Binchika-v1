@@ -1,5 +1,5 @@
 // Sign-in links sent by Binchika itself (token-hash flow): the server asks Supabase Auth for a magic-link
-// token, emails https://binchika.com/portal/#th=<hashed_token> from noreply@binchika.com, and the portal
+// token, emails https://binchika.com/portal/#th=<hashed_token> from noreply@mail.example.org, and the portal
 // calls verifyOtp({ token_hash, type: "magiclink" }). No Supabase Site URL or redirect list is involved.
 // Answers the same whether or not the email belongs to a verifier (no account enumeration).
 import { rest } from "./supa.js";

@@ -1,5 +1,5 @@
 -- Session 88 (production-readiness gaps; docs/reports/2026-11-01-production-readiness.md). Additive only.
--- report_checks: the Form EC8A control-total check made on ingest, and the OCR proposal if the contained OCR path is
+-- report_checks: the Form R1 control-total check made on ingest, and the OCR proposal if the contained OCR path is
 -- switched on. Numbers and reasons only: no names, handles, photos or captions. Deleted with its report.
 CREATE TABLE IF NOT EXISTS report_checks (
   report_id     TEXT PRIMARY KEY REFERENCES reports(id) ON DELETE CASCADE,

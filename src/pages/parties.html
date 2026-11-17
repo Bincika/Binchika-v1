@@ -1,17 +1,17 @@
-<!--{"title":"All 22 registered parties, equal space · Binchika","description":"Every INEC-registered political party gets the same card, the same space and a shuffled position. Official logos from INEC. Manifestos summarised with page-and-paragraph citations once parties submit them.","nav":"parties","path":"/parties/","scripts":["/assets/js/parties.js"]}-->
+<!--{"title":"All registered parties, equal space · Binchika","description":"Every {{BODY}}-registered political party gets the same card, the same space and a shuffled position. Official logos from {{BODY}}. Manifestos summarised with page-and-paragraph citations, on one template for every party.","nav":"parties","path":"/parties/","scripts":["/assets/js/parties.js"]}-->
 <section class="page-head">
   <div class="wrap">
-    <p class="eyebrow">Registered political parties · INEC register</p>
-    <h1>22 parties. <span class="grad-text">Same space for each.</span></h1>
-    <p class="lede">Every party is invited to send its full manifesto and motto through <a href="/contact/?topic=manifesto">our contact form</a>. We summarise each manifesto with exact page-and-paragraph citations, using the same template for every party. Nobody pays for placement.</p>
+    <p class="eyebrow">Registered political parties · {{BODY}} register</p>
+    <h1>Every party. <span class="grad-text">Same space for each.</span></h1>
+    <p class="lede">Every party is invited to send its full manifesto and motto through <a href="/contact/?topic=manifesto">our contact form</a>. We summarise manifestos with exact page-and-paragraph citations, using the same template for every party, whether the party sends the document or has already published it. Nobody pays for placement.</p>
   </div>
 </section>
 
 <section style="padding-top:0" aria-label="Civic statements">
   <div class="wrap civic-band">
-    <div class="civic-card reveal" style="--g:radial-gradient(60% 80% at 20% 20%,#2A7BE0,transparent 60%),radial-gradient(60% 70% at 80% 70%,#0E9AA0,transparent 60%),#0D1B2E"><p>A result sheet posted is a promise kept.</p><small>Photograph Form EC8A, not people</small></div>
-    <div class="civic-card reveal" style="--g:radial-gradient(60% 80% at 75% 25%,#E0743A,transparent 60%),radial-gradient(60% 70% at 20% 80%,#B4501F,transparent 60%),#24130A"><p>Every vote counted where it was cast.</p><small>176,846 polling units, one standard</small></div>
-    <div class="civic-card reveal" style="--g:radial-gradient(60% 80% at 30% 70%,#12945F,transparent 60%),radial-gradient(60% 70% at 80% 20%,#D99A00,transparent 60%),#0B1F16"><p>Check the count, not the candidate.</p><small>Only INEC declares results</small></div>
+    <div class="civic-card reveal" style="--g:radial-gradient(60% 80% at 20% 20%,#2A7BE0,transparent 60%),radial-gradient(60% 70% at 80% 70%,#0E9AA0,transparent 60%),#0D1B2E"><p>A result sheet posted is a promise kept.</p><small>Photograph {{RESULT_FORM}}, not people</small></div>
+    <div class="civic-card reveal" style="--g:radial-gradient(60% 80% at 75% 25%,#E0743A,transparent 60%),radial-gradient(60% 70% at 20% 80%,#B4501F,transparent 60%),#24130A"><p>Every vote counted where it was cast.</p><small>12,000 polling units, one standard</small></div>
+    <div class="civic-card reveal" style="--g:radial-gradient(60% 80% at 30% 70%,#12945F,transparent 60%),radial-gradient(60% 70% at 80% 20%,#D99A00,transparent 60%),#0B1F16"><p>Check the count, not the candidate.</p><small>Only {{BODY}} declares results</small></div>
   </div>
 </section>
 
@@ -26,11 +26,21 @@
     </div>
     <ul class="cards" id="cards" aria-label="Party cards"></ul>
 
+    <section class="msum-section" aria-labelledby="msum-h" style="padding:0">
+      <h2 id="msum-h" style="font-size:1.5rem">Summaries of published manifestos</h2>
+      <div class="callout">
+        <p><strong>Binchika does not endorse any party, and nothing here is advice on how to vote.</strong> We describe what a party's own document says, using the same template and the same questions for every party.</p>
+        <p style="margin-bottom:0"><strong>Coverage is not equal yet: <span id="manifesto-count">0 of 22</span> summaries are published.</strong> <span id="manifesto-rest"></span> The order in which summaries were added says nothing about any party.</p>
+        <p><strong>The documents may differ a great deal in age,</strong> and several were written for an earlier election. Check the date on each one: an older document may not show what a party proposes today. A party can <a href="/contact/?topic=manifesto">send a correction or a newer document</a> at any time.</p>
+      </div>
+      <div id="manifesto-list"></div>
+    </section>
+
     <div class="callout" style="margin-top:2.5rem">
       <h2 style="font-size:1.5rem">How the colours work</h2>
       <p id="color-rule"></p>
       <p style="margin-bottom:0">Binchika uses a fixed high-contrast palette instead of party brand colours, because many parties share greens and reds. The same colour marks a party's seats everywhere on this site.</p>
     </div>
-    <p class="source-note">Register and logos: <a href="https://inecnigeria.org/political-parties/" rel="noopener">INEC</a>, checked 24 October 2026. Logos are shown only to identify each party, with backgrounds removed for display. INEC's site has no logo for Accord, so its card shows the acronym until an official logo is available. Presidential and governorship candidates will be listed from INEC's published final lists only.</p>
+    <p class="source-note">Register and logos: <a href="{{BODY_URL}}" rel="noopener">{{BODY}}</a> (fictional). Logos are shown only to identify each party, with backgrounds removed for display. {{BODY}}'s site has no logo for Accord, so its card shows the acronym until an official logo is available. Presidential and governorship candidates will be listed from {{BODY}}'s published final lists only.</p>
   </div>
 </section>

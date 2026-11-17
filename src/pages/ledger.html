@@ -1,4 +1,4 @@
-<!--{"title":"Live public ledger of citizen-verified tallies · Binchika","description":"A live, hash-chained, append-only ledger of every processed polling-unit tally: confidence levels, discrepancies with IReV and a full audit trail you can verify in your own browser.","nav":"ledger","path":"/ledger/","scripts":["/assets/js/ledger.js","/assets/js/scroll-lit.js"]}-->
+<!--{"title":"Live public ledger of citizen-verified tallies · Binchika","description":"A live, hash-chained, append-only ledger of every processed polling-unit tally: confidence levels, discrepancies with {{PORTAL}} and a full audit trail you can verify in your own browser.","nav":"ledger","path":"/ledger/","scripts":["/assets/js/ledger.js","/assets/js/scroll-lit.js"]}-->
 <section class="page-head">
   <div class="wrap">
     <p class="eyebrow">Public ledger · append-only · hash-chained</p>
@@ -13,7 +13,7 @@
     <div class="kpis" aria-live="polite">
       <div class="kpi k1"><b id="k-entries">0</b><span>Ledger entries</span></div>
       <div class="kpi k2"><b id="k-high">0</b><span>High-confidence units</span></div>
-      <div class="kpi k3"><b id="k-disc">0</b><span>Mismatches with IReV</span></div>
+      <div class="kpi k3"><b id="k-disc">0</b><span>Mismatches with {{PORTAL}}</span></div>
       <div class="kpi k4"><b id="k-states">0</b><span>States reporting</span></div>
     </div>
 
@@ -49,8 +49,8 @@
           <th scope="col">Confidence</th>
           <th scope="col">Largest reported share</th>
           <th scope="col" class="num"><button type="button" data-sort="total">Votes</button></th>
-          <th scope="col">vs IReV</th>
-          <th scope="col"><button type="button" data-sort="recordedAt">Recorded (WAT)</button></th>
+          <th scope="col">vs {{PORTAL}}</th>
+          <th scope="col"><button type="button" data-sort="recordedAt">Recorded (XLT)</button></th>
           <th scope="col">Hash</th>
         </tr></thead>
         <tbody id="ledger-body"><tr><td colspan="11">Loading…</td></tr></tbody>
@@ -66,16 +66,27 @@
     <div class="flow" data-scroll-lit style="margin-top:1rem">
       <div class="lit-step panel"><strong>1 · Photo</strong><p class="muted" style="margin:.3rem 0 0">A citizen photographs or reports the posted result sheet. Their handle becomes a one-way hash.</p></div>
       <div class="lit-step panel"><strong>2 · Read</strong><p class="muted" style="margin:.3rem 0 0">Machine reading extracts each party's votes; uncertain reads go to people.</p></div>
-      <div class="lit-step panel"><strong>3 · Agree</strong><p class="muted" style="margin:.3rem 0 0">At least 85% of at least 3 independent reports must match for high confidence.</p></div>
-      <div class="lit-step panel"><strong>4 · Compare</strong><p class="muted" style="margin:.3rem 0 0">The tally is checked against INEC's IReV upload and the pre-election register.</p></div>
+      <div class="lit-step panel"><strong>3 · Agree</strong><p class="muted" style="margin:.3rem 0 0">At least 85% of at least 3 photos read by a person must match, and every group of two or more witnesses must have had a photo read.</p></div>
+      <div class="lit-step panel"><strong>4 · Compare</strong><p class="muted" style="margin:.3rem 0 0">The tally is checked against {{BODY}}'s {{PORTAL}} upload and the pre-election register.</p></div>
       <div class="lit-step panel"><strong>5 · Chain</strong><p class="muted" style="margin:.3rem 0 0">A new entry is hashed onto the chain. Nothing can be edited, only added.</p></div>
     </div>
     <div class="pledge" style="margin-top:2.5rem" data-scroll-lit>
-      <div><h3>High confidence</h3><p>At least 85% of independent reports agree on every party's count, from at least 3 reporters. Only these reach the ledger as tallies.</p></div>
-      <div><h3>Mismatch with IReV</h3><p>The consensus citizen tally differs from INEC's IReV upload. The flag shows each party's difference. It is not an accusation.</p></div>
+      <div><h3>High confidence</h3><p>At least 85% of the reports whose photo has been read agree on every party's count, from at least 3 reporters, and every set of figures sent by two or more witnesses has had a photo read. Only these reach the ledger as tallies.</p></div>
+      <div><h3>Mismatch with {{PORTAL}}</h3><p>The consensus citizen tally differs from {{BODY}}'s {{PORTAL}} upload. The flag shows each party's difference. It is not an accusation.</p></div>
       <div><h3>Correction</h3><p>A verifier raised a flag, a different Regional Verifier escalated it, AI re-investigated it and the BinchikAdmin recorded the correction. Corrections are new entries, so history is never edited.</p></div>
       <div><h3>No result sheet</h3><p class="ec8a-rule">{{EC8A_RULE}} It never appears here as a high-agreement tally on its own.</p></div>
     </div>
     <p class="source-note">The rules are code, not opinion: <a href="https://github.com/Bincika/Binchika-v1/blob/main/functions/_lib/consensus.js" rel="noopener">consensus.js</a> and <a href="https://github.com/Bincika/Binchika-v1/blob/main/functions/_lib/ledger.js" rel="noopener">ledger.js</a>. The browser verification uses the same ledger.js file.</p>
+
+    <h2 id="rule-changes" style="font-size:clamp(1.6rem,3vw,2.4rem);margin-top:3rem">Rule changes</h2>
+    <article class="panel" style="margin-top:1rem" aria-labelledby="rule-change-example">
+      <h3 id="rule-change-example" style="margin-top:0">What "high confidence" means</h3>
+      <p>A polling unit's figures reach this ledger only at <strong>high confidence</strong>, which needs two things:</p>
+      <ol>
+        <li><strong>At least 3 photos of the result sheet have been read by a person, and at least 85% of them show the same figures.</strong></li>
+        <li><strong>No group of people has been ignored.</strong> If at least two people have sent the same different figures for a unit, someone must read one of their photos before the unit can be posted. If none of them sends a photo when asked (three requests, none answered), the unit can be posted and the ledger says so.</li>
+      </ol>
+      <p class="source-note" style="margin-bottom:0">Each later change to these rules is listed here, with its date.</p>
+    </article>
   </div>
 </section>

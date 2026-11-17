@@ -53,7 +53,7 @@ export function consensus(reports, { highShare = HIGH_SHARE, minIndependent = MI
 }
 
 /**
- * Consensus for one polling unit, with the rule for when Form EC8A is not available (session 55):
+ * Consensus for one polling unit, with the rule for when Form R1 is not available (session 55):
  * - reports of the posted result sheet ("ec8a", the default) count exactly as in consensus();
  * - alternative evidence (video, handwritten numbers, a photo of the results board) counts only after a verifier has
  *   approved it (audit "approved"); pending and rejected alternatives are left out;
@@ -74,7 +74,7 @@ export function unitConsensus(reports, opts) {
   return { ...mixed, status: mixed.status === "high" ? "lower" : mixed.status, evidence: "mixed", alternatives, pendingAudit };
 }
 
-/** Compare a consensus citizen tally with the official (IReV/INEC) tally. */
+/** Compare a consensus citizen tally with the official (ERP/EEC) tally. */
 export function compareWithOfficial(citizen, official) {
   const norm = (t) => Object.fromEntries(Object.entries(t).map(([k, v]) => [k.toUpperCase(), Math.trunc(Number(v))]));
   const c = norm(citizen);

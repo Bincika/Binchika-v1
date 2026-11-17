@@ -22,7 +22,7 @@ test("attachment count, size and type limits", () => {
   assert.ok(validateContact({ ...ok, files: [{ name: "x.exe", type: "application/x-msdownload", size: 10 }] }, now).errors.some((e) => e.includes("x.exe")));
 });
 test("routing: manifesto from accounts@, errors from ops@; subject is labelled", () => {
-  assert.match(NATURES.manifesto.from, /accounts@binchika\.com/);
-  assert.match(NATURES.error.from, /ops@binchika\.com/);
+  assert.match(NATURES.manifesto.from, /accounts@mail\.example\.org/);
+  assert.match(NATURES.error.from, /ops@mail\.example\.org/);
   assert.match(subjectFor(ok), /^\[Binchika · Party manifesto or motto submission\] Please find our full manifesto attached for review\.$/);
 });

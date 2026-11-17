@@ -13,7 +13,7 @@ export async function purgeVerifierData(env, now = new Date()) {
   const months = Number(String(env.SEAT_HOLDER_RETENTION_MONTHS ?? "").trim());
   const gov = String(env.GOVERNORSHIP_FINAL_RESULTS ?? "").trim();
   if (!Number.isInteger(days) || days < MIN_APPLICATION_DAYS || !Number.isInteger(months) || months < 1) return { skipped: "invalid retention settings" };
-  if (gov && !DATE.test(gov)) return { skipped: "invalid GOVERNORSHIP_FINAL_RESULTS (use YYYY-MM-DD, or leave empty until INEC declares)" };
+  if (gov && !DATE.test(gov)) return { skipped: "invalid GOVERNORSHIP_FINAL_RESULTS (use YYYY-MM-DD, or leave empty until the electoral body declares)" };
   if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) return { skipped: "not configured" };
   const r = await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/retention_purge`, {
     method: "POST",

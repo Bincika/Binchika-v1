@@ -1,6 +1,8 @@
 // Verifier & admin portal with a left-hand control panel.
 // Real mode: Supabase magic-link sign-in + RLS tables + /api/admin/*. Preview mode: fictional data, nothing saved.
 import { TENANT } from "./lib/tenant.generated.js";   // country values (tenants/<id>/tenant.json; session 98)
+import { sectionFromHash, stripSectionFromHash, allowedSection, assetTag, offlineVersion, countAppLinkKeys } from "./lib/portal-extras.js";
+import { unitLabel, machineDidNotRead, machineSentence } from "./lib/verifier-labels.js";   // session 150: "Not counted" unless High
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const nf = new Intl.NumberFormat("en-GB");
@@ -21,7 +23,19 @@ let supa = null, me = null, preview = false, viewAs = null, section = "overview"
 let flags = [], reports = [], seats = [];
 let linkNotice = "";                                      // shown on Account after a password-reset link
 let mfaNeeded = false;                                  // OpsAdmin/BinchikAdmin must reach aal2 (authenticator code) first
-let adminData = { invites: [], applications: [], history: [], ops: [] };   // BinchikAdmin seat management
+let diag = { status: "idle", data: null };   // BinchikAdmin diagnostics (session 143): loaded only when the section is opened
+let diagDevice = { status: "idle", data: null };   // three more "This device" readings (session 147): worked out here, sent nowhere
+// Section link (session 147): /portal/#s=<name>. Read once, kept in memory, removed from the address bar. It is applied
+// only after sign-in and the authenticator step, and only for a section the signed-in role already has.
+let pendingSection = sectionFromHash(location.hash);
+if (pendingSection) history.replaceState(null, "", location.pathname + location.search + stripSectionFromHash(location.hash));
+function applyPendingSection() {
+  const ok = allowedSection(me?.role, pendingSection, ROLE_SECTIONS);
+  if (ok) section = pendingSection;
+  pendingSection = null;
+  return ok;
+}
+let adminData = { invites: [], applications: [], history: [], ops: [], review: { applications: [], mailKnown: false } };   // BinchikAdmin seat management (review: session 134)
 
 const SECTIONS = {
   overview: ["Overview", "M4 13h6V4H4zm0 7h6v-5H4zm10 0h6v-9h-6zm0-16v5h6V4z"],
@@ -34,6 +48,7 @@ const SECTIONS = {
   mail: ["Inbox & Sent", "M3 5h18v14H3zM3 6l9 7 9-7"],
   contacts: ["Contacts & campaigns", "M16 11a4 4 0 1 0 0-8M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a6 6 0 0 1 12 0M16 15a6 6 0 0 1 6 6"],
   viewas: ["View as…", "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"],
+  diagnostics: ["Diagnostics", "M3 12h4l3-8 4 16 3-8h4"],
   rulebook: ["Rule book", "M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"],
   account: ["Settings / Account", "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0"],
 };
@@ -41,7 +56,7 @@ const ROLE_SECTIONS = {
   szv: ["overview", "flags", "reports", "hierarchy", "seats", "rulebook", "account"],
   nrv: ["overview", "flags", "reports", "hierarchy", "seats", "rulebook", "account"],
   admin: ["overview", "flags", "reports", "metrics", "hierarchy", "seats", "rulebook", "account"],
-  superadmin: ["overview", "flags", "metrics", "meetings", "mail", "contacts", "viewas", "reports", "hierarchy", "seats", "rulebook", "account"],
+  superadmin: ["overview", "flags", "metrics", "meetings", "mail", "contacts", "viewas", "reports", "hierarchy", "seats", "diagnostics", "rulebook", "account"],
 };
 // Display names only: the role keys stay "admin" / "superadmin" in the database and RLS.
 const ROLE_LABEL = { szv: "State Zone Verifier", nrv: "Regional Verifier", admin: "OpsAdmin", superadmin: "BinchikAdmin" };
@@ -57,7 +72,7 @@ const lensStates = () => {
   return regions.find((r) => r.id === l.region_id)?.states ?? [];
 };
 const readOnly = () => Boolean(viewAs);
-const areaName = (l) => (l.role === "szv" ? stateName[l.state_iso] : l.role === "nrv" ? regions.find((r) => r.id === l.region_id)?.name ?? "" : "All of Nigeria");
+const areaName = (l) => (l.role === "szv" ? stateName[l.state_iso] : l.role === "nrv" ? regions.find((r) => r.id === l.region_id)?.name ?? "" : `All of ${TENANT.country}`);
 
 function drawSide() {
   $("cp-role").textContent = me ? ROLE_LABEL[me.role] : "Portal";
@@ -163,20 +178,20 @@ async function openViewer(id) {
     : `<p class="callout"><strong>Fingerprint does not match the one recorded when it arrived.</strong> Do not approve it: reject it and raise a flag.</p>`;
   const people = res.headers.get("x-evidence-people") || r?.face_check || "unchecked";
   const peopleNote = people === "none" ? `<p class="source-note">Checked for people: none found. Still never share it.</p>`
-    : people === "detected" ? `<p class="callout"><strong>People may be visible in this file.</strong> It is withheld from any publication. Never save or share it.</p>`
-    : `<p class="callout"><strong>Not checked for people.</strong> Treat it as if people are visible: it is withheld from any publication.</p>`;
+    : people === "detected" ? `<p class="callout"><strong>People may be visible in this file.</strong> It is withheld from any publication. Never save or share it. ${machineSentence(r)}.</p>`
+    : `<p class="callout"><strong>Not checked for people.</strong> Treat it as if people are visible: it is withheld from any publication. ${machineSentence(r)}.</p>`;
   split(media + check + peopleNote);
 }
 // Session 88: readings count only once a verifier confirms them, beside the photo. Plain-language statuses, the sheet's
 // control totals and any OCR proposal (with per-field confidence) are shown next to the evidence.
 const STATUS_LABEL = { received: "Received", ocr_pending: "Waiting for a reading", ocr_done: "Read by machine (confident)", needs_review: "Needs a verifier's check", verified: "Confirmed by a verifier", rejected: "Rejected" };
-const UNIT_LABEL = { high: "High confidence, posted", held: "High, but held back by a check", lower: "Lower confidence", medium: "Not yet high", low: "Not yet high", insufficient: "Not enough readings" };
+// Unit standing: only "high" is posted and counted; every other standing reads "Not counted (…)" (lib/verifier-labels.js).
 const GATE_LABEL = { "polling-unit": "polling-unit code", consensus: "three agreeing readings", "human-or-confident": "confirmed readings", "control-totals": "sheet totals balance", baseline: "no count above the register" };
 const canReview = (r) => canAudit() && (r.evidence ?? "ec8a") === "ec8a" && r.status === "needs_review" && r.tally;
 function statusCell(r) {
   const label = esc(r.status_label ?? STATUS_LABEL[r.status] ?? r.status);
   const sheet = r.tally && (r.evidence ?? "ec8a") === "ec8a" ? (r.balanced ? `<span class="chip ok"><i></i>sheet balances</span>` : `<span class="chip warn"><i></i>${r.controls ? "sheet does not balance" : "no sheet totals yet"}</span>`) : "";
-  const u = r.unit ? `<br><small class="muted">Unit: ${esc(UNIT_LABEL[r.unit.status] ?? r.unit.status)} · ${r.unit.reports} reading${r.unit.reports === 1 ? "" : "s"}${r.unit.irev && r.unit.irev.match === false ? " · <strong>differs from IReV</strong>" : r.unit.irev ? " · matches IReV" : ""}</small>` : "";
+  const u = r.unit ? `<br><small class="muted">Unit: ${esc(unitLabel(r.unit.status))} · ${r.unit.reports} reading${r.unit.reports === 1 ? "" : "s"}${r.unit.irev && r.unit.irev.match === false ? " · <strong>differs from ${TENANT.electoralBody.resultsPortalShort}</strong>" : r.unit.irev ? ` · matches ${TENANT.electoralBody.resultsPortalShort}` : ""}</small>` : "";
   const btn = canReview(r) ? ` <button class="btn btn-solid btn-sm" type="button" data-review="${esc(r.id)}">Check reading</button>` : "";
   return `${label} ${sheet}${btn}${u}`;
 }
@@ -184,7 +199,10 @@ function readingPanel(r) {
   const tally = r.tally ? Object.entries(r.tally).map(([k, v]) => `<tr><th scope="row">${esc(k)}</th><td class="num">${esc(v)}</td></tr>`).join("") : "";
   const k = r.controls ?? {};
   const lowFields = (r.ocr?.fields ?? []).filter((f) => f.confidence < 0.9).map((f) => f.name);
-  const ocr = r.ocr && r.ocr.status === "proposed"
+  // A stored photo the people check has not cleared is never read by the machine (functions/_lib/ocr.js); say so plainly.
+  const ocr = machineDidNotRead(r) && r.ocr?.status !== "proposed"
+    ? `<p class="callout"><strong>${machineSentence(r)}:</strong> it has not been cleared by the check for people. Read it yourself. The numbers below were typed in by the reporter.</p>`
+    : r.ocr && r.ocr.status === "proposed"
     ? `<p class="source-note"><strong>Machine reading (proposal only).</strong> Lowest field confidence ${Math.round((r.ocr.confidence ?? 0) * 100)}%${lowFields.length ? `; check carefully: ${esc(lowFields.join(", "))}` : ""}.</p>${r.ocr.transcript ? `<p class="mono ev-transcript">${esc(r.ocr.transcript)}</p>` : ""}`
     : r.ocr ? `<p class="source-note">Machine reading: ${esc(r.ocr.status === "withheld" ? `withheld (${r.ocr.reason ?? "not clear enough"})` : "switched off")}. Read the photo yourself.</p>`
     : `<p class="source-note">No machine reading: the numbers below were typed in by the reporter.</p>`;
@@ -208,7 +226,7 @@ async function submitReview(id, decision) {
   const res = await fetch("/api/portal/review", { method: "POST", headers: { Authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ reportId: id, decision, note, controls }) });
   const j = await res.json().catch(() => ({}));
   if (!res.ok) { st.innerHTML = `${esc(j.error ?? `Could not save (${res.status}).`)}${(j.problems ?? []).length ? `<br>${j.problems.map(esc).join("<br>")}` : ""}`; return; }
-  st.textContent = `Saved: ${decision === "confirm" ? "confirmed" : "rejected"}. The unit is now ${UNIT_LABEL[j.unit?.status] ?? j.unit?.status ?? "unchanged"}.`;
+  st.textContent = `Saved: ${decision === "confirm" ? "confirmed" : "rejected"}. The unit is now: ${j.unit?.status ? unitLabel(j.unit.status) : "unchanged"}.`;
   await loadReal();
 }
 // Dynamic flagging: "Flag unit" on any row opens the flag form with the unit and race already filled in.
@@ -219,9 +237,9 @@ function reportsView() {
   const list = reports.filter((r) => st.includes(stateOfPu(r.pu_code)));
   const pending = list.filter((r) => (r.evidence ?? "ec8a") !== "ec8a" && r.audit_status === "pending").length;
   const audit = pending && canAudit()
-    ? `<div class="panel audit-box"><h3>Audit alternative evidence (${pending} waiting)</h3><p class="muted" style="margin:.2rem 0 .6rem">When Form EC8A is not available, a video, handwritten numbers or a photo of the board counts only after a verifier has audited it, and it stays lower-confidence: it can never make a unit high-confidence on its own. Check that it shows this polling unit and that the numbers match it, then approve or reject with a reason someone else can check.</p><label>Reason for your decision (required)<textarea id="audit-note" rows="2" minlength="10" maxlength="500"></textarea></label><p class="form-status" id="audit-status" role="status"></p></div>` : "";
+    ? `<div class="panel audit-box"><h3>Audit alternative evidence (${pending} waiting)</h3><p class="muted" style="margin:.2rem 0 .6rem">When ${TENANT.text.resultFormShort} is not available, a video, handwritten numbers or a photo of the board counts only after a verifier has audited it, and it stays lower-confidence: it can never make a unit high-confidence on its own. Check that it shows this polling unit and that the numbers match it, then approve or reject with a reason someone else can check.</p><label>Reason for your decision (required)<textarea id="audit-note" rows="2" minlength="10" maxlength="500"></textarea></label><p class="form-status" id="audit-status" role="status"></p></div>` : "";
   return `<h2>Incoming citizen reports</h2><p class="muted">Reporters stay anonymous: you see units and tallies, never who sent them.</p>${audit}
-    ${list.length ? `<div class="table-scroll" style="max-height:440px"><table class="data"><thead><tr><th>Unit</th><th>Race</th><th>Channel</th><th>Evidence</th><th>Status</th><th>Received (WAT)</th></tr></thead><tbody>${list.map((r) => `<tr><td class="mono">${esc(r.pu_code ?? "—")}</td><td>${esc(r.race ?? "—")}</td><td>${esc(r.channel ?? "—")}</td><td>${evidenceCell(r)}${viewBtn(r)}</td><td>${statusCell(r)}${!readOnly() && me.role === "szv" && r.pu_code ? ` <button class="btn btn-ghost btn-sm" type="button" data-flagrow="${esc(r.id)}">Flag unit</button>` : ""}</td><td>${new Date(r.received_at).toLocaleString("en-GB", { timeZone: TENANT.locale.timeZone })}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">No reports in this area yet.</p>`}`;
+    ${list.length ? `<div class="table-scroll" style="max-height:440px"><table class="data"><thead><tr><th>Unit</th><th>Race</th><th>Channel</th><th>Evidence</th><th>Status</th><th>Received (${TENANT.locale.zoneLabel})</th></tr></thead><tbody>${list.map((r) => `<tr><td class="mono">${esc(r.pu_code ?? "—")}</td><td>${esc(r.race ?? "—")}</td><td>${esc(r.channel ?? "—")}</td><td>${evidenceCell(r)}${viewBtn(r)}</td><td>${statusCell(r)}${!readOnly() && me.role === "szv" && r.pu_code ? ` <button class="btn btn-ghost btn-sm" type="button" data-flagrow="${esc(r.id)}">Flag unit</button>` : ""}</td><td>${new Date(r.received_at).toLocaleString("en-GB", { timeZone: TENANT.locale.timeZone })}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">No reports in this area yet.</p>`}`;
 }
 async function auditReport(id, decision) {
   const note = $("audit-note")?.value.trim() ?? "";
@@ -247,13 +265,33 @@ const appsFor = (s) => adminData.applications.filter((a) => a.role_sought === s.
 const openIn = (kind, iso) => seats.filter((s) => s.role === kind && !s.taken && !s.pending && (kind === "szv" ? s.state_iso === iso : s.region_id === regionOf(iso)?.id));
 const appOption = (a, extra = "") => `<option value="${a.id}">Score ${a.score ?? "–"} · ${esc(stateName[a.state_iso])} · applied ${new Date(a.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} · ref ${a.id.slice(0, 8)}${extra}</option>`;
 const inviteTarget = (i) => (i.kind && i.kind !== "seat" && !i.seat_code ? `Any ${i.kind.toUpperCase()} · ${i.kind === "szv" ? stateName[i.state_iso] : i.region_id}` : i.seat_code);
+// Session 134: applications stored for a person to review (question 7 "not sure"). BinchikAdmin only; no names or emails.
+const ANSWER = { yes: "yes", no: "no", unsure: "not sure" };
+function reviewPanel() {
+  const rv = adminData.review;
+  if (!rv) return `<div class="panel" style="margin-bottom:1.2rem" id="review-panel"><b>Applications for review</b><p class="muted">Could not load the review list. Reload the page.</p></div>`;
+  const list = rv.applications ?? [];
+  const asked = (a) => (!rv.mailKnown ? "Unknown" : a.infoRequestedAt ? `Asked ${watTime(a.infoRequestedAt)}${a.replyAt && a.replyAt > a.infoRequestedAt ? `<br><b>Reply ${watTime(a.replyAt)}</b> (Inbox)` : "<br>No reply yet"}` : "Not asked");
+  const answers = (a) => Object.entries(a.answers ?? {}).map(([q, v]) => `<span class="mono"${q === "q7" ? ' style="font-weight:700"' : ""}>${esc(q.toUpperCase())} ${esc(ANSWER[v] ?? v)}</span>`).join(" · ");
+  return `<div class="panel" style="margin-bottom:1.2rem" id="review-panel"><b>Applications for review${list.length ? ` (${list.length})` : ""}</b>
+    <p class="source-note">These applicants answered “not sure” to question 7, so a person decides. <b>Approve</b> moves the application to the eligible list on the same footing as everyone else. <b>Reject</b> keeps it on file as ineligible until the retention date, so the same email or card cannot apply again. <b>Ask a question</b> emails the applicant from ops@mail.example.org; the reply arrives in the Inbox with the reference in the subject. Every decision emails the applicant. Names and email addresses are not shown. The questions are on the <a href="/verifiers/apply/?from=verifiers">application page</a>.</p>
+    ${list.length ? `<div class="table-scroll"><table class="data inv-table"><thead><tr><th>Ref</th><th>Area</th><th>Role</th><th>Applied</th><th>Answers</th><th>Question sent</th><th>Decide</th></tr></thead><tbody>${list.map((a) => `<tr>
+      <td class="mono">${esc(a.ref)}</td>
+      <td>${esc(stateName[a.state_iso] ?? a.state_iso)}<br><small class="muted">state of ${esc(a.state_basis)}</small></td>
+      <td>${esc(String(a.role_sought).toUpperCase())}</td>
+      <td>${watTime(a.created_at)}<br><small class="muted">notice ${esc(a.privacy_version ?? "")}</small></td>
+      <td style="white-space:normal;min-width:14rem">${answers(a)}</td>
+      <td>${asked(a)}</td>
+      <td><div class="cta-row" style="gap:.4rem;flex-wrap:wrap"><button type="button" class="btn btn-solid btn-sm" data-review="approve" data-app="${esc(a.id)}" aria-label="Approve ref ${esc(a.ref)}">Approve</button><button type="button" class="btn btn-ghost btn-sm" data-review="request_info" data-app="${esc(a.id)}" aria-label="Ask ref ${esc(a.ref)} a question">Ask a question</button><button type="button" class="btn btn-ghost btn-sm" data-review="reject" data-app="${esc(a.id)}" aria-label="Reject ref ${esc(a.ref)}">Reject</button></div></td>
+    </tr>`).join("")}</tbody></table></div>` : `<p class="muted">No applications are waiting for review.</p>`}<p class="form-status" id="review-status" role="status"></p></div>`;
+}
 function seatAdminView() {
   if (me?.role !== "superadmin" || readOnly()) return "";
   const open = seats.filter((s) => !s.taken && !s.pending), held = seats.filter((s) => s.taken || s.pending);
   const ops = adminData.ops ?? [];
   const EV = { invited: "Code emailed", claimed: "Account created", pledged: "Pledge signed", released: "Released", invite_revoked: "Invite revoked", invite_expired: "Invite expired", appointed: "OpsAdmin appointed" };
-  return `<div class="metric-grid" style="margin-bottom:1.2rem">
-    <form class="portal-form panel" id="inv-form"><b>Invite a verifier</b><p class="source-note">The code goes to the applicant by email only, from noreply@binchika.com. You never see it. OpsAdmin seats are never offered by code.</p>
+  return `${reviewPanel()}<div class="metric-grid" style="margin-bottom:1.2rem">
+    <form class="portal-form panel" id="inv-form"><b>Invite a verifier</b><p class="source-note">The code goes to the applicant by email only, from noreply@mail.example.org. You never see it. OpsAdmin seats are never offered by code.</p>
       <label>Code type<select id="inv-kind"><option value="szv">SZV code: invitee picks any open SZV seat in their state</option><option value="nrv">NRV code: invitee picks any open NRV seat in their region</option><option value="seat">One specific seat</option></select></label>
       <label id="inv-seat-wrap" hidden>Open seat<select id="inv-seat"><option value="">Choose…</option>${open.map((s) => `<option value="${s.code}">${esc(s.code)} · ${esc(seatArea(s))}</option>`).join("")}</select></label>
       <label>Eligible applicant<select id="inv-app" required></select></label>
@@ -326,6 +364,17 @@ function wireSeatAdmin() {
     if (!confirm("Revoke this unused code? The applicant becomes eligible again.")) return;
     call("/api/admin/revoke", { offerId: btn.dataset.revoke }, "revoke-status");
   }));
+  // Session 134: review decisions. Each one emails the applicant; approve and reject cannot be undone from here.
+  const ASK = {
+    approve: (ref) => `Approve ref ${ref}? It joins the eligible list on the same footing as everyone else, and the applicant is emailed.`,
+    reject: (ref) => `Reject ref ${ref}? The applicant is emailed the published question 7 rule, and the application stays on file as ineligible. This can't be undone from here.`,
+    request_info: (ref) => `Email ref ${ref} one question about question 7, from ops@mail.example.org? Their reply will arrive in the Inbox.`,
+  };
+  document.querySelectorAll("[data-review]").forEach((btn) => btn.addEventListener("click", () => {
+    const ref = btn.dataset.app.slice(0, 8);
+    if (!confirm(ASK[btn.dataset.review](ref))) return;
+    call("/api/admin/applications", { action: btn.dataset.review, applicationId: btn.dataset.app }, "review-status");
+  }));
 }
 function hierarchyView() {
   const W = 1000, colW = W / regions.length, H = 166 + Math.max(...regions.map((r) => r.states.length)) * 26 + 6;
@@ -352,7 +401,7 @@ function metricsView() {
     <h3>Monitoring plan</h3>
     <div class="metric-grid">
       <div class="panel"><b>Intake</b><ul><li>Reports per hour, by channel</li><li>Photo → reading time (median)</li><li>Share of fields needing a human read</li></ul></div>
-      <div class="panel"><b>Results integrity</b><ul><li>Units at high / medium / low confidence</li><li>IReV mismatch rate, by state</li><li>Baseline breaches (register moved; votes above register)</li></ul></div>
+      <div class="panel"><b>Results integrity</b><ul><li>Units at high / medium / low confidence</li><li>${TENANT.electoralBody.resultsPortalShort} mismatch rate, by state</li><li>Baseline breaches (register moved; votes above register)</li></ul></div>
       <div class="panel"><b>Verifier health</b><ul><li>Seats filled, and active in the last 24 h</li><li>Median time: flag → NRV review → decision</li><li>Flags per verifier (outliers can signal bias or pressure)</li><li>Approve : reject ratio, by region</li></ul></div>
       <div class="panel"><b>System</b><ul><li>Queue depth and retry rate</li><li>Ledger head age (minutes since the last entry)</li><li>Error rate per API route</li></ul></div>
     </div>`;
@@ -372,7 +421,7 @@ function meetingsView() {
     <div class="callout signal-note"><strong>Default channel: Signal, by username only.</strong> Every verifier sets their Signal <strong>profile name to their seat number</strong> (for example SZV-073) and joins with a Signal username. <strong>Never share phone numbers</strong>, in a call, a group or a direct message. ${SIGNAL_GUIDE}</div>
     <form class="portal-form panel" id="meet-form">
     <div class="form-grid"><label class="wide">Title<input id="m-title" required maxlength="120" placeholder="Pre-election briefing"></label>
-    <label>Date and time (WAT)<input id="m-when" type="datetime-local" required></label>
+    <label>Date and time (${TENANT.locale.zoneLabel})<input id="m-when" type="datetime-local" required></label>
     <label>Channel<select id="m-channel"><option value="signal" selected>Signal call link (default)</option><option value="other">Other secure https link</option></select></label>
     <label class="wide">Meeting link<input id="m-link" type="url" required placeholder="https://signal.link/call/#key=…"></label>
     <label class="wide">Agenda (one item per line)<textarea id="m-agenda" rows="3"></textarea></label>
@@ -407,7 +456,81 @@ function viewAsView() {
     <label>Area<select id="va-area"></select></label></div><button class="btn btn-solid btn-sm" type="submit">Open their view</button></form>`;
 }
 const rulebookView = () => `<h2>Rule book</h2><p>Your welcome packet and the full rule book address you only by your seat number.</p><a class="btn btn-solid" href="/portal/rulebook/${me?.seat_code ? `?seat=${encodeURIComponent(me.seat_code)}` : ""}">Open the rule book</a>`;
-const VIEWS = { overview: overviewView, flags: flagsView, reports: reportsView, hierarchy: hierarchyView, seats: seatsView, metrics: metricsView, meetings: meetingsView, mail: mailView, contacts: crmView, viewas: viewAsView, rulebook: rulebookView, account: accountView };
+// ---------- Diagnostics (session 143): BinchikAdmin only, read-only. docs/egm/owner-diagnostics/build-plan.md ----------
+// The server answers with set / missing and yes / no only: never a secret value. "This device" is worked out here and sent nowhere.
+const DIAG_SAMPLE = { time: "2026-11-15T12:00:00.000Z", bindings: { DB: true, EVIDENCE: true, AI: true }, secrets: { SUPABASE_URL: true, RESEND_API_KEY: true, TELEGRAM_BOT_TOKEN: false }, switches: { applicationsOpen: true, privacyNoticeVersion: "PN-2026-1", ocrEngine: "off", resultsSource: "snapshot" }, database: { reachable: true }, supabase: { configured: true, reachable: true }, appLink: { readable: true, package: "com.example.app", fingerprints: 1, playSigningKeyListed: false } };
+const diagRow = (k, v) => `<tr><th scope="row" style="text-align:left;font-weight:500;white-space:normal">${k}</th><td style="white-space:normal;min-width:11rem">${v}</td></tr>`;
+const diagMark = (ok, yes, no) => (ok ? `<b>${yes}</b>` : `<span class="mono">${no}</span>`);
+const diagTable = (caption, rows) => `<div class="panel" style="margin-bottom:1.2rem"><b>${caption}</b><div class="table-scroll"><table class="data"><tbody>${rows.join("")}</tbody></table></div></div>`;
+function deviceFacts() {
+  const mode = ["standalone", "fullscreen", "minimal-ui"].find((m) => matchMedia(`(display-mode: ${m})`).matches) ?? "browser";
+  return { mode, fromApp: document.referrer.startsWith("android-app://"), worker: Boolean(navigator.serviceWorker?.controller), online: navigator.onLine };
+}
+function diagnosticsView() {
+  if (me?.role !== "superadmin") return `<h2>Diagnostics</h2><p class="callout">BinchikAdmin only.</p>`;
+  const dev = deviceFacts(), ex = diagDevice.data, wait = diagDevice.status !== "ready" || !ex;
+  const device = diagTable("This device (worked out in this browser; sent nowhere)", [
+    diagRow("Display mode", dev.mode === "browser" ? `<span class="mono">browser</span>: the page has an address bar` : `<b>${esc(dev.mode)}</b>: full-screen, as the Android app shows it once its link is verified`),
+    diagRow("Opened from the Android app", dev.fromApp ? "<b>Yes</b>" : "Not reported by the browser"),
+    diagRow("Offline page ready", diagMark(dev.worker, "Yes", "Not yet on this visit (reload once)")),
+    diagRow("Browser says it is online", diagMark(dev.online, "Yes", "No")),
+    diagRow("Site version", wait ? "Checking…" : ex.site ? `<span class="mono">${esc(ex.site)}</span>` : "Not available"),
+    diagRow("Offline page version", wait ? "Checking…" : ex.offline ? `<span class="mono">${esc(ex.offline)}</span>` : "Not stored on this device yet"),
+    diagRow("App link file as this device receives it", wait ? "Checking…" : ex.keys === null ? "Could not be read" : `<b>${ex.keys} ${ex.keys === 1 ? "key" : "keys"}</b>`),
+  ]);
+  const head = `<h2>Diagnostics</h2><p class="source-note">Read-only. Secrets are shown as set or missing only; no value is ever sent to this page. Nothing here is stored or logged.</p>`;
+  if (diag.status === "error") return `${head}<p class="callout" role="alert">Could not load diagnostics. Reload the page.</p>${device}`;
+  if (diag.status !== "ready" || !diag.data) return `${head}<p class="muted" role="status">Loading…</p>${device}`;
+  const d = diag.data, al = d.appLink ?? {}, sw = d.switches ?? {};
+  const link = !al.readable ? `<span class="mono">The app link file could not be read</span>`
+    : al.playSigningKeyListed ? `<b>${al.fingerprints} keys listed</b>: the upload key and the Play app signing key. A copy installed from Play can open without the address bar.`
+    : `<span class="mono">${al.fingerprints} key listed</span>: the upload key only. Add the Play app signing key (Play Console → Test and release → App integrity → App signing); until then a copy installed from Play shows the address bar.`;
+  return `${head}${preview ? `<p class="callout">Preview: sample server values. Nothing was read from the server.</p>` : ""}
+    <div class="cta-row" style="margin-bottom:1rem"><button type="button" class="btn btn-ghost btn-sm" id="diag-refresh">Refresh</button><span class="muted">Server time ${esc(d.time)}</span></div>
+    ${diagTable("Android app link", [diagRow("Package", al.package ? `<span class="mono">${esc(al.package)}</span>` : "Not readable"), diagRow("Signing keys on the site", link)])}
+    ${device}
+    ${diagTable("Services", [
+      diagRow("Ledger database (D1) answers", diagMark(d.database?.reachable, "Yes", "No")),
+      diagRow("Supabase sign-in answers", diagMark(d.supabase?.reachable, "Yes", "No")),
+      ...Object.entries(d.bindings ?? {}).map(([k, v]) => diagRow(`Binding <span class="mono">${esc(k)}</span>`, diagMark(v, "Present", "Missing"))),
+    ])}
+    ${diagTable("Switches", [
+      diagRow("Verifier applications", sw.applicationsOpen ? "<b>Open</b>" : "Closed"),
+      diagRow("Privacy notice version", sw.privacyNoticeVersion ? `<span class="mono">${esc(sw.privacyNoticeVersion)}</span>` : "Not set"),
+      diagRow("OCR engine", `<span class="mono">${esc(sw.ocrEngine)}</span>`),
+      diagRow("Results source", `<span class="mono">${esc(sw.resultsSource)}</span>`),
+    ])}
+    ${diagTable("Secrets and keys (set or missing only)", Object.entries(d.secrets ?? {}).map(([k, v]) => diagRow(`<span class="mono">${esc(k)}</span>`, diagMark(v, "Set", "Missing"))))}`;
+}
+async function loadDeviceExtras() {
+  if (diagDevice.status !== "idle") return;
+  diagDevice = { status: "loading", data: null };
+  const data = { site: assetTag([...document.scripts].map((s) => s.src)), offline: null, keys: null };
+  try { data.offline = "caches" in globalThis ? offlineVersion(await caches.keys()) : null; } catch { data.offline = null; }
+  try {
+    const r = await fetch("/.well-known/assetlinks.json", { cache: "no-store" });
+    data.keys = r.ok ? countAppLinkKeys(await r.text()) : null;
+  } catch { data.keys = null; }
+  diagDevice = { status: "ready", data };
+  if (section === "diagnostics") render();
+}
+async function loadDiagnostics() {
+  diag = { status: "loading", data: null };
+  if (preview) { diag = { status: "ready", data: DIAG_SAMPLE }; return render(); }
+  try {
+    const r = await fetch("/api/admin/diagnostics", { headers: await authHeader(), cache: "no-store" });
+    diag = r.ok ? { status: "ready", data: await r.json() } : { status: "error", data: null };
+  } catch { diag = { status: "error", data: null }; }
+  render();
+}
+function wireDiagnostics() {
+  if (section !== "diagnostics" || me?.role !== "superadmin") return;
+  $("diag-refresh")?.addEventListener("click", () => { diag = { status: "idle", data: null }; diagDevice = { status: "idle", data: null }; render(); });
+  loadDeviceExtras();
+  if (diag.status === "idle") loadDiagnostics();
+}
+
+const VIEWS = { overview: overviewView, flags: flagsView, reports: reportsView, hierarchy: hierarchyView, seats: seatsView, metrics: metricsView, meetings: meetingsView, mail: mailView, contacts: crmView, viewas: viewAsView, diagnostics: diagnosticsView, rulebook: rulebookView, account: accountView };
 
 function render() {
   drawSide();
@@ -424,7 +547,7 @@ function render() {
   main.querySelectorAll("[data-review]").forEach((b) => b.addEventListener("click", () => openViewer(b.dataset.review)));
   main.querySelectorAll("[data-flagrow]").forEach((b) => b.addEventListener("click", () => flagFromRow(b.dataset.flagrow)));
   main.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => openViewer(b.dataset.view)));
-  wireMeetings(); wireViewAs(); wireAccount(); wireSeatAdmin(); wireMail(); wireCrm();
+  wireMeetings(); wireViewAs(); wireAccount(); wireSeatAdmin(); wireMail(); wireCrm(); wireDiagnostics();
 }
 function wireSignIn() {
   document.querySelectorAll("[data-prev]").forEach((b) => b.addEventListener("click", () => startPreview(b.dataset.prev)));
@@ -446,7 +569,7 @@ function wireSignIn() {
     $("pw-status").textContent = (await requestLink(email, true)).message;
   });
 }
-// Sign-in links come from Binchika's own endpoint (noreply@binchika.com, token-hash flow).
+// Sign-in links come from Binchika's own endpoint (noreply@mail.example.org, token-hash flow).
 async function requestLink(email, reset = false) {
   const r = await fetch("/api/auth/link", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email, reset }) });
   const j = await r.json().catch(() => ({}));
@@ -481,7 +604,7 @@ async function mfaInto(box, done) {
 function accountView() {
   const isAdmin = ["admin", "superadmin"].includes(me.role);
   return `<h2>Settings and account</h2>${linkNotice ? `<p class="callout">${esc(linkNotice)}</p>` : ""}
-    <div class="panel"><h3 style="margin-top:0">Sign in on another device</h3><p class="muted">We'll email a one-time sign-in link to your account address from noreply@binchika.com. Open it on the other device. ${isAdmin ? "You'll still be asked for your authenticator code." : ""}</p>
+    <div class="panel"><h3 style="margin-top:0">Sign in on another device</h3><p class="muted">We'll email a one-time sign-in link to your account address from noreply@mail.example.org. Open it on the other device. ${isAdmin ? "You'll still be asked for your authenticator code." : ""}</p>
       <button class="btn btn-ghost btn-sm" type="button" id="link-me">Email me a fresh sign-in link</button> <span class="form-status" id="link-status" role="status"></span></div>
     <form class="portal-form panel" id="pw-change"><h3 style="margin-top:0">Set a new password</h3><div class="form-grid"><label>New password<input type="password" id="a-pass" autocomplete="new-password" minlength="12" maxlength="72" required></label><label>Repeat<input type="password" id="a-pass2" autocomplete="new-password" required></label></div>
       <button class="btn btn-solid btn-sm" type="submit">Save password</button> <span class="form-status" id="a-status" role="status"></span></form>
@@ -547,7 +670,7 @@ function wireMeetings() {
     const b = body(dryRun);
     if (preview) {
       const n = b.audience.seats.length;
-      $("m-status").textContent = dryRun ? `Preview: ${n} seat${n === 1 ? "" : "s"} selected: ${b.audience.seats.slice(0, 12).join(", ")}${n > 12 ? "…" : ""}.` : `Preview: ${n} invite${n === 1 ? "" : "s"} would be sent from noreply@binchika.com, each addressed by seat number.`;
+      $("m-status").textContent = dryRun ? `Preview: ${n} seat${n === 1 ? "" : "s"} selected: ${b.audience.seats.slice(0, 12).join(", ")}${n > 12 ? "…" : ""}.` : `Preview: ${n} invite${n === 1 ? "" : "s"} would be sent from noreply@mail.example.org, each addressed by seat number.`;
       return;
     }
     const token = (await supa.auth.getSession()).data.session?.access_token;
@@ -564,9 +687,9 @@ function wireMeetings() {
 // owner's inbox); sending goes through /api/admin/mail/send (Resend, branded template). Guide: docs/EMAIL-GUIDE.md.
 let mail = { tab: "in", mailbox: "all", list: [], unread: {}, mailboxes: [], open: null, html: false, loaded: false, loading: false, error: "", readError: "", notice: "", draft: null };
 const MAILBOX_FALLBACK = [
-  { key: "ops", address: "ops@binchika.com", name: "Binchika Ops", purpose: "verifiers, maintenance, technical and operational" },
-  { key: "accounts", address: "accounts@binchika.com", name: "Binchika Accounts", purpose: "parties, manifestos, data requests" },
-  { key: "noreply", address: "noreply@binchika.com", name: "Binchika", purpose: "announcements and notices (replies still arrive)" },
+  { key: "ops", address: "ops@mail.example.org", name: "Binchika Ops", purpose: "verifiers, maintenance, technical and operational" },
+  { key: "accounts", address: "accounts@mail.example.org", name: "Binchika Accounts", purpose: "parties, manifestos, data requests" },
+  { key: "noreply", address: "noreply@mail.example.org", name: "Binchika", purpose: "announcements and notices (replies still arrive)" },
 ];
 let previewMail = [];
 // Tickets (session 78, phase 1, no AI): one per contact-form enquiry, reference BIN-YYMM-NNNN. Reference, topic,
@@ -618,7 +741,7 @@ function mailView() {
     ? `<ul class="mail-list">${mail.list.map((m) => `<li><button type="button" data-mail="${esc(m.id)}" class="${!out && !m.read_at ? "unread" : ""}"${mail.open?.id === m.id ? ' aria-current="true"' : ""}>
         <b>${esc(out ? `To: ${m.to_addrs.join(", ")}` : m.from_name || m.from_addr)}</b><span class="mail-subj">${esc(m.subject || "(no subject)")}</span>
         <span class="mail-snip">${esc(m.snippet ?? "")}</span><span class="mail-meta">${esc(m.mailbox ? `${m.mailbox}@` : "")} · ${watTime(m.at)}${m.attachments ? ` · ${plural(m.attachments, "attachment")}` : ""}${m.auto ? " · automatic reply" : ""}${m.optout_confirm ? " · unsubscribe confirmation" : ""}</span>${optChip(m.optout)}</button></li>`).join("")}</ul>`
-    : `<p class="muted">${out ? "Nothing sent from the dashboard yet. Automatic replies to incoming mail are listed here too; other emails the site sends by itself (seat codes, sign-in links, meeting invites) are not." : "No messages yet. Mail to ops@, accounts@ and noreply@binchika.com appears here once it reaches the mailbox; a copy also goes to the owner's own inbox."}</p>`;
+    : `<p class="muted">${out ? "Nothing sent from the dashboard yet. Automatic replies to incoming mail are listed here too; other emails the site sends by itself (seat codes, sign-in links, meeting invites) are not." : "No messages yet. Mail to ops@, accounts@ and noreply@mail.example.org appears here once it reaches the mailbox; a copy also goes to the owner's own inbox."}</p>`;
   const openOpt = out ? 0 : mail.list.filter((m) => m.optout?.state === "open").length;
   return `${head}${mail.notice ? `<p class="callout">${esc(mail.notice)}</p>` : ""}${openOpt ? `<p class="callout" role="status"><b>${plural(openOpt, "opt-out request")} ${openOpt === 1 ? "needs" : "need"} your decision.</b> Open ${openOpt === 1 ? "it" : "each"} and choose “Remove from contacts and confirm”. Requests the mailbox could check are handled automatically and listed under Contacts &amp; campaigns → Opt-outs.</p>` : ""}<div class="mail-split"><div class="mail-col">${items}</div><div class="mail-read panel" id="mail-read">${readView()}</div></div>`;
 }
@@ -716,7 +839,7 @@ async function replyWithMediaDecision(ref, decision) {
     if (!r.ok) { $("tk-status").textContent = j.error ?? `Could not open the message for ${ref} (${r.status}).`; return; }
     m = j.message;
   }
-  mail.draft = { from: t.mailbox, to: m.from_addr, cc: "", subject: /^\s*re:/i.test(m.subject) ? m.subject : `Re: ${m.subject}`, body, replyToId: m.id, replyLabel: m.subject || "(no subject)", ticketRef: ref, mediaDecision: decision, mediaReason: reason };
+  mail.draft = { from: t.mailbox, to: m.from_addr, cc: "", bcc: "", subject: /^\s*re:/i.test(m.subject) ? m.subject : `Re: ${m.subject}`, body, replyToId: m.id, replyLabel: m.subject || "(no subject)", ticketRef: ref, mediaDecision: decision, mediaReason: reason };
   mail.tab = "compose";
   mail.notice = `Draft “${MEDIA_DECISION[decision]}” reply filled in for ${ref}. Check the request in the message first, edit the reply if needed, then press Send. Sending records the decision; nothing has been sent yet.`;
   render();
@@ -735,7 +858,7 @@ async function replyWithAnswer(ref) {
     if (!r.ok) { $("tk-status").textContent = j.error ?? `Could not open the message for ${ref} (${r.status}).`; return; }
     m = j.message;
   }
-  mail.draft = { from: t.mailbox, to: m.from_addr, cc: "", subject: /^\s*re:/i.test(m.subject) ? m.subject : `Re: ${m.subject}`, body: t.kb.reply, replyToId: m.id, replyLabel: m.subject || "(no subject)", ticketRef: ref };
+  mail.draft = { from: t.mailbox, to: m.from_addr, cc: "", bcc: "", subject: /^\s*re:/i.test(m.subject) ? m.subject : `Re: ${m.subject}`, body: t.kb.reply, replyToId: m.id, replyLabel: m.subject || "(no subject)", ticketRef: ref };
   mail.tab = "compose";
   mail.notice = `Approved answer “${t.kb.question}” filled in for ${ref}. Read it and change anything that does not fit this person's question, then press Send. Nothing has been sent yet.`;
   render();
@@ -763,19 +886,20 @@ function composeView() {
     <p class="source-note" id="mc-purpose"></p>
     <label class="wide">To<input id="mc-to" required autocomplete="off" value="${esc(d.to ?? "")}" placeholder="name@example.org (separate several with commas)"></label>
     <label class="wide">Cc (optional)<input id="mc-cc" autocomplete="off" value="${esc(d.cc ?? "")}"></label>
+    <label class="wide">Bcc (optional)<input id="mc-bcc" autocomplete="off" value="${esc(d.bcc ?? "")}" placeholder="Hidden from the other recipients (separate several with commas)"></label>
     <label class="wide">Subject<input id="mc-subject" required maxlength="200" value="${esc(d.subject ?? "")}"></label>
     <label class="wide">Message<textarea id="mc-body" rows="10" required maxlength="20000">${esc(d.body ?? "")}</textarea></label></div>
     <div class="mail-attach"><label class="btn btn-ghost btn-sm" for="mc-files">Attach files</label><input id="mc-files" class="sr-only" type="file" multiple accept="${ATTACH_ACCEPT}">
       <span class="source-note">Photos and images are compressed automatically (longest side up to ${IMG_MAX_SIDE} px). PDF and Office files are already compressed and go as they are. Up to ${ATTACH_MAX_FILES} files, ${ATTACH_MAX_MB} MB in total.</span>
       <ul class="mail-att-list" id="mc-att-list">${attachList(d.attachments)}</ul></div>
     ${d.replyToId ? `<p class="source-note">Replying to “${esc(d.replyLabel)}”. The original is quoted under your message and the reply is threaded with it.</p>` : ""}
-    <p class="source-note">Your text goes out inside the branded Binchika email (agogo logo, sign-off from the chosen address, INEC notice). Plain text only: leave a blank line between paragraphs, and https links become clickable. At most 10 recipients.</p>
+    <p class="source-note">Your text goes out inside the branded Binchika email (agogo logo, sign-off from the chosen address, ${TENANT.electoralBody.short} notice). Plain text only: leave a blank line between paragraphs, and https links become clickable. At most 10 recipients in total, including Cc and Bcc. Bcc addresses are hidden from the other recipients and are not kept in Sent.</p>
     <div class="cta-row"><button class="btn btn-ghost btn-sm" type="button" id="mc-preview">Preview</button><button class="btn btn-solid btn-sm" type="submit">Send</button>${d.replyToId ? `<button class="btn btn-ghost btn-sm" type="button" id="mc-cancel">Cancel reply</button>` : ""}</div>
     <p class="form-status" id="mc-status" role="status"></p>
     <iframe class="mail-frame" id="mc-frame" sandbox="" title="Email preview" hidden></iframe></form>`;
 }
 
-const saveDraft = () => { if ($("mail-form")) mail.draft = { ...mail.draft, from: $("mc-from").value, to: $("mc-to").value, cc: $("mc-cc").value, subject: $("mc-subject").value, body: $("mc-body").value }; };
+const saveDraft = () => { if ($("mail-form")) mail.draft = { ...mail.draft, from: $("mc-from").value, to: $("mc-to").value, cc: $("mc-cc").value, bcc: $("mc-bcc").value, subject: $("mc-subject").value, body: $("mc-body").value }; };
 const reloadMail = () => { mail.loaded = false; mail.open = null; mail.readError = ""; render(); };
 
 function wireMail() {
@@ -807,7 +931,7 @@ function wireMail() {
   $("mail-optout")?.addEventListener("click", actOnOptOut);
   $("mail-reply")?.addEventListener("click", () => {
     const m = mail.open;
-    mail.draft = { from: m.mailbox ?? "ops", to: m.from_addr, cc: "", subject: /^\s*re:/i.test(m.subject) ? m.subject : `Re: ${m.subject}`, body: "", replyToId: m.id, replyLabel: m.subject || "(no subject)" };
+    mail.draft = { from: m.mailbox ?? "ops", to: m.from_addr, cc: "", bcc: "", subject: /^\s*re:/i.test(m.subject) ? m.subject : `Re: ${m.subject}`, body: "", replyToId: m.id, replyLabel: m.subject || "(no subject)" };
     mail.tab = "compose"; render();
   });
   main.querySelectorAll("[data-att]").forEach((b) => b.addEventListener("click", () => downloadAttachment(Number(b.dataset.att))));
@@ -851,7 +975,7 @@ async function deleteOpenMail() {
 // Inbox opt-out requests (session 96): act on one the mailbox Worker could not handle by itself.
 async function actOnOptOut() {
   const m = mail.open;
-  if (!confirm(`Remove ${m.from_addr} from the contact registry and every campaign, and send the automated confirmation from noreply@binchika.com?`)) return;
+  if (!confirm(`Remove ${m.from_addr} from the contact registry and every campaign, and send the automated confirmation from noreply@mail.example.org?`)) return;
   if (preview) { m.optout = { state: "done", method: "admin", at: new Date().toISOString(), confirmed: true }; mail.notice = "Preview: opt-out recorded (nothing is saved or sent in preview)."; render(); return; }
   const r = await fetch("/api/admin/optouts", { method: "POST", headers: { "content-type": "application/json", ...(await authHeader()) }, body: JSON.stringify({ mailId: m.id }) });
   const j = await r.json().catch(() => ({}));
@@ -949,7 +1073,7 @@ function crmSendView() {
 
 function crmOptOutsView() {
   const o = crm.data.optOuts;
-  return `<p class="muted" style="max-width:72ch">People who asked to stop receiving emails. Each was removed from the contact registry and every campaign at once, and was sent one confirmation from noreply@binchika.com. Only a masked address is shown; a scrambled form of the full address is kept so they cannot be added again by mistake. Requests that arrive by email and need a decision are marked in the Inbox.</p>
+  return `<p class="muted" style="max-width:72ch">People who asked to stop receiving emails. Each was removed from the contact registry and every campaign at once, and was sent one confirmation from noreply@mail.example.org. Only a masked address is shown; a scrambled form of the full address is kept so they cannot be added again by mistake. Requests that arrive by email and need a decision are marked in the Inbox.</p>
     ${o.length ? `<div class="table-scroll" style="max-height:none"><table class="data"><caption class="sr-only">Opt-outs</caption><thead><tr><th scope="col">When</th><th scope="col">Address</th><th scope="col">How</th><th scope="col">Was in</th><th scope="col">Confirmation</th></tr></thead><tbody>${o.map((x) => `<tr><td>${watTime(x.at)}</td><td>${esc(x.email_masked)}</td><td>${esc(OPT_METHOD[x.method] ?? x.method)}${x.mail_id ? ` · <button type="button" class="linklike" data-o-open="${esc(x.mail_id)}">Open message</button>` : ""}</td><td>${x.campaigns.length ? x.campaigns.map((n) => esc(n)).join(", ") : `<span class="muted">No campaign</span>`}</td><td>${x.confirmed ? `<span class="chip ok"><i></i>Sent</span>` : `<span class="chip warn"><i></i>Not sent</span>`}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">No opt-outs yet.</p>`}`;
 }
 
@@ -1019,7 +1143,7 @@ function wireCrm() {
   const payload = () => ({ campaignId: $("s-camp").value, from: $("s-from").value, subject: $("s-subject").value, body: $("s-body").value });
   $("s-preview")?.addEventListener("click", async () => {
     saveCrmDraft();
-    if (preview) { crm.preview = { campaign: crm.data.campaigns.find((k) => k.id === $("s-camp").value)?.name ?? "(no campaign)", recipients: 2, from: "Binchika <noreply@binchika.com>", preview: `<p style="font:16px Arial">${esc($("s-body").value)}</p><p style="font:12px Arial;color:#555">Preview: each copy ends with the person's own unsubscribe link.</p>` }; return render(); }
+    if (preview) { crm.preview = { campaign: crm.data.campaigns.find((k) => k.id === $("s-camp").value)?.name ?? "(no campaign)", recipients: 2, from: "Binchika <noreply@mail.example.org>", preview: `<p style="font:16px Arial">${esc($("s-body").value)}</p><p style="font:12px Arial;color:#555">Preview: each copy ends with the person's own unsubscribe link.</p>` }; return render(); }
     const r = await crmCall("/api/admin/campaigns/send", "POST", { ...payload(), dryRun: true });
     if (!r.ok) return status("s-status", r.j.error ?? "Could not build the preview.");
     crm.preview = r.j; render();
@@ -1123,14 +1247,14 @@ function wireCompose(form) {
     const files = d.attachments ?? [];
     const fileNote = files.length ? ` with ${files.length} attachment${files.length === 1 ? "" : "s"} (${fmtSize(files.reduce((a, x) => a + x.size, 0))})` : "";
     if (preview) { st.textContent = dryRun ? "Preview mode: once signed in, Preview shows the real branded email built by the server." : `Preview: nothing sent. A real send would go from ${box.address} to ${d.to}${fileNote}.`; return; }
-    if (!dryRun && !confirm(`Send “${d.subject}” from ${box.address} to ${d.to}${d.cc ? ` (cc ${d.cc})` : ""}${fileNote}?`)) return;
+    if (!dryRun && !confirm(`Send “${d.subject}” from ${box.address} to ${d.to}${d.cc ? ` (cc ${d.cc})` : ""}${d.bcc ? ` (bcc ${d.bcc})` : ""}${fileNote}?`)) return;
     st.textContent = dryRun ? "Building the preview…" : "Sending…";
     // The preview does not need the file contents, only their names; the real send uploads them.
     const attachments = files.map((a) => ({ filename: a.filename, contentType: a.contentType, content: a.content }));
-    const r = await fetch("/api/admin/mail/send", { method: "POST", headers: { "content-type": "application/json", ...(await authHeader()) }, body: JSON.stringify({ from: d.from, to: d.to, cc: d.cc, subject: d.subject, body: d.body, replyToId: d.replyToId, attachments, dryRun }) });
+    const r = await fetch("/api/admin/mail/send", { method: "POST", headers: { "content-type": "application/json", ...(await authHeader()) }, body: JSON.stringify({ from: d.from, to: d.to, cc: d.cc, bcc: d.bcc, subject: d.subject, body: d.body, replyToId: d.replyToId, attachments, dryRun }) });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { st.textContent = j.error ?? `Failed (${r.status}). Nothing was sent.`; return; }
-    if (dryRun) { const f = $("mc-frame"); f.hidden = false; f.srcdoc = j.preview; st.textContent = `This is what ${j.to.join(", ")} will receive from ${j.from}${j.attachments?.length ? `, with ${j.attachments.map((a) => a.filename).join(", ")} attached` : ""}. Nothing has been sent yet.`; return; }
+    if (dryRun) { const f = $("mc-frame"); f.hidden = false; f.srcdoc = j.preview; st.textContent = `This is what ${j.to.join(", ")}${j.bcc?.length ? ` (and ${j.bcc.length} blind ${j.bcc.length === 1 ? "copy" : "copies"})` : ""} will receive from ${j.from}${j.attachments?.length ? `, with ${j.attachments.map((a) => a.filename).join(", ")} attached` : ""}. Nothing has been sent yet.`; return; }
     // A reply started from a ticket ("Reply with this") marks that ticket answered; a media decision reply records the
     // decision instead (session 91).
     let tkNote = "";
@@ -1181,31 +1305,31 @@ async function raiseFlag(e) {
 }
 
 function startPreview(role) {
-  preview = true; viewAs = null; section = "overview";
+  preview = true; viewAs = null; section = "overview"; diag = { status: "idle", data: null };
   $("preview-banner").hidden = false;
-  me = { role, public_id: { szv: "V0007", nrv: "V0042", admin: "V0002", superadmin: "V0001" }[role], seat_code: { szv: "SZV-073", nrv: "NRV-16" }[role] ?? null, state_iso: role === "szv" ? "NG-LA" : null, region_id: role === "nrv" ? "R6" : null };
+  me = { role, public_id: { szv: "V0007", nrv: "V0042", admin: "V0002", superadmin: "V0001" }[role], seat_code: { szv: "SZV-073", nrv: "NRV-16" }[role] ?? null, state_iso: role === "szv" ? "XL-LA" : null, region_id: role === "nrv" ? "R6" : null };
   flags = [
-    { id: "p1", pu_code: "24-09-05-012", race: "president", state_iso: "NG-LA", status: "open", reason: "IReV upload shows 442 for one party; 5 photos show 412.", raised_by_public_id: "V0007" },
-    { id: "p2", pu_code: "24-03-11-004", race: "president", state_iso: "NG-LA", status: "escalated", reason: "Two SZVs disagree on whether the sheet was altered.", raised_by_public_id: "V0009", nrv_public_id: "V0042", nrv_findings: "Photos from 6 reporters agree; the IReV image is the outlier." },
-    { id: "p3", pu_code: "30-14-02-021", race: "house", state_iso: "NG-OY", status: "ai_done", reason: "Accredited voters exceed the unit's register.", raised_by_public_id: "V0013", nrv_public_id: "V0042", ai_summary: "Re-read of 9 photos: accredited 611, register 590. Baseline breach confirmed." },
-    { id: "p4", pu_code: "19-22-04-007", race: "president", state_iso: "NG-KN", status: "open", reason: "Party totals on the photo do not add up to total valid votes.", raised_by_public_id: "V0021" },
+    { id: "p1", pu_code: "24-09-05-012", race: "president", state_iso: "XL-LA", status: "open", reason: "The official upload shows 442 for one party; 5 photos show 412.", raised_by_public_id: "V0007" },
+    { id: "p2", pu_code: "24-03-11-004", race: "president", state_iso: "XL-LA", status: "escalated", reason: "Two SZVs disagree on whether the sheet was altered.", raised_by_public_id: "V0009", nrv_public_id: "V0042", nrv_findings: "Photos from 6 reporters agree; the official portal image is the outlier." },
+    { id: "p3", pu_code: "30-14-02-021", race: "house", state_iso: "XL-OY", status: "ai_done", reason: "Accredited voters exceed the unit's register.", raised_by_public_id: "V0013", nrv_public_id: "V0042", ai_summary: "Re-read of 9 photos: accredited 611, register 590. Baseline breach confirmed." },
+    { id: "p4", pu_code: "19-22-04-007", race: "president", state_iso: "XL-KN", status: "open", reason: "Party totals on the photo do not add up to total valid votes.", raised_by_public_id: "V0021" },
   ];
-  reports = Array.from({ length: 14 }, (_, i) => ({ pu_code: ["24-09-05-012", "24-03-11-004", "30-14-02-021", "19-22-04-007"][i % 4], race: i % 3 ? "president" : "house", channel: ["telegram", "web", "whatsapp", "sms"][i % 4], status: ["ocr_pending", "needs_review", "verified"][i % 3], received_at: new Date(Date.now() - i * 840000).toISOString(), id: `p-rep-${i}`, evidence: i === 1 ? "board" : i === 6 ? "handwritten" : "ec8a", audit_status: i === 1 ? "pending" : i === 6 ? "approved" : null, audited_by: i === 6 ? "V0007" : null, has_media: i === 1 || i === 6 || i === 4,
+  reports = Array.from({ length: 14 }, (_, i) => ({ pu_code: ["24-09-05-012", "24-03-11-004", "30-14-02-021", "19-22-04-007"][i % 4], race: i % 3 ? "president" : "house", channel: ["telegram", "web", "whatsapp", "sms"][i % 4], status: ["ocr_pending", "needs_review", "verified"][i % 3], received_at: new Date(Date.now() - i * 840000).toISOString(), id: `p-rep-${i}`, evidence: i === 1 ? "board" : i === 6 ? "handwritten" : "ec8a", audit_status: i === 1 ? "pending" : i === 6 ? "approved" : null, audited_by: i === 6 ? "V0007" : null, has_media: i === 1 || i === 6 || i === 4 || i === 13, face_check: i === 1 || i === 13 ? "unchecked" : "none",   // session 150: one reading shows "The machine did not read this photo"
     // Session 88 preview: readings with sheet totals, one machine proposal, and the unit's consensus and gates.
-    tally: i % 3 === 0 ? null : { APC: 47, PDP: 37, LP: 32, NNPP: 8 }, controls: i % 3 === 0 ? null : { register: 480, accredited: 130, rejected: 5 }, balanced: i % 3 !== 0, problems: [],
-    ocr: i === 4 ? { status: "proposed", confidence: 0.6, fields: [{ name: "parties", confidence: 0.97 }, { name: "rejected", confidence: 0.6 }], transcript: "APC 47  PDP 37  LP 32  NNPP 8  Rejected 5  Accredited 130  Register 480" } : null,
+    tally: i % 3 === 0 ? null : { PA: 47, PB: 37, PC: 32, PD: 8 }, controls: i % 3 === 0 ? null : { register: 480, accredited: 130, rejected: 5 }, balanced: i % 3 !== 0, problems: [],
+    ocr: i === 4 ? { status: "proposed", confidence: 0.6, fields: [{ name: "parties", confidence: 0.97 }, { name: "rejected", confidence: 0.6 }], transcript: "PA 47  PB 37  PC 32  PD 8  Rejected 5  Accredited 130  Register 480" } : null,
     unit: { status: i % 3 === 2 ? "high" : "medium", share: 1, reports: 2 + (i % 2), irev: i === 2 ? { match: false } : null, gates: { gates: [{ id: "polling-unit", pass: true }, { id: "consensus", pass: i % 3 === 2 }, { id: "human-or-confident", pass: true }, { id: "control-totals", pass: true }, { id: "baseline", pass: true }] } } }));
   seats = seats.map((s, i) => ({ ...s, taken: i % 3 === 0, pending: i % 7 === 1 }));
   const day = 86400000;
   const pm = (id, direction, mailbox, from_addr, from_name, to, subject, body_text, ago, read, attachments = []) => ({ id, direction, mailbox, from_addr, from_name, to_addrs: [to], cc_addrs: [], subject, body_text, body_html: null, at: new Date(Date.now() - ago * day).toISOString(), read_at: read ? new Date().toISOString() : null, attachments });
   previewMail = [
-    pm("pm1", "in", "ops", "volunteer@example.org", "Example Volunteer", "ops@binchika.com", "Question about the SZV seat in Lagos", "Good afternoon,\n\nI applied for an SZV seat in Lagos last week. How long does screening usually take?\n\nThank you.", 0.1, false),
-    pm("pm2", "in", "accounts", "secretariat@example.org", "Example Party Secretariat", "accounts@binchika.com", "Manifesto summary for the party page", "Please find our manifesto summary attached for the parties page.", 0.6, false, [{ filename: "manifesto-summary.pdf", mimeType: "application/pdf", size: 184320 }]),
-    pm("pm3", "in", "noreply", "reader@example.org", null, "noreply@binchika.com", "Re: Your Binchika sign-in link", "The link expired before I could use it. Could you send another?", 1.4, true),
-    pm("pm4", "out", "ops", "ops@binchika.com", "Binchika Ops", "volunteer@example.org", "Re: Question about the SZV seat in Lagos", "Screening takes about a week. You will hear from noreply@binchika.com if a seat is offered.\n\nBinchika Ops", 0.05, true),
-    pm("pm5", "in", "ops", "desk@example.org", "Example Newsroom Desk", "ops@binchika.com", "[BIN-2611-0002 · Media access request (press feed)] We would like to show the citizen tally on our live page", "Reference: BIN-2611-0002\nNature: Media access request (press feed)\n\nMedia access request\nOrganisation: Example Newsroom\nWebsite: https://example.org\nType: Newspaper or online newsroom\nIntended use: Live results page or embed\nChecking the feed: About once a minute\nTerms accepted: yes\nEmail domain matches the website: yes\n\nWe would like to show the citizen tally on our live page.", 0.2, false),
+    pm("pm1", "in", "ops", "volunteer@example.org", "Example Volunteer", "ops@mail.example.org", "Question about the SZV seat in Region LA", "Good afternoon,\n\nI applied for an SZV seat in Region LA last week. How long does screening usually take?\n\nThank you.", 0.1, false),
+    pm("pm2", "in", "accounts", "secretariat@example.org", "Example Party Secretariat", "accounts@mail.example.org", "Manifesto summary for the party page", "Please find our manifesto summary attached for the parties page.", 0.6, false, [{ filename: "manifesto-summary.pdf", mimeType: "application/pdf", size: 184320 }]),
+    pm("pm3", "in", "noreply", "reader@example.org", null, "noreply@mail.example.org", "Re: Your Binchika sign-in link", "The link expired before I could use it. Could you send another?", 1.4, true),
+    pm("pm4", "out", "ops", "ops@mail.example.org", "Binchika Ops", "volunteer@example.org", "Re: Question about the SZV seat in Region LA", "Screening takes about a week. You will hear from noreply@mail.example.org if a seat is offered.\n\nBinchika Ops", 0.05, true),
+    pm("pm5", "in", "ops", "desk@example.org", "Example Newsroom Desk", "ops@mail.example.org", "[BIN-2611-0002 · Media access request (press feed)] We would like to show the citizen tally on our live page", "Reference: BIN-2611-0002\nNature: Media access request (press feed)\n\nMedia access request\nOrganisation: Example Newsroom\nWebsite: https://example.org\nType: Newspaper or online newsroom\nIntended use: Live results page or embed\nChecking the feed: About once a minute\nTerms accepted: yes\nEmail domain matches the website: yes\n\nWe would like to show the citizen tally on our live page.", 0.2, false),
   ];
-  previewMail.push({ ...pm("pm6", "in", "noreply", "former@example.org", "Example Former Contact", "noreply@binchika.com", "Re: Newsroom briefing", "Unsubscribe\n\n> Earlier message quoted here.", 0.02, false), optout: { state: "open" } });
+  previewMail.push({ ...pm("pm6", "in", "noreply", "former@example.org", "Example Former Contact", "noreply@mail.example.org", "Re: Newsroom briefing", "Unsubscribe\n\n> Earlier message quoted here.", 0.02, false), optout: { state: "open" } });
   mail = { ...mail, tab: "in", mailbox: "all", mailboxes: [], open: null, loaded: false, loading: false, error: "", notice: "", draft: null };
   const pc = (id, name, email, organisation, campaigns, notes = null) => ({ id, name, email, organisation, notes, campaigns, created_at: new Date(Date.now() - 3 * day).toISOString() });
   previewCrm = {
@@ -1231,13 +1355,17 @@ function startPreview(role) {
   loadMail();   // preview only: fills the unread badge at once (no network)
   loadTickets();
   adminData = {
-    invites: [{ id: "p-inv-1", kind: "szv", state_iso: "NG-LA", seat_code: null, status: "sent", window_hours: 24, expires_at: new Date(Date.now() + 0.6 * day).toISOString(), created_by_public_id: "V0001" }, { id: "p-inv-2", kind: "seat", seat_code: "NRV-17", status: "claimed", window_hours: 24, confirm_expires_at: new Date(Date.now() + 0.3 * day).toISOString(), created_by_public_id: "V0001" }],
+    invites: [{ id: "p-inv-1", kind: "szv", state_iso: "XL-LA", seat_code: null, status: "sent", window_hours: 24, expires_at: new Date(Date.now() + 0.6 * day).toISOString(), created_by_public_id: "V0001" }, { id: "p-inv-2", kind: "seat", seat_code: "NRV-17", status: "claimed", window_hours: 24, confirm_expires_at: new Date(Date.now() + 0.3 * day).toISOString(), created_by_public_id: "V0001" }],
     ops: [{ code: "OPS-1", label: "OpsAdmin seat 1", holder: "V0002" }, { code: "OPS-2", label: "OpsAdmin seat 2", holder: null }, { code: "OPS-3", label: "OpsAdmin seat 3", holder: null }],
     applications: [
-      { id: "3f2a91c0-0000-4000-8000-000000000001", state_iso: "NG-LA", role_sought: "szv", score: 92, created_at: new Date(Date.now() - 9 * day).toISOString() },
-      { id: "7b11e4d2-0000-4000-8000-000000000002", state_iso: "NG-LA", role_sought: "szv", score: 85, created_at: new Date(Date.now() - 8 * day).toISOString() },
-      { id: "c9d07a55-0000-4000-8000-000000000003", state_iso: "NG-OY", role_sought: "nrv", score: 88, created_at: new Date(Date.now() - 7 * day).toISOString() },
+      { id: "3f2a91c0-0000-4000-8000-000000000001", state_iso: "XL-LA", role_sought: "szv", score: 92, created_at: new Date(Date.now() - 9 * day).toISOString() },
+      { id: "7b11e4d2-0000-4000-8000-000000000002", state_iso: "XL-LA", role_sought: "szv", score: 85, created_at: new Date(Date.now() - 8 * day).toISOString() },
+      { id: "c9d07a55-0000-4000-8000-000000000003", state_iso: "XL-OY", role_sought: "nrv", score: 88, created_at: new Date(Date.now() - 7 * day).toISOString() },
     ],
+    review: { mailKnown: true, applications: [   // session 134: sample rows; preview actions change nothing
+      { id: "a41c7e20-0000-4000-8000-000000000004", ref: "a41c7e20", state_iso: "XL-KN", state_basis: "origin", role_sought: "szv", score: 50, created_at: new Date(Date.now() - 2 * day).toISOString(), privacy_version: "PN-2026-1", answers: { q1: "no", q2: "no", q3: "no", q4: "no", q5: "yes", q6: "yes", q7: "unsure", q8: "no" }, infoRequestedAt: new Date(Date.now() - 1 * day).toISOString(), replyAt: new Date(Date.now() - 0.4 * day).toISOString() },
+      { id: "e8b30f11-0000-4000-8000-000000000005", ref: "e8b30f11", state_iso: "XL-EN", state_basis: "residence", role_sought: "nrv", score: 50, created_at: new Date(Date.now() - 0.5 * day).toISOString(), privacy_version: "PN-2026-1", answers: { q1: "no", q2: "no", q3: "no", q4: "no", q5: "yes", q6: "yes", q7: "unsure", q8: "no" }, infoRequestedAt: null, replyAt: null },
+    ] },
     history: [
       { at: new Date(Date.now() - 1 * day).toISOString(), seat_code: "OPS-1", event: "appointed", public_id: "V0002", actor_public_id: "V0001" },
       { at: new Date(Date.now() - 2 * day).toISOString(), seat_code: "SZV-073", event: "pledged", public_id: "V0007", pledge_version: "P-2026-2" },
@@ -1245,6 +1373,7 @@ function startPreview(role) {
       { at: new Date(Date.now() - 3.2 * day).toISOString(), seat_code: "SZV-073", event: "invited", actor_public_id: "V0001" },
     ],
   };
+  applyPendingSection();
   render();
 }
 
@@ -1257,9 +1386,13 @@ async function loadReal() {
     try { seats = (await fetch("/api/seats", { cache: "no-store" }).then((r) => r.json())).seats ?? seats; } catch {}
     const r = await fetch("/api/admin/invites", { headers: { Authorization: `Bearer ${token}` } }).catch(() => null);
     if (r?.ok) adminData = await r.json();
+    // Session 134: the review list, fetched after adminData is replaced so the eligible data above is untouched.
+    const rv = await fetch("/api/admin/applications", { headers: { Authorization: `Bearer ${token}` } }).catch(() => null);
+    adminData.review = rv?.ok ? await rv.json().catch(() => null) : null;
     await loadMail();   // Inbox unread count for the side badge
     await loadTickets();   // open-ticket count on the Tickets button
   }
+  if (!new URLSearchParams(location.search).get("preview")) applyPendingSection();   // preview mode applies it itself
   render();
 }
 
@@ -1282,6 +1415,17 @@ async function afterSignIn() {
   await loadReal();
 }
 
+// Section link while the portal is already open. A sign-in link in the same address is left to the reload below.
+addEventListener("hashchange", () => {
+  if (/(^#|&)th=/.test(location.hash)) return;
+  const name = sectionFromHash(location.hash);
+  if (!name) return;
+  pendingSection = name;
+  history.replaceState(null, "", location.pathname + location.search + stripSectionFromHash(location.hash));
+  if (!me || mfaNeeded) return;
+  if (applyPendingSection()) render();
+});
+
 seats = await seatsP;
 if (cfg.signIn) {
   const { createClient } = await import("/assets/vendor/supabase.js");
@@ -1294,7 +1438,7 @@ if (cfg.signIn) {
     history.replaceState(null, "", location.pathname);
     const { error } = await supa.auth.verifyOtp({ token_hash: h.get("th"), type: "magiclink" });
     if (error) linkNotice = "That sign-in link has been used or has expired. Request a new one below.";
-    else if (h.get("reset")) { section = "account"; linkNotice = "You're signed in with a one-time link. Set a new password below."; }
+    else if (h.get("reset")) { pendingSection = null; section = "account"; linkNotice = "You're signed in with a one-time link. Set a new password below."; }
   }
   await afterSignIn();
 } else render();

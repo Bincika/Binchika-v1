@@ -4,9 +4,9 @@
 // The only addresses the dashboard may send from. To add one: add it here, add a Cloudflare Email Routing rule for it
 // (scripts/mailbox-routing.mjs), and it works with Resend because the whole binchika.com domain is verified there.
 export const MAILBOXES = {
-  ops: { address: "ops@binchika.com", name: "Binchika Ops", purpose: "verifiers, maintenance, technical and operational" },
-  accounts: { address: "accounts@binchika.com", name: "Binchika Accounts", purpose: "parties, manifestos, data requests" },
-  noreply: { address: "noreply@binchika.com", name: "Binchika", purpose: "announcements and notices (replies still arrive)" },
+  ops: { address: "ops@mail.example.org", name: "Binchika Ops", purpose: "verifiers, maintenance, technical and operational" },
+  accounts: { address: "accounts@mail.example.org", name: "Binchika Accounts", purpose: "parties, manifestos, data requests" },
+  noreply: { address: "noreply@mail.example.org", name: "Binchika", purpose: "announcements and notices (replies still arrive)" },
 };
 export const fromHeader = (key) => `${MAILBOXES[key].name} <${MAILBOXES[key].address}>`;
 
@@ -14,21 +14,25 @@ export const MAX_RECIPIENTS = 10;
 const EMAIL = /^[^\s@<>,;"]{1,64}@[^\s@<>,;"]{1,255}\.[a-z]{2,}$/i;
 export const splitAddrs = (s) => String(s ?? "").split(/[,;\n]+/).map((x) => x.trim().replace(/^.*<([^>]+)>\s*$/, "$1")).filter(Boolean);
 
-/** @param {{from, to, cc, subject, body, inReplyTo}} b  → { ok, errors, mail } with normalised fields. */
+/** @param {{from, to, cc, bcc, subject, body, inReplyTo}} b  → { ok, errors, mail } with normalised fields.
+ *  BCC (session 141) is optional and held to the same rules as To and Cc. A bad BCC refuses the whole message: it is never dropped. */
 export function validateSend(b) {
   const errors = [];
   const from = String(b?.from ?? "");
   if (!MAILBOXES[from]) errors.push(`"From" must be one of: ${Object.values(MAILBOXES).map((m) => m.address).join(", ")}`);
-  const to = splitAddrs(b?.to), cc = splitAddrs(b?.cc);
+  const to = splitAddrs(b?.to), cc = splitAddrs(b?.cc), bcc = splitAddrs(b?.bcc);
   if (!to.length) errors.push("add at least one recipient");
-  if (to.length + cc.length > MAX_RECIPIENTS) errors.push(`at most ${MAX_RECIPIENTS} recipients in total`);
-  for (const a of [...to, ...cc]) if (!EMAIL.test(a)) errors.push(`not an email address: ${a.slice(0, 80)}`);
+  if (to.length + cc.length + bcc.length > MAX_RECIPIENTS) errors.push(`at most ${MAX_RECIPIENTS} recipients in total`);
+  for (const a of [...to, ...cc, ...bcc]) if (!EMAIL.test(a)) errors.push(`not an email address: ${a.slice(0, 80)}`);
+  // A blind copy that is also a visible recipient, or is listed twice, is a mistake: refuse it and say which address.
+  const seen = new Set([...to, ...cc].map((a) => a.toLowerCase()));
+  for (const a of bcc) { const k = a.toLowerCase(); if (seen.has(k)) errors.push(`listed more than once: ${k.slice(0, 80)}`); seen.add(k); }
   const subject = String(b?.subject ?? "").replace(/[\r\n]+/g, " ").trim();
   if (!subject || subject.length > 200) errors.push("subject must be 1–200 characters");
   const body = String(b?.body ?? "").replace(/\r\n/g, "\n").trim();
   if (!body || body.length > 20000) errors.push("message must be 1–20,000 characters");
   const inReplyTo = /^<[^\s<>]{3,250}>$/.test(String(b?.inReplyTo ?? "")) ? b.inReplyTo : null;
-  return { ok: errors.length === 0, errors, mail: { from, to, cc, subject, body, inReplyTo } };
+  return { ok: errors.length === 0, errors, mail: { from, to, cc, bcc, subject, body, inReplyTo } };
 }
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));

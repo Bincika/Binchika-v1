@@ -7,7 +7,7 @@ test("canonical JSON is key-order independent", () => {
 });
 
 test("chain verifies, and tampering is detected at the right index", async () => {
-  const g = await genesis("ng-2027");
+  const g = await genesis("example-2099");
   const e1 = await makeEntry({ id: "pu:1", tally: { A: 10 } }, g, "2027-01-16T18:00:00Z");
   const e2 = await makeEntry({ id: "pu:2", tally: { A: 7 } }, e1.hash, "2027-01-16T18:01:00Z");
   const e3 = await makeEntry({ id: "pu:3", tally: { A: 3 } }, e2.hash, "2027-01-16T18:02:00Z");
@@ -21,6 +21,6 @@ test("chain verifies, and tampering is detected at the right index", async () =>
 });
 
 test("genesis is deterministic per cycle", async () => {
-  assert.equal(await genesis("ng-2027"), await genesis("ng-2027"));
-  assert.notEqual(await genesis("ng-2027"), await genesis("gh-2028"));
+  assert.equal(await genesis("example-2099"), await genesis("example-2099"));
+  assert.notEqual(await genesis("example-2099"), await genesis("gh-2028"));
 });

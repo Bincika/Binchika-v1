@@ -1,4 +1,4 @@
-// Composes src/pages/*.html into site/ with the shared layout (masthead with INEC notice, clock, theme; footer).
+// Composes src/pages/*.html into site/ with the shared layout (masthead with EEC notice, clock, theme; footer).
 // Each page starts with a JSON comment:
 //   <!--{"title":"…","description":"…","nav":"map","path":"/map/","scripts":["/assets/js/map.js"],"head":"<link …>"}-->
 // Usage: node scripts/build-site.mjs
@@ -8,23 +8,24 @@ import { readFileSync } from "node:fs";
 import { parseKb, kbDrift, helpHtml } from "../functions/_lib/kb.js";
 const awaitRead = (p) => readFileSync(p, "utf8");
 
+const TENANT = loadTenant();
+const PARTY_COUNT = JSON.parse(readFileSync("site/data/parties.json", "utf8")).parties.length;
 const NAV = [
   ["monitor", "/tally/", "Live Tally Ledger"],
-  ["map", "/map/", "Nigeria map"],
+  ["map", "/map/", TENANT.text.mapNav],
   ["parties", "/parties/", "Parties"],
   ["ledger", "/ledger/", "Ledger"],
   ["verifiers", "/verifiers/", "Verifiers"],
   ["vote", "/vote/", "How to vote"],
   ["about", "/about/", "About"],
-];
+].filter(([, , label]) => label);
 // The one approved description of the pipeline, and the rule for when the result sheet is missing (owner wording,
 // session 53). Pages use {{PIPELINE}} and {{EC8A_RULE}}, and the footer repeats PIPELINE on every page, so the
 // wording cannot drift between pages. Smoke tests check both.
-const PIPELINE = "Citizens photograph or report the posted result sheet. Binchika compares those reports with INEC's IReV uploads and writes high-agreement tallies to a public hash-chained ledger. Only INEC declares results.";
-const EC8A_RULE = "<strong>If Form EC8A is not available:</strong> other evidence, such as a video, handwritten numbers or a photo of the results board, is accepted only after a verifier has audited it, and it is marked as lower-confidence.";
+const PIPELINE = TENANT.text.pipeline;
+const EC8A_RULE = TENANT.text.evidenceRule;
 // The active country (session 98): tenant_config.json → tenants/<id>/tenant.json. The generated module is committed so
 // tests and Pages Functions work before a build; the build rewrites it and site/data/locale.json from the tenant.
-const TENANT = loadTenant();
 await writeFile("functions/_lib/tenant.generated.js", tenantModule(TENANT));
 await writeFile("site/data/locale.json", localeJson(TENANT));
 const ORIGIN = TENANT.site.origin;
@@ -59,6 +60,7 @@ const KEY = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 
 // Social placeholders (accounts not yet created): glyphs from Simple Icons (CC0)
 // Official @getbinchika accounts; entries without a URL are placeholders (dimmed, not links).
+// The community invite is tenant data (site.social.discord), so a fork without one keeps the placeholder.
 const SOCIAL = [
   ["facebook", "Facebook", "https://www.facebook.com/profile.php?id=61596030114590"],
   ["x", "X", "https://x.com/getbinchika"],
@@ -66,7 +68,7 @@ const SOCIAL = [
   ["threads", "Threads", "https://www.threads.com/@getbinchika"],
   ["youtube", "YouTube", "https://www.youtube.com/@getbinchika"],
   ["reddit", "Reddit", "https://www.reddit.com/user/getbinchika/"],
-  ["whatsapp", "WhatsApp", null], ["telegram", "Telegram", null], ["discord", "Discord", null], ["tiktok", "TikTok", null],
+  ["whatsapp", "WhatsApp", null], ["telegram", "Telegram", null], ["discord", "Discord", TENANT.site.social?.discord ?? null], ["tiktok", "TikTok", null],
 ];
 const socialSvg = {};
 for (const [slug] of SOCIAL) socialSvg[slug] = await readFile(`site/assets/img/social/${slug}.svg`, "utf8").catch(() => "");
@@ -104,8 +106,8 @@ ${m.head ?? ""}
 <a class="skip" href="#main">Skip to content</a>
 <header class="masthead">
   <div class="notice" role="note"><div class="wrap">
-    <span><strong>Not official results.</strong> Only <a href="https://www.inecnigeria.org/" rel="noopener">INEC</a> declares election results in Nigeria. Binchika is a citizen transparency layer.</span>
-    <span class="pledge-line">No party ads · equal space for all 22 parties · <a href="/about/#rules">our rules</a></span>
+    <span><strong>Not official results.</strong> Only <a href="${TENANT.electoralBody.url}" rel="noopener">${TENANT.electoralBody.short}</a> declares election results ${TENANT.text.bannerScope}. Binchika is a citizen transparency layer.</span>
+    <span class="pledge-line">No party ads · equal space for all ${PARTY_COUNT} parties · <a href="/about/#rules">our rules</a></span>
   </div></div>
   <div class="bar"><div class="wrap">
     <a class="brand" href="/" aria-label="Binchika home"><img src="/assets/img/brand/agogo-128.webp" alt="" width="42" height="42">${wordmark("span", "wm-sm")}</a>
@@ -113,7 +115,7 @@ ${m.head ?? ""}
       ${NAV.map(([k, href, label]) => `<a href="${href}"${m.nav === k ? ' aria-current="page"' : ""}>${label}</a>`).join("\n      ")}
       <a class="nav-portal" href="/portal/"${m.nav === "portal" ? ' aria-current="page"' : ""}>Verifier &amp; admin sign-in</a>
     </nav>
-    <div class="clock" data-clock aria-label="Local time in Nigeria"><span class="clock-time" data-clock-time>--:--:--</span><span class="clock-meta" data-clock-meta>Abuja · WAT (UTC+1)</span></div>
+    <div class="clock" data-clock aria-label="${TENANT.text.clockLabel}"><span class="clock-time" data-clock-time>--:--:--</span><span class="clock-meta" data-clock-meta>${TENANT.locale.city} · ${TENANT.locale.zoneLabel} (${TENANT.locale.utcOffset})</span></div>
     <a class="icon-btn portal-btn" href="/portal/" aria-label="Verifier and admin sign-in"${m.nav === "portal" ? ' aria-current="page"' : ""}>${KEY}</a>
     <button class="icon-btn theme-btn" type="button" data-theme-toggle aria-label="Switch colour theme">${SUN}${MOON}</button>
     <button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menu">${MENU}</button>
@@ -126,13 +128,13 @@ ${body}
   <div class="wrap foot-min">
     <ul class="socials" aria-label="Binchika on social media: @getbinchika">
       ${SOCIAL.map(([slug, name, url]) => url
-        ? `<li><a class="social" href="${url}" rel="noopener me" target="_blank" title="Binchika on ${name} (@getbinchika)" aria-label="Binchika on ${name} (opens in a new tab)" data-social="${slug}">${socialSvg[slug]}</a></li>`
+        ? `<li><a class="social" href="${url}" rel="noopener me" target="_blank" title="Binchika on ${name}${slug === "discord" ? "" : " (@getbinchika)"}" aria-label="Binchika on ${name} (opens in a new tab)" data-social="${slug}">${socialSvg[slug]}</a></li>`
         : `<li><span class="social soon" role="img" title="${name}: coming soon" aria-label="${name}: coming soon" data-social="${slug}">${socialSvg[slug]}</span></li>`).join("\n      ")}
     </ul>
     <p class="foot-line">© 2026 Oruanyi. All rights reserved. <span class="sep" aria-hidden="true">|</span> Designed and maintained by
       <a class="oru" href="https://oruanyi.com/" rel="noopener"><picture><source srcset="/assets/img/brand/oruanyi.webp" type="image/webp"><img src="/assets/img/brand/oruanyi.png" alt="Oruanyi" width="97" height="36"></picture></a></p>
     <p class="foot-small foot-pipeline">${PIPELINE}</p>
-    <p class="foot-small"><a href="/help/">Help</a> · <a href="/contact/">Contact</a> · <a href="/media/">For newsrooms</a> · <a href="/governance/">AI governance</a> · <a href="/sources/">Sources &amp; licences</a> · <a href="${TENANT.site.sourceRepo}" rel="noopener">Open source (MIT)</a></p>
+    <p class="foot-small"><a href="/help/">Help</a> · <a href="/contact/">Contact</a> · <a href="/media/">For newsrooms</a> · <a href="/governance/">AI governance</a> · <a href="/sources/">Sources &amp; licences</a> · <a href="${TENANT.site.sourceRepo}" rel="noopener">Open source (MIT OR Apache-2.0)</a></p>
   </div>
 </footer>
 <script src="/assets/js/site.js?v=${V}" type="module"></script>
@@ -160,43 +162,16 @@ for (const f of (await readdir("src/drafts").catch(() => [])).filter((f) => f.en
   else if (path !== "/") await rm(`site${path}`, { recursive: true, force: true });
 }
 // Register totals (/register/, published 28 Oct 2026 as option B): national and zone figures from data/register-2026/aggregates.json, refused unless
-// the zones add up exactly to the national total. No state list (docs/INEC-PRELIMINARY-REGISTER-2027.md §4a).
-function registerParts() {
-  const A = JSON.parse(awaitRead("data/register-2026/aggregates.json"));
-  const nf = new Intl.NumberFormat("en-GB"), ch = (a, b) => { const x = (a / b - 1) * 100; return `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(1)}%`; };
-  const z = A.zones, N = A.national;
-  if (z.order.reduce((s, k) => s + z["2026"][k], 0) !== N["2026"]) throw new Error("register: 2026 zones do not add up to the national total");
-  // 2026 first so it stays on screen on phones; names and headings may wrap (table.data cells are nowrap by default)
-  const W = ' style="white-space:normal"';
-  const row = (name, a, b, strong) => { const s = (v) => (strong ? `<strong>${v}</strong>` : v);
-    return `<tr><th scope="row"${W}>${s(name)}</th><td class="num">${s(nf.format(b))}</td><td class="num">${s(nf.format(a))}</td><td class="num">${s(ch(b, a))}</td></tr>`; };
-  const table = `<div class="table-scroll" style="max-height:none"><table class="data"><caption class="sr-only">Registered voters by geopolitical zone, 2026 (preliminary) and 2023</caption><thead><tr><th scope="col"${W}>Zone</th><th scope="col" class="num"${W}>2026 (preliminary)</th><th scope="col" class="num">2023</th><th scope="col" class="num">Change</th></tr></thead><tbody>${z.order.map((k) => row(z.names[k], z["2023"][k], z["2026"][k])).join("")}${row("Nigeria", N["2023"], N["2026"], true)}</tbody></table></div>`;
-  const e = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const link = (u) => `<a href="${e(u)}" rel="noopener">${e(new URL(u).hostname.replace(/^www\./, ""))}</a>`;
-  const sources = `<ul class="source-note" style="padding-left:1.2rem;display:grid;gap:.3rem">
-<li><strong>2023:</strong> INEC, registered voters and PVCs collected for the 2023 general election: ${link(N.source2023)}. Zone totals are summed from INEC's state figures.</li>
-<li><strong>2026, national:</strong> INEC's announcement of 6 October 2026, as reported by ${[...new Set(N.sources2026)].map(link).join(" and ")}.</li>
-<li><strong>2026, zones:</strong> as reported by ${[...new Set(z.sources2026)].map(link).join(" and ")}. The six zones add up exactly to ${nf.format(N["2026"])}.</li>
-<li>Compiled ${e(A.compiled)}. ${e(A.status)}</li>
-</ul>`;
-  // /tally/ (formerly /monitor/) register analysis (session 44): the ten largest states as INEC's chairman announced them on 6 Oct 2026. Not the
-  // 37-state press table (verified: false). The 2023 column must match INEC's own 2023 state figures, or the page is not built.
-  const base = JSON.parse(awaitRead("site/data/baselines/registered-voters.json")).state;
-  const isoOf = Object.fromEntries(JSON.parse(awaitRead("site/data/states.json")).states.map((s) => [s.name, s.iso]));
-  for (const r of A.topStates.rows) if (base[isoOf[r.state]]?.registered !== r["2023"]) throw new Error(`register: 2023 figure for ${r.state} does not match INEC's 2023 table`);
-  const topTable = `<div class="table-scroll" style="max-height:none"><table class="data"><caption class="sr-only">The ten states with the most registered voters, 2026 (preliminary, as announced) and 2023</caption><thead><tr><th scope="col"${W}>State</th><th scope="col" class="num"${W}>2026 (preliminary)</th><th scope="col" class="num">2023</th><th scope="col" class="num">Change</th></tr></thead><tbody>${A.topStates.rows.map((r) => row(r.state, r["2023"], r["2026"])).join("")}</tbody></table></div>`;
-  const topSources = [...new Set(A.topStates.sources2026)].map(link).join(", ");
-  return { table, sources, topTable, topSources };
-}
+// the zones add up exactly to the national total. No state list (docs/EEC-PRELIMINARY-REGISTER-2027.md §4a).
 // Pre-rendered first screen of headlines (site/data/news-snapshot.json, written by scripts/snapshot-news.mjs).
 // Shown at first paint without waiting for /api/news; news.js swaps in the live feed after load.
 const newsSnap = await readFile("site/data/news-snapshot.json", "utf8").then(JSON.parse).catch(() => null);
 function newsSnapshotHtml() {
   if (!newsSnap?.items?.length) return '<p class="muted">Loading headlines…</p>';
   const e = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const when = new Date(newsSnap.fetchedAt).toLocaleString("en-GB", { timeZone: "Africa/Lagos", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  const when = new Date(newsSnap.fetchedAt).toLocaleString("en-GB", { timeZone: TENANT.locale.timeZone, day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   return newsSnap.items.filter((i) => /^https?:\/\//.test(i.link)).map((i) => `<article><span class="src">${e(i.source)}</span><h3><a href="${e(i.link)}" rel="noopener" target="_blank">${e(i.title)}<span class="sr-only"> (opens in a new tab)</span></a></h3><span class="muted" style="font-size:.8rem">${e(new Date(i.publishedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }))}</span></article>`).join("")
-    + `<p class="muted news-snap-note" style="font-size:.78rem;grid-column:1/-1">Headlines as of ${e(when)} WAT · updating…</p>`;
+    + `<p class="muted news-snap-note" style="font-size:.78rem;grid-column:1/-1">Headlines as of ${e(when)} ${TENANT.locale.zoneLabel} · updating…</p>`;
 }
 
 const built = [];
@@ -214,7 +189,8 @@ for (const f of pages) {
   let body = src.slice(match[0].length).replaceAll("{{WORDMARK}}", wordmark("span", "wm-hero"));
   body = body.replace('<p class="muted">Loading headlines…</p>', newsSnapshotHtml());
   body = body.replace("<!--CSS-AFTER-HERO-->", meta.critical && CRITICAL ? `\n${STYLESHEETS}` : "");
-  if (body.includes("{{REGISTER_")) { const r = registerParts(); body = body.replace("{{REGISTER_ZONE_TABLE}}", r.table).replace("{{REGISTER_SOURCES}}", r.sources).replace("{{REGISTER_TOP_STATES}}", r.topTable).replace("{{REGISTER_TOP_SOURCES}}", r.topSources); }
+  if (body.includes("{{REGISTER_")) { const { registerParts } = await import("./lib/register-parts.mjs"); const r = registerParts(); body = body.replace("{{REGISTER_ZONE_TABLE}}", r.table).replace("{{REGISTER_SOURCES}}", r.sources).replace("{{REGISTER_TOP_STATES}}", r.topTable).replace("{{REGISTER_TOP_SOURCES}}", r.topSources); }
+  body = body.replaceAll("{{BODY}}", TENANT.electoralBody.short).replaceAll("{{BODY_NAME}}", TENANT.electoralBody.name).replaceAll("{{BODY_URL}}", TENANT.electoralBody.url).replaceAll("{{COUNTRY}}", TENANT.country).replaceAll("{{PORTAL}}", TENANT.electoralBody.resultsPortalShort).replaceAll("{{RESULT_FORM}}", TENANT.text.resultFormShort);
   body = body.replaceAll("{{PIPELINE}}", PIPELINE).replaceAll("{{EC8A_RULE}}", EC8A_RULE).replace("{{KB_HELP}}", () => helpHtml(KB));
   if (/\{\{[A-Z_]+\}\}/.test(body)) throw new Error(`${f}: unfilled placeholder ${body.match(/\{\{[A-Z_]+\}\}/)[0]}`);
   const html = layout(meta, body);

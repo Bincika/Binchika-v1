@@ -10,8 +10,8 @@ const factory = (options = {}) => {
 const payload = (race = "president", votes = 9) => ({
   race, units: { reported: 1, total: 100 },
   national: { totals: { ALPHA: votes, BRAVO: 3 }, leader: leader({ ALPHA: votes, BRAVO: 3 }) },
-  byState: { "NG-LA": { units: 1, totals: { ALPHA: votes, BRAVO: 3 }, leader: leader({ ALPHA: votes, BRAVO: 3 }) } },
-  byLga: { "NG-LA": { "24-09": { units: 1, totals: { ALPHA: votes, BRAVO: 3 }, leader: leader({ ALPHA: votes, BRAVO: 3 }) } } },
+  byState: { "XL-LA": { units: 1, totals: { ALPHA: votes, BRAVO: 3 }, leader: leader({ ALPHA: votes, BRAVO: 3 }) } },
+  byLga: { "XL-LA": { "24-09": { units: 1, totals: { ALPHA: votes, BRAVO: 3 }, leader: leader({ ALPHA: votes, BRAVO: 3 }) } } },
   spread: { ALPHA: 1, BRAVO: 1 }, updatedAt: "2026-10-30T12:00:00.000Z",
 });
 const response = (data) => ({ ok: true, json: async () => data });
@@ -141,15 +141,15 @@ test("invalid race, timestamps, counts and inconsistent totals fail closed", asy
     (p) => { p.updatedAt = "2026-02-30T12:00:00.000Z"; },
     (p) => { p.national.totals.ALPHA = -1; },
     (p) => { p.national.totals.ALPHA = 9.5; },
-    (p) => { p.byState["NG-LA"].totals.ALPHA = "9"; },
-    (p) => { p.byState["NG-LA"].totals.ALPHA = 10; },
+    (p) => { p.byState["XL-LA"].totals.ALPHA = "9"; },
+    (p) => { p.byState["XL-LA"].totals.ALPHA = 10; },
     (p) => { p.units.reported = 2; },
     (p) => { p.units.reported = 1.2; },
     (p) => { p.units.total = 0; },
-    (p) => { p.byState["NG-LA"].units = 2; },
-    (p) => { p.byState["NG-XX"] = p.byState["NG-LA"]; delete p.byState["NG-LA"]; },
-    (p) => { p.byLga["NG-LA"]["24-09"].totals.ALPHA = 10; },
-    (p) => { p.byLga["NG-LA"]["19-01"] = p.byLga["NG-LA"]["24-09"]; delete p.byLga["NG-LA"]["24-09"]; },
+    (p) => { p.byState["XL-LA"].units = 2; },
+    (p) => { p.byState["XL-XX"] = p.byState["XL-LA"]; delete p.byState["XL-LA"]; },
+    (p) => { p.byLga["XL-LA"]["24-09"].totals.ALPHA = 10; },
+    (p) => { p.byLga["XL-LA"]["19-01"] = p.byLga["XL-LA"]["24-09"]; delete p.byLga["XL-LA"]["24-09"]; },
   ];
   for (const change of changes) {
     const bad = payload(); change(bad);
@@ -190,7 +190,7 @@ test("demo state races use the same eligible jurisdiction universe as the API", 
     assert.equal(state.status, "fresh");
     assert.equal(Object.keys(state.data.byState).length, expected, race);
     assert.equal(Object.keys(state.data.byLga).length, expected, race);
-    assert.equal(state.data.byState["NG-FC"], undefined, race);
+    assert.equal(state.data.byState["XL-FC"], undefined, race);
     assert.equal(state.data.units.reported, expected * 6, race);
   }
 });
@@ -234,4 +234,138 @@ test("auto-refresh watches only the visible active race and refreshes on return"
   assert.equal(urls.length, count + 1);
   await feed.watch("local-government"); assert.equal(timers.size, 0);
   feed.destroy(); assert.equal(listeners.size, 0); assert.equal(timers.size, 0);
+});
+
+// Session 107: a poll that brings the same counts must not look like a change.
+const later = (data, seconds) => ({ ...data, updatedAt: new Date(Date.parse(data.updatedAt) + seconds * 1000).toISOString() });
+
+test("content revision holds when only the timestamp changes, and moves when counts change", async () => {
+  let body = payload("president", 9);
+  const feed = factory({ fetchImpl: async () => response(body) });
+  const first = await feed.ensure("president", { force: true });
+  assert.match(first.contentRevision, /^president:c\d+$/);
+  assert.equal(first.changedAt, null); assert.equal(first.delta, null);
+  body = later(body, 30);
+  const same = await feed.ensure("president", { force: true });
+  assert.notEqual(same.revision, first.revision, "each accepted fetch still has its own revision");
+  assert.equal(same.contentRevision, first.contentRevision);
+  assert.equal(same.changedAt, null);
+  body = later(payload("president", 12), 60);
+  const moved = await feed.ensure("president", { force: true });
+  assert.notEqual(moved.contentRevision, first.contentRevision);
+  assert.ok(Number.isFinite(moved.changedAt));
+});
+
+test("a content revision belongs to one race, so identical empty races never match", async () => {
+  const empty = (race) => ({ race, units: { reported: 0, total: 100 }, national: { totals: {} }, byState: {}, byLga: {}, spread: {}, updatedAt: "2026-10-30T12:00:00.000Z" });
+  const feed = factory({ fetchImpl: async (url) => response(empty(new URL(url, "https://example.test").searchParams.get("race"))) });
+  const a = await feed.ensure("president"); const b = await feed.ensure("senate");
+  assert.notEqual(a.contentRevision, b.contentRevision);
+  assert.equal(factory().read("house").contentRevision, null);
+});
+
+test("a change reports the delta in polling units and votes against the previous snapshot", async () => {
+  let body = payload("president", 9);
+  const feed = factory({ fetchImpl: async () => response(body) });
+  await feed.ensure("president", { force: true });
+  body = later(payload("president", 15), 30);
+  assert.deepEqual((await feed.ensure("president", { force: true })).delta, { units: 0, votes: 6 });
+  body = later(payload("president", 10), 60);
+  assert.deepEqual((await feed.ensure("president", { force: true })).delta, { units: 0, votes: -5 });
+});
+
+test("a rejected or failed refresh keeps the content revision and delta", async () => {
+  let body = payload("president", 9), fail = false;
+  const feed = factory({ fetchImpl: async () => { if (fail) throw new Error("down"); return response(body); } });
+  await feed.ensure("president", { force: true });
+  body = later(payload("president", 15), 30);
+  const good = await feed.ensure("president", { force: true });
+  fail = true;
+  const failed = await feed.ensure("president", { force: true });
+  assert.equal(failed.status, "stale");
+  assert.equal(failed.contentRevision, good.contentRevision); assert.deepEqual(failed.delta, good.delta);
+  fail = false; body = later(payload("president", 99), -999);
+  const rejected = await feed.ensure("president", { force: true });
+  assert.equal(rejected.status, "stale"); assert.equal(rejected.contentRevision, good.contentRevision);
+});
+
+const liveFeed = (fetchImpl) => {
+  const listeners = new Map(), timers = new Map(); let nextId = 0;
+  const documentRef = { visibilityState: "visible", addEventListener: (name, fn) => listeners.set(name, fn), removeEventListener: (name) => listeners.delete(name) };
+  const feed = factory({ autoRefresh: true, documentRef, fetchImpl,
+    setTimeoutImpl: (fn, delay) => { const id = ++nextId; timers.set(id, { fn, delay }); return id; },
+    clearTimeoutImpl: (id) => timers.delete(id) });
+  return { feed, timers, listeners, documentRef, delays: () => [...timers.values()].map((t) => t.delay).filter((d) => d !== 12_000) };
+};
+
+test("pause stops scheduled and visibility refreshes; manual refresh still works; resume refreshes once and restarts the timer", async () => {
+  let requests = 0;
+  const { feed, delays, listeners, documentRef } = liveFeed(async (url) => { requests++; return response(payload(new URL(url, "https://example.test").searchParams.get("race"))); });
+  await feed.watch("president");
+  assert.equal(feed.isPaused(), false); assert.equal(delays().length, 1);
+  feed.setPaused(true);
+  assert.equal(feed.isPaused(), true); assert.equal(delays().length, 0);
+  const before = requests;
+  documentRef.visibilityState = "hidden"; listeners.get("visibilitychange")();
+  documentRef.visibilityState = "visible"; listeners.get("visibilitychange")();
+  await Promise.resolve();
+  assert.equal(requests, before, "returning to the page must not refresh while paused");
+  await feed.ensure("president", { force: true });
+  assert.equal(requests, before + 1, "Refresh now still fetches");
+  assert.equal(delays().length, 0, "a manual refresh does not restart the timer");
+  await feed.watch("senate");
+  assert.equal(requests, before + 2, "a race with no data still loads once");
+  assert.equal(delays().length, 0);
+  feed.setPaused(false);
+  await feed.ensure("senate");
+  assert.equal(requests, before + 3, "resume refreshes once");
+  assert.equal(delays().length, 1);
+  feed.destroy();
+});
+
+test("failed refreshes back off to 240 s and a success returns to 30 s", async () => {
+  let fail = false, stamp = 0;
+  const { feed, delays } = liveFeed(async () => { if (fail) throw new Error("down"); return response(later(payload(), stamp++)); });
+  await feed.watch("president");
+  assert.deepEqual(delays(), [30_000]);
+  fail = true;
+  const seen = [];
+  for (let i = 0; i < 5; i++) { await feed.ensure("president", { force: true }); seen.push(delays()[0]); }
+  assert.deepEqual(seen, [60_000, 120_000, 240_000, 240_000, 240_000]);
+  fail = false;
+  await feed.ensure("president", { force: true });
+  assert.deepEqual(delays(), [30_000]);
+  feed.destroy();
+});
+
+test("preload loads a likely next race once, and never the active race, while paused or after a recent attempt", async () => {
+  const urls = []; let fail = false, clock = 1_000_000;
+  const feed = factory({ now: () => clock, fetchImpl: async (url) => { urls.push(url); if (fail) throw new Error("down"); return response(payload(new URL(url, "https://example.test").searchParams.get("race"))); } });
+  await feed.watch("president");
+  urls.length = 0;
+  await feed.preload("president");
+  assert.equal(urls.length, 0, "active race");
+  await feed.preload("local-government");
+  assert.equal(urls.length, 0, "no feed");
+  await feed.preload("senate");
+  assert.equal(urls.length, 1); assert.equal(feed.read("senate").status, "fresh");
+  await feed.preload("senate");
+  assert.equal(urls.length, 1, "still recent");
+  feed.setPaused(true); clock += 60_000;
+  await feed.preload("senate");
+  assert.equal(urls.length, 1, "paused");
+  feed.setPaused(false); await feed.ensure("president");
+  urls.length = 0; fail = true;
+  await feed.preload("house"); await feed.preload("house");
+  assert.equal(urls.length, 1, "a failed preload is not retried on every hover");
+});
+
+test("a failed preload of another race cannot slow the active race", async () => {
+  let fail = false;
+  const { feed, delays } = liveFeed(async () => { if (fail) throw new Error("down"); return response(payload()); });
+  await feed.watch("president");
+  fail = true;
+  await feed.preload("senate");
+  assert.deepEqual(delays(), [30_000]);
+  feed.destroy();
 });

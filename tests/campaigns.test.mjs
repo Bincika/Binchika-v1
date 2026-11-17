@@ -105,7 +105,7 @@ test("opt-out: removes the contact everywhere, records a keyed hash and masked a
   assert.equal(env.DB.db.prepare("SELECT COUNT(*) AS n FROM campaign_members WHERE contact_id = ?").get(ids[0]).n, 0);
   assert.equal(calls.length, 1);
   assert.deepEqual(calls[0].body.to, ["person0@example.org"]);
-  assert.match(calls[0].body.from, /noreply@binchika\.com/);
+  assert.match(calls[0].body.from, /noreply@mail\.example\.org/);
   assert.match(calls[0].body.text, /Binchika will honour your request/);
   assert.match(calls[0].body.text, /removed from our contact registry/);
   assert.equal(env.DB.db.prepare("SELECT sent_by FROM mail_messages").get().sent_by, "unsubscribe", "confirmation is recorded in Sent");
@@ -134,7 +134,7 @@ test("campaign send: one message per person, the person only in Bcc, own unsubsc
   assert.equal(msgs.length, 4);
   const seen = new Set();
   for (const m of msgs) {
-    assert.deepEqual(m.to, ["noreply@binchika.com"], "To is only our own address");
+    assert.deepEqual(m.to, ["noreply@mail.example.org"], "To is only our own address");
     assert.equal(m.cc, undefined);
     assert.equal(m.bcc.length, 1, "exactly one Bcc per message");
     seen.add(m.bcc[0]);
@@ -194,17 +194,17 @@ test("loop-back: only our own campaign copies with a genuine marker are recognis
   const { camp } = await seed(env, 1);
   await sendCampaign(env, { campaignId: camp, from: "noreply", subject: "s", body: "b", confirmCount: 1 });
   const marker = calls[0].body[0].headers["X-Binchika-Campaign"];
-  assert.equal(await isCampaignLoopback(env, "Binchika <noreply@binchika.com>", hdrs({ "x-binchika-campaign": marker })), true);
+  assert.equal(await isCampaignLoopback(env, "Binchika <noreply@mail.example.org>", hdrs({ "x-binchika-campaign": marker })), true);
   assert.equal(await isCampaignLoopback(env, "someone@example.org", hdrs({ "x-binchika-campaign": marker })), false, "outsiders are never skipped");
-  assert.equal(await isCampaignLoopback(env, "noreply@binchika.com", hdrs({ "x-binchika-campaign": marker.slice(0, -2) + "zz" })), false);
+  assert.equal(await isCampaignLoopback(env, "noreply@mail.example.org", hdrs({ "x-binchika-campaign": marker.slice(0, -2) + "zz" })), false);
   const forged = `${"a".repeat(8)}-aaaa-4aaa-8aaa-${"a".repeat(12)}.${"A".repeat(32)}`;
-  assert.equal(await isCampaignLoopback(env, "noreply@binchika.com", hdrs({ "x-binchika-campaign": forged })), false);
-  assert.equal(await isCampaignLoopback(env, "noreply@binchika.com", hdrs({})), false);
+  assert.equal(await isCampaignLoopback(env, "noreply@mail.example.org", hdrs({ "x-binchika-campaign": forged })), false);
+  assert.equal(await isCampaignLoopback(env, "noreply@mail.example.org", hdrs({})), false);
 });
 
 test("dashboard daily cap ignores unsubscribe confirmations", async () => {
   const env = envOf();
-  const ins = env.DB.db.prepare("INSERT INTO mail_messages (id, direction, mailbox, from_addr, to_addrs, subject, sent_by) VALUES (?, 'out', 'noreply', 'noreply@binchika.com', '[]', 's', 'unsubscribe')");
+  const ins = env.DB.db.prepare("INSERT INTO mail_messages (id, direction, mailbox, from_addr, to_addrs, subject, sent_by) VALUES (?, 'out', 'noreply', 'noreply@mail.example.org', '[]', 's', 'unsubscribe')");
   for (let i = 0; i < 100; i++) ins.run(`u${i}`);
   globalThis.fetch = async () => new Response(JSON.stringify({ id: "re_1" }), { status: 200 });
   const r = await sendFromDashboard(env, { from: "ops", to: "a@example.org", subject: "s", body: "b" }, "V0001");
@@ -214,10 +214,10 @@ test("dashboard daily cap ignores unsubscribe confirmations", async () => {
 
 // ---- mailbox Worker (session 96) ----
 import worker from "../workers/mailbox/src/index.js";
-const eml = (from, subject, body, extra = []) => [`From: ${from}`, "To: noreply@binchika.com", `Subject: ${subject}`, "Message-ID: <m-9@example.org>", ...extra, "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "", body, ""].join("\r\n");
+const eml = (from, subject, body, extra = []) => [`From: ${from}`, "To: noreply@mail.example.org", `Subject: ${subject}`, "Message-ID: <m-9@example.org>", ...extra, "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "", body, ""].join("\r\n");
 function message(raw, envelopeFrom, headerMap) {
   const log = { forwarded: 0, rejected: null };
-  return { log, msg: { raw, from: envelopeFrom, to: "noreply@binchika.com", headers: hdrs(headerMap), forward: async () => { log.forwarded++; }, setReject: (r) => { log.rejected = r; } } };
+  return { log, msg: { raw, from: envelopeFrom, to: "noreply@mail.example.org", headers: hdrs(headerMap), forward: async () => { log.forwarded++; }, setReject: (r) => { log.rejected = r; } } };
 }
 const workerEnv = (env) => ({ ...env, EMAIL_FORWARD_TO: "owner@example.net", AUTO_REPLY: "on", EVIDENCE: { put: async () => {} } });
 const silent = async (fn) => { const l = console.log; console.log = () => {}; try { return await fn(); } finally { console.log = l; } };
@@ -227,7 +227,7 @@ test("worker: our own campaign copy is accepted quietly — not forwarded, not s
   const { camp } = await seed(env, 1);
   await sendCampaign(env, { campaignId: camp, from: "noreply", subject: "s", body: "b", confirmCount: 1 });
   const marker = calls[0].body[0].headers["X-Binchika-Campaign"];
-  const { log, msg } = message(eml("Binchika <noreply@binchika.com>", "s", "b"), "bounce@send.binchika.com", { from: "Binchika <noreply@binchika.com>", "x-binchika-campaign": marker, subject: "s" });
+  const { log, msg } = message(eml("Binchika <noreply@mail.example.org>", "s", "b"), "bounce@send.mail.example.org", { from: "Binchika <noreply@mail.example.org>", "x-binchika-campaign": marker, subject: "s" });
   await silent(() => worker.email(msg, env));
   assert.deepEqual(log, { forwarded: 0, rejected: null });
   assert.equal(env.DB.db.prepare("SELECT COUNT(*) AS n FROM mail_messages").get().n, 0);

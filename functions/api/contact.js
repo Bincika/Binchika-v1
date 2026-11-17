@@ -5,6 +5,7 @@
 // Neither step can undo or block the delivery to EMAIL_FORWARD_TO; failures are logged without addresses or content.
 import { TENANT } from "../_lib/tenant.generated.js";   // time zone per country (session 98)
 import { validateContact, subjectFor, NATURES } from "../_lib/contact.js";
+import { checkAttachment } from "../_lib/filetype.js";
 import { contactEml, mailboxForNature } from "../_lib/contactmail.js";
 import { MAILBOXES } from "../_lib/mailbox.js";
 import { storeCopy, autoReply } from "../../workers/mailbox/src/index.js";
@@ -27,6 +28,17 @@ export async function onRequestPost({ request, env }) {
   };
   const v = validateContact(f);
   if (!v.ok) return json({ error: v.errors.includes("spam") || v.errors.includes("too fast") ? "Please try again." : v.errors.join("; ") }, 422);
+  // Session 150 (audit of 16 November 2026): the declared type is only a claim. Each file's bytes must agree with it
+  // (functions/_lib/filetype.js), or the whole message is refused here: before the rate-limit row, the ticket number and
+  // any email. The stored Inbox copy below uses the type found in the bytes.
+  let bytes, types;
+  try {
+    bytes = await Promise.all(files.map(async (x) => new Uint8Array(await x.arrayBuffer())));
+    const checks = files.map((x, i) => checkAttachment(x.type, bytes[i]));
+    const bad = files.filter((_, i) => !checks[i].ok);
+    if (bad.length) return json({ error: bad.map((x) => `file type not accepted: ${x.name}`).join("; ") }, 422);
+    types = checks.map((c) => c.type);
+  } catch { return json({ error: "Invalid form." }, 400); }
   // Session 91: a media access request carries a few more fields. They go into the enquiry text only (the owner copy and
   // the Inbox copy), never into a new table.
   let media = null;
@@ -51,11 +63,10 @@ export async function onRequestPost({ request, env }) {
   let ref = null;
   if (env.DB) { try { ref = await nextRef(env.DB); } catch (e) { console.log(JSON.stringify({ event: "contact-ref-failed", error: String(e).slice(0, 160) })); } }
 
-  const bytes = await Promise.all(files.map(async (x) => new Uint8Array(await x.arrayBuffer())));
   const attachments = files.map((x, i) => ({ filename: x.name.replace(/[^\w.\- ]+/g, "_").slice(0, 120), content: b64(bytes[i]) }));
   const text = [
     ref ? `Reference: ${ref}` : null, `Nature: ${NATURES[f.nature].label}`, f.party ? `Party: ${f.party}` : null,
-    `From: ${f.name || "(no name given)"} <${f.email}>`, `Sent: ${new Date().toLocaleString("en-GB", { timeZone: TENANT.locale.timeZone })} WAT`,
+    `From: ${f.name || "(no name given)"} <${f.email}>`, `Sent: ${new Date().toLocaleString("en-GB", { timeZone: TENANT.locale.timeZone })} ${TENANT.locale.zoneLabel}`,
     `Attachments: ${attachments.length}`, ...(media ? ["", ...media] : []), "", f.message.trim(), "", "— Sent via the contact form at binchika.com/contact/",
   ].filter((l) => l !== null).join("\n");
   const r = await fetch("https://api.resend.com/emails", {
@@ -69,12 +80,12 @@ export async function onRequestPost({ request, env }) {
   const mailbox = mailboxForNature(f.nature);
   const to = MAILBOXES[mailbox].address;
   const subject = subjectFor(f, ref);
-  const messageId = `<contact-${crypto.randomUUID()}@binchika.com>`;
+  const messageId = `<contact-${crypto.randomUUID()}@mail.example.org>`;
   let stored = null;
   if (env.DB && env.EVIDENCE) {
     try {
       const raw = contactEml({ mailbox, name: f.name, email: f.email, subject, text, messageId,
-        files: files.map((x, i) => ({ filename: attachments[i].filename, type: x.type, bytes: bytes[i] })) });
+        files: files.map((x, i) => ({ filename: attachments[i].filename, type: types[i], bytes: bytes[i] })) });
       stored = await storeCopy(env, raw, to);
     } catch (e) { console.log(JSON.stringify({ event: "contact-store-failed", error: String(e).slice(0, 160) })); }
   }

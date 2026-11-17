@@ -1,6 +1,6 @@
 -- Evidence type and verifier audit for citizen reports (session 55; docs/EVIDENCE-AUDIT.md). Additive only.
 -- evidence: what the report shows. 'ec8a' = the posted result sheet (default, and every existing row).
---   'video' | 'handwritten' | 'board' = alternatives accepted only when Form EC8A is not available.
+--   'video' | 'handwritten' | 'board' = alternatives accepted only when Form R1 is not available.
 -- audit_status: NULL for result-sheet reports; 'pending' → 'approved' | 'rejected' for alternatives, decided by an
 --   SZV/NRV for that state (POST /api/portal/evidence). Approved alternatives can make a unit "lower" (lower-confidence),
 --   never "high", so they never reach the ledger or the results on their own (functions/_lib/consensus.js unitConsensus).
