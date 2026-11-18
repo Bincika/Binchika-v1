@@ -41,14 +41,15 @@ export async function onRequestPost({ request, env }) {
     }
     // Session 200 (build-plan-7): the corrected figures are checked before anything is written. Shape: the intake rules
     // (checkTally). Register: the votes may not exceed the largest register printed on the unit's counted sheets — the
-    // same sheets processUnit counts (pipeline.js). A misread high register is the accepted residual risk; the three-seat
+    // same sheets processUnit counts (pipeline.js): person-confirmed ones only, since a machine reading never counts by
+    // itself (session 215). A misread high register is the accepted residual risk; the three-seat
     // approval is the check on it. With no register on any counted sheet, the register check is skipped, as in processUnit.
     const checked = checkTally(tally);
     if (checked.errors.length) return json({ error: `the corrected figures are not valid: ${checked.errors[0]}` }, 422);
     const { results: sheets } = await env.DB.prepare(
       `SELECT c.controls_json FROM reports r JOIN report_checks c ON c.report_id = r.id
         WHERE r.pu_code = ?1 AND r.race = ?2 AND r.tally_json IS NOT NULL AND r.status <> 'rejected'
-          AND COALESCE(r.audit_status, '') <> 'rejected' AND r.status IN ('ocr_done','verified')
+          AND COALESCE(r.audit_status, '') <> 'rejected' AND r.status = 'verified'
           AND COALESCE(r.evidence, 'ec8a') = 'ec8a'`,
     ).bind(flag.pu_code, flag.race).all();
     const registers = sheets.map((s) => (s.controls_json ? JSON.parse(s.controls_json).register : null)).filter((n) => Number.isInteger(n));

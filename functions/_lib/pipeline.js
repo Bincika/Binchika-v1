@@ -35,8 +35,9 @@ export async function appendEntry(db, body) {
  * Re-evaluates one polling unit for one race. Appends to the ledger only when a high-confidence tally is new or changed
  * AND every posting gate passes (ec8a.js postingGates).
  * Which readings count (session 88, docs/protocol/AI-GOVERNANCE.md): a result-sheet reading counts only once a verifier
- * has confirmed it ("verified") or a calibrated machine reading cleared every field ("ocr_done"). "needs_review" no
- * longer counts. Alternative evidence (no Form R1) counts only once a verifier has approved it, and can only make a
+ * has confirmed it ("verified"). "needs_review" does not count. Session 215 (constitution §4, amended 18 November 2026):
+ * a machine reading never counts by itself, so "ocr_done" no longer counts either; this path must stay removed.
+ * Alternative evidence (no Form R1) counts only once a verifier has approved it, and can only make a
  * unit "lower", never "high" (unitConsensus in consensus.js), so it never reaches the ledger on its own.
  * A unit that is high but fails a gate is stored as "held": it is not posted and is not in the public totals.
  */
@@ -57,7 +58,7 @@ async function assessUnit(db, puCode, race) {
     `SELECT r.reporter_hash, r.tally_json, r.channel, r.evidence, r.audit_status, r.received_at, c.checks_ok, c.controls_json
        FROM reports r LEFT JOIN report_checks c ON c.report_id = r.id
       WHERE r.pu_code = ?1 AND r.race = ?2 AND r.tally_json IS NOT NULL AND r.status <> 'rejected' AND COALESCE(r.audit_status, '') <> 'rejected'
-        AND (r.status IN ('ocr_done','verified') OR (r.evidence <> 'ec8a' AND r.audit_status = 'approved'))
+        AND (r.status = 'verified' OR (r.evidence <> 'ec8a' AND r.audit_status = 'approved'))
       ORDER BY r.received_at`
   ).bind(puCode, race).all();
   const c = unitConsensus(reps.map((r) => ({ reporterHash: r.reporter_hash, tally: JSON.parse(r.tally_json), source: r.channel, evidence: r.evidence ?? "ec8a", audit: r.audit_status ?? null })));
