@@ -2,7 +2,7 @@
 
 Where every report for a polling unit agrees and few people back the figures, nothing else asks for an extra photo. So Binchika also asks for photos from a **random sample of 2 in every 100 undisputed units**. The sample never holds a unit back: a sampled unit with no photo sent is posted if its other photos meet the rule, like any unit. This page shows how anyone can check that the sample was drawn fairly, without any access to Binchika's systems: you need only the published rule, the published lists and a computer.
 
-**Status.** Photo requests are not running yet. The worked example below uses a real past random value and a made-up list of five units, so you can try every step today. *Session 188: the owner added a published commitment to the list before the draw and removed the switch to a later round (sections 4a and 6); the rule on `/ledger/` will carry these when it is published. Session 192: one definition of "same figures", outside copies of the commitment, and the empty list (section 4a). Session 194: the election identifier in the commitment, the archive capture as the only evidence of time, and the full list published after the night window.*
+**Status.** Photo requests are not running yet. The worked example below uses a real past random value and a made-up list of five units, so you can try every step today. *Session 188: the owner added a published commitment to the list before the draw and removed the switch to a later round (sections 4a and 6); the rule on `/ledger/` will carry these when it is published. Session 192: one definition of "same figures", outside copies of the commitment, and the empty list (section 4a). Session 194: the election identifier in the commitment, the archive capture as the only evidence of time, and the full list published after the night window. Session 202: the earliest capture in two archives stands; the sampled units are also published after the night window.*
 
 **Undisputed** means: at the cut-off C (below), the polling unit has, for that race, at least one claim or report that has not been rejected; every one of them carries the same party figures (control figures are not compared; typed figures are included); and the unit is not yet posted. The same definition is used in the photo-request design. Unit codes and race names are plain ASCII text.
 
@@ -16,15 +16,17 @@ Where every report for a polling unit agrees and few people back the figures, no
 - the **cut-off C**, at least 30 minutes before T, when the list of undisputed units is frozen;
 - the SHA-256 of a fallback secret, and the fallback rule (section 6).
 
-**Between C and T:** for each race, the **commitment**, a SHA-256 of the frozen list (section 4a). It is published before round R exists, so nobody can choose the list after seeing the random number. It is put in a plain-text file at a fixed address, `/ledger/sample-commitments.txt`, and that file is captured by a public web archive before T.
+**Between C and T:** for each race, the **commitment**, a SHA-256 of the frozen list (section 4a). It is published before round R exists, so nobody can choose the list after seeing the random number. It is put in a plain-text file at a fixed address, `/ledger/sample-commitments.txt`, and that file is captured by **two independent public web archives** before T.
 
 **The archive capture is the only evidence of time.** Its own timestamp shows the commitment existed before T, without trusting Binchika's clock. A copy in the open-source repository is a convenience only: a git commit's date is set by whoever commits and proves nothing.
-- **"Published" means captured by the archive before T.** No capture before T for a race means **no draw for that race**.
-- **Two different commitments for the same race void its draw.**
+- **"Published" means captured after C and before T.** The commitment is the **earliest** capture of that exact address in that time (any query string is ignored). If the two archives' earliest captures in that time differ, both are published and the draw for that race is void, which is a published breach.
+- A later or different capture does **not** cancel the draw: it is a breach of the rule, published on the ledger page, and the draw stands on the earliest capture.
+- If there is no capture before T for a race, there is no draw for that race, and that too is published on the ledger page as a breach, never quietly.
+- *General knowledge:* a server can show an archive different content from what readers see, and captures can fail. Compare the archive copy with the ledger page.
 
-**After the draw, on the night:** the round number R used, and for each race the **sampled units**.
+**After the draw, on the night:** the round number R used. Nothing else.
 
-**After the night window closes:** for each race, the full list of **undisputed units**. It is held back until then so that, on the night, it cannot point to the units where people used the app. You can check the commitment (section 4a) as soon as the list is out.
+**After the night window closes:** for each race, the **sampled units** and the full list of **undisputed units**. Both are held back until then so that, on the night, they cannot point to the units where people used the app. You can check the commitment (section 4a) as soon as the list is out.
 
 ## 1. Work out which round is used
 The random number is drand round **R**, the first round at or after the stated time T (in Unix seconds):
