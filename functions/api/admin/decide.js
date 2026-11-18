@@ -4,6 +4,8 @@
 import { requireAdmin, rest, json } from "../../_lib/supa.js";
 import { recordCorrection } from "../../_lib/pipeline.js";
 import { methodNotAllowed } from "../../_lib/http.js";
+import { checkTally } from "../../_lib/report.js";
+import { checkAgainstBaseline } from "../../_lib/baseline.js";
 
 export async function onRequestPost({ request, env }) {
   const gate = await requireAdmin(request, env);   // BinchikAdmin + MFA (aal2)
@@ -37,8 +39,28 @@ export async function onRequestPost({ request, env }) {
     if (prev?.status !== "high" || !prev?.ledger_hash) {
       return json({ error: "a correction can only change a posted result; this unit is not on the ledger" }, 409);
     }
+    // Session 200 (build-plan-7): the corrected figures are checked before anything is written. Shape: the intake rules
+    // (checkTally). Register: the votes may not exceed the largest register printed on the unit's counted sheets — the
+    // same sheets processUnit counts (pipeline.js). A misread high register is the accepted residual risk; the three-seat
+    // approval is the check on it. With no register on any counted sheet, the register check is skipped, as in processUnit.
+    const checked = checkTally(tally);
+    if (checked.errors.length) return json({ error: `the corrected figures are not valid: ${checked.errors[0]}` }, 422);
+    const { results: sheets } = await env.DB.prepare(
+      `SELECT c.controls_json FROM reports r JOIN report_checks c ON c.report_id = r.id
+        WHERE r.pu_code = ?1 AND r.race = ?2 AND r.tally_json IS NOT NULL AND r.status <> 'rejected'
+          AND COALESCE(r.audit_status, '') <> 'rejected' AND r.status IN ('ocr_done','verified')
+          AND COALESCE(r.evidence, 'ec8a') = 'ec8a'`,
+    ).bind(flag.pu_code, flag.race).all();
+    const registers = sheets.map((s) => (s.controls_json ? JSON.parse(s.controls_json).register : null)).filter((n) => Number.isInteger(n));
+    if (registers.length) {
+      const votes = Object.values(checked.value).reduce((a, n) => a + n, 0);
+      const b = checkAgainstBaseline(Math.max(...registers), { votesCast: votes });
+      if (b.findings.some((f) => f.field === "votesCast")) {
+        return json({ error: "the corrected votes exceed the register printed on this unit's sheets" }, 409);
+      }
+    }
     entry = await recordCorrection(env.DB, {
-      puCode: flag.pu_code, race: flag.race, tally, flagId: flag.id,
+      puCode: flag.pu_code, race: flag.race, tally: checked.value, flagId: flag.id,
       reason: `${note} (raised by ${flag.raised_by_public_id ?? "?"}, reviewed by ${flag.nrv_public_id ?? "?"}, approved by ${me.public_id})`,
       supersedes: prev?.ledger_hash ?? null,
     });

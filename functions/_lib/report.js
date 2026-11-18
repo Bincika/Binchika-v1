@@ -18,6 +18,27 @@ export async function hashReporter(salt, channel, handle) {
   return sha256Hex(`${salt}:${channel}:${String(handle).trim().toLowerCase()}`);
 }
 
+/**
+ * A correction's figures (session 200, build-plan-7): the same party and vote rules as intake below, plus "not empty",
+ * because a correction must carry figures. Returns { value, errors }: value is the cleaned tally (upper-case keys), or
+ * null when there are errors. parseReport is deliberately left unchanged; a test proves both refuse the same inputs.
+ */
+export function checkTally(tally) {
+  if (!tally || typeof tally !== "object" || Array.isArray(tally)) return { value: null, errors: ["the tally must be an object of party votes"] };
+  const entries = Object.entries(tally);
+  if (!entries.length) return { value: null, errors: ["the tally must name at least one party"] };
+  const errors = [];
+  const value = {};
+  for (const [k, v] of entries) {
+    const n = Number(v);
+    if (!/^[A-Z]{1,6}$/i.test(k)) errors.push(`bad party acronym "${k}"`);
+    else if (NOT_A_PARTY.test(k.toUpperCase())) errors.push(`"${k}" is not a party: void ballots go in controls.rejected, never in a party`);
+    else if (typeof v === "boolean" || v === null || v === "" || !Number.isInteger(n) || n < 0 || n > MAX_VOTES) errors.push(`votes for ${k} must be an integer 0–${MAX_VOTES}`);
+    else value[k.toUpperCase()] = n;
+  }
+  return errors.length ? { value: null, errors } : { value, errors: [] };
+}
+
 /** Returns { ok: true, value } or { ok: false, errors: string[] }. Never echoes the handle back. */
 export function parseReport(body) {
   const errors = [];

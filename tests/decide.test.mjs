@@ -4,12 +4,13 @@ import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { onRequestPost } from "../functions/api/admin/decide.js";
 import { appendEntry } from "../functions/_lib/pipeline.js";
+import { checkTally, parseReport } from "../functions/_lib/report.js";
 
 // Session 76: a correction needs three separate seats (raiser, a different NRV, the approving BinchikAdmin).
 // Supabase is stubbed at fetch level; D1 is a real SQLite database with the real migrations.
 function sqliteD1() {
   const db = new DatabaseSync(":memory:");
-  for (const f of ["0001_init.sql", "0002_ledger.sql", "0005_evidence.sql"]) db.exec(readFileSync(new URL(`../db/d1/${f}`, import.meta.url), "utf8"));
+  for (const f of ["0001_init.sql", "0002_ledger.sql", "0005_evidence.sql", "0008_report_checks.sql"]) db.exec(readFileSync(new URL(`../db/d1/${f}`, import.meta.url), "utf8"));
   const stmt = (sql, args = []) => ({
     bind: (...a) => stmt(sql, a),
     all: async () => ({ results: db.prepare(sql).all(...args) }),
@@ -122,4 +123,57 @@ test("rejecting still works without the three-seat rule (it changes nothing in t
   assert.equal(r.status, 200);
   assert.equal(r.ledger, 0);
   assert.equal(r.patches[0].status, "rejected");
+});
+
+// Session 200 (build-plan-7): a correction's figures are checked before anything is written.
+const sheet = (register) => (DB) => {
+  DB.db.prepare("INSERT INTO reports (id, channel, reporter_hash, pu_code, race, tally_json, status, evidence) VALUES ('r1','web','h1','24-09-05-012','president','{\"PA\":90,\"PB\":95}','verified','ec8a')").run();
+  DB.db.prepare("INSERT INTO report_checks (report_id, controls_json, checks_ok) VALUES ('r1', ?1, 1)").run(JSON.stringify({ register }));
+};
+const postedWithSheet = (register) => async (DB) => { await posted(DB); sheet(register)(DB); };
+const refusedUnchanged = (r, status) => {
+  assert.equal(r.status, status);
+  assert.equal(r.ledger, 0);
+  assert.equal(r.patches.length, 0, "the flag is left as it was");
+  assert.equal(r.unit.status, "high");
+};
+
+test("a correction with negative votes is refused", async () => {
+  refusedUnchanged(await decide(flag({ proposed_tally: { PA: -5, PB: 95 } })), 422);
+});
+
+test("a correction with fractional votes is refused", async () => {
+  refusedUnchanged(await decide(flag({ proposed_tally: { PA: 90.5, PB: 95 } })), 422);
+});
+
+test("a correction that puts votes in a non-party (VOID) is refused", async () => {
+  const r = await decide(flag({ proposed_tally: { PA: 90, VOID: 4 } }));
+  refusedUnchanged(r, 422);
+  assert.match(r.body.error, /VOID/);
+});
+
+test("a correction given as an array or an empty object is refused", async () => {
+  refusedUnchanged(await decide(flag({ proposed_tally: [90, 95] })), 422);
+  refusedUnchanged(await decide(flag({ proposed_tally: {} })), 422);
+});
+
+test("a correction whose votes exceed the register printed on the unit's sheets is refused", async () => {
+  const r = await decide(flag({ proposed_tally: { PA: 90, PB: 95 } }), { seed: postedWithSheet(150) });
+  refusedUnchanged(r, 409);
+  assert.match(r.body.error, /register/);
+});
+
+test("a correction within the register is written, with party keys upper-cased", async () => {
+  const r = await decide(flag({ proposed_tally: { pa: 90, PB: 95 } }), { seed: postedWithSheet(300) });
+  assert.equal(r.status, 200);
+  assert.equal(r.ledger, 1);
+  assert.deepEqual(r.correction.tally, { PA: 90, PB: 95 });
+});
+
+test("the correction check and intake refuse the same bad party and the same bad figure", () => {
+  for (const tally of [{ VOID: 3 }, { PA: -1 }, { PA: 1.5 }, { "A-B": 2 }]) {
+    assert.ok(checkTally(tally).errors.length > 0, JSON.stringify(tally));
+    assert.ok(!parseReport({ channel: "web", handle: "h", puCode: "24-09-05-012", race: "president", tally }).ok, JSON.stringify(tally));
+  }
+  assert.deepEqual(checkTally({ pa: 1 }), { value: { PA: 1 }, errors: [] });
 });
