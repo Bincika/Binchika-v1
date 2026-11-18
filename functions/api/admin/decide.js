@@ -59,18 +59,39 @@ export async function onRequestPost({ request, env }) {
         return json({ error: "the corrected votes exceed the register printed on this unit's sheets" }, 409);
       }
     }
-    entry = await recordCorrection(env.DB, {
+    // Build plan 8 (correction-path hardening): one correction per flag, written only if the unit is still posted with the
+    // hash read above, in one D1 batch. Until the migration exists (previews share the production database) approving is
+    // refused with 503 and nothing is written; rejecting stays available below.
+    const out = await recordCorrection(env.DB, {
       puCode: flag.pu_code, race: flag.race, tally: checked.value, flagId: flag.id,
       reason: `${note} (raised by ${flag.raised_by_public_id ?? "?"}, reviewed by ${flag.nrv_public_id ?? "?"}, approved by ${me.public_id})`,
       supersedes: prev?.ledger_hash ?? null,
+      expectedHash: prev.ledger_hash,
     });
+    if (out.refused === "not_ready") return json({ error: "corrections are being upgraded; nothing was written. Try again after the upgrade." }, 503);
+    if (out.refused === "busy") return json({ error: "the ledger is busy; nothing was written. Try again." }, 503);
+    if (out.refused === "unit_changed") return json({ error: "the unit changed while you were deciding; nothing was written. Reload and decide again." }, 409);
+    if (out.refused === "already_decided") {
+      // Gate 1, F5: the D1 write committed earlier but the flag update did not. Update the flag only; write nothing new.
+      const claim = await env.DB.prepare("SELECT ledger_hash FROM correction_claims WHERE flag_id = ?1").bind(flag.id).first();
+      const rows = await patchFlag(env, flagId, decided(user, note, "approved"), true);
+      if (!claim || !rows?.length) return json({ error: "this flag has already been decided" }, 409);
+      return json({ ok: true, decision, ledger: { hash: claim.ledger_hash }, warning: "flag updated on retry" });
+    }
+    entry = out.entry;
+    // The flag update is conditional, so a flag decided elsewhere meanwhile is not overwritten. The correction stands
+    // either way; the admin list "Corrections to check" shows any claim whose flag is not approved.
+    const rows = await patchFlag(env, flagId, decided(user, note, "approved"), true);
+    const res = { ok: true, decision, ledger: { seq: entry.seq, hash: entry.hash } };
+    return json(rows?.length ? res : { ...res, warning: "flag already updated" });
   }
-  await rest(env, `discrepancy_flags?id=eq.${flagId}`, {
-    method: "PATCH",
-    body: JSON.stringify({ status: decision === "approve" ? "approved" : "rejected", decision_note: note, decided_by: user.id, decided_at: new Date().toISOString() }),
-  });
-  return json({ ok: true, decision, ledger: entry ? { seq: entry.seq, hash: entry.hash } : null });
+  await patchFlag(env, flagId, decided(user, note, "rejected"), false);   // rejecting: as before
+  return json({ ok: true, decision, ledger: null });
 }
+
+const decided = (user, note, status) => ({ status, decision_note: note, decided_by: user.id, decided_at: new Date().toISOString() });
+const patchFlag = (env, flagId, body, onlyIfOpen) =>
+  rest(env, `discrepancy_flags?id=eq.${flagId}${onlyIfOpen ? "&status=in.(escalated,investigating,ai_done)" : ""}`, { method: "PATCH", body: JSON.stringify(body) });
 
 // GET is not a read here: answer 405 instead of falling through to the home page (session 90; functions/_lib/http.js).
 export const onRequestGet = () => methodNotAllowed("POST");

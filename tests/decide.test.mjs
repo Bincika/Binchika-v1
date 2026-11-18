@@ -7,18 +7,10 @@ import { appendEntry } from "../functions/_lib/pipeline.js";
 import { checkTally, parseReport } from "../functions/_lib/report.js";
 
 // Session 76: a correction needs three separate seats (raiser, a different NRV, the approving BinchikAdmin).
-// Supabase is stubbed at fetch level; D1 is a real SQLite database with the real migrations.
-function sqliteD1() {
-  const db = new DatabaseSync(":memory:");
-  for (const f of ["0001_init.sql", "0002_ledger.sql", "0005_evidence.sql", "0008_report_checks.sql"]) db.exec(readFileSync(new URL(`../db/d1/${f}`, import.meta.url), "utf8"));
-  const stmt = (sql, args = []) => ({
-    bind: (...a) => stmt(sql, a),
-    all: async () => ({ results: db.prepare(sql).all(...args) }),
-    first: async () => db.prepare(sql).get(...args) ?? null,
-    run: async () => { const r = db.prepare(sql).run(...args); return { meta: { changes: r.changes } }; },
-  });
-  return { db, prepare: (sql) => stmt(sql) };
-}
+// Supabase is stubbed at fetch level; D1 is a real SQLite database with the real migrations. Session 211 (build plan 8):
+// plus the correction-guard schema as a test fixture, since approving now needs it (without it the route answers 503,
+// covered in tests/correction-guard.test.mjs, test 11).
+import { sqliteD1 } from "./fixtures/correction-guard-schema.mjs";
 
 const FLAG_ID = "11111111-2222-3333-4444-555555555555";
 // The owner's address is already public in the project brief; its hash is the BinchikAdmin lock.

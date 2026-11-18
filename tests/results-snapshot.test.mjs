@@ -10,6 +10,7 @@ import { recordCorrection } from "../functions/_lib/pipeline.js";
 import { RESULTS_BODY_VERSION, RESULTS_RACES, SNAPSHOT_MAX_AGE_MS, resultsAccumulator, servedBody, statusCounts } from "../functions/_lib/results-body.js";
 import { REBUILD_EVERY_MS, buildRace, runAll } from "../workers/results-snapshot/src/build.js";
 import { createResultsFeed } from "../site/assets/js/lib/results-feed.js";
+import { CORRECTION_GUARD_SCHEMA } from "./fixtures/correction-guard-schema.mjs";
 
 function freshDb() {
   const raw = new DatabaseSync(":memory:");
@@ -22,12 +23,32 @@ function freshDb() {
         bind: (...values) => statement(values),
         all: async () => { log.push(sql); if (db.beforeAll) await db.beforeAll(sql, params); return { results: raw.prepare(sql).all(...params).map((r) => ({ ...r })) }; },
         first: async () => { log.push(sql); const row = raw.prepare(sql).get(...params); return row ? { ...row } : null; },
-        run: async () => { log.push(sql); return raw.prepare(sql).run(...params); },
+        run: async () => { log.push(sql); const r = raw.prepare(sql).run(...params); return { ...r, meta: { changes: Number(r.changes) } }; },
+        sql, params,
       });
       return statement([]);
     },
+    // Session 211 (build plan 8): recordCorrection writes in one D1 batch; this is one transaction, as D1's batch is.
+    async batch(stmts) {
+      raw.exec("BEGIN");
+      try {
+        const out = stmts.map((s) => { log.push(s.sql); const r = raw.prepare(s.sql)[/^\s*SELECT/i.test(s.sql) ? "all" : "run"](...s.params); return { meta: { changes: Number(r?.changes ?? 0) } }; });
+        raw.exec("COMMIT");
+        return out;
+      } catch (e) { raw.exec("ROLLBACK"); throw e; }
+    },
   };
   return db;
+}
+// Session 211 (build plan 8): a correction now needs the correction-guard schema (a test fixture until the owner authorises
+// the migration file) and the posted hash the route read; it returns { entry } or { refused }.
+async function correct(db, puCode, tally) {
+  if (!db.raw.prepare("SELECT 1 FROM pragma_table_info('unit_consensus') WHERE name = 'correction_hash'").get()) db.raw.exec(CORRECTION_GUARD_SCHEMA);
+  db.raw.prepare("UPDATE unit_consensus SET ledger_hash = COALESCE(ledger_hash, 'posted-before') WHERE pu_code = ? AND race = 'president'").run(puCode);
+  const { ledger_hash: expectedHash } = db.raw.prepare("SELECT ledger_hash FROM unit_consensus WHERE pu_code = ? AND race = 'president'").get(puCode);
+  const out = await recordCorrection(db, { puCode, race: "president", tally, flagId: "f1", reason: "test", expectedHash });
+  assert.ok(out.entry, JSON.stringify(out));
+  return out.entry;
 }
 const addUnit = (db, pu, race, tally, { status = "high", updated = "2027-01-16T10:00:00.000Z", irev = null } = {}) =>
   db.raw.prepare("INSERT INTO unit_consensus (pu_code, race, status, share, reports, tally_json, discrepancy_json, updated_at) VALUES (?, ?, ?, 1, 3, ?, ?, ?) ON CONFLICT (pu_code, race) DO UPDATE SET status = excluded.status, tally_json = excluded.tally_json, updated_at = excluded.updated_at")
@@ -222,7 +243,7 @@ test("a correction, and a change from high to held, cause a rebuild", async () =
   addUnit(db, "19-01-01-001", "president", { A: 7, ADC: 2 }, { status: "held", updated: "2020-01-01T00:03:00.000Z" });
   assert.equal((await buildRace(db, "president", { now: clock(NOW + 60_000) })).rebuilt, true);
   assert.equal(stored(db).body.units.reported, 4);
-  await recordCorrection(db, { puCode: "24-09-05-012", race: "president", tally: { A: 1, AA: 3 }, flagId: "f1", reason: "test" });
+  await correct(db, "24-09-05-012", { A: 1, AA: 3 });
   assert.equal((await buildRace(db, "president", { now: clock(NOW + 120_000) })).rebuilt, true);
   assert.equal(stored(db).body.byLga["XL-LA"]["24-09"].totals.A, 2);
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM ledger_entries").get().n, 1, "the builder adds nothing to the ledger; only the correction does");
@@ -472,7 +493,7 @@ test("the ledger head on a press response is live, without a rebuild", async () 
   await freshBuild(db);
   const empty = await (await pressRead(db)).json();
   assert.deepEqual([empty.ledger.head, empty.ledger.count], [null, 0]);
-  const entry = await recordCorrection(db, { puCode: "24-09-05-012", race: "president", tally: { A: 1, AA: 3 }, flagId: "f1", reason: "test" });
+  const entry = await correct(db, "24-09-05-012", { A: 1, AA: 3 });
   const after = await (await pressRead(db)).json();
   assert.deepEqual([after.ledger.head, after.ledger.count], [entry.hash, 1]);
   assert.equal(after.ledger.verify, "https://binchika.com/ledger/");

@@ -24,6 +24,7 @@ let flags = [], reports = [], seats = [];
 let linkNotice = "";                                      // shown on Account after a password-reset link
 let mfaNeeded = false;                                  // OpsAdmin/BinchikAdmin must reach aal2 (authenticator code) first
 let diag = { status: "idle", data: null };   // BinchikAdmin diagnostics (session 143): loaded only when the section is opened
+let corrCheck = { status: "idle", data: null };   // BinchikAdmin "Corrections to check" (session 211, build plan 8): loaded only on the Flags section
 let diagDevice = { status: "idle", data: null };   // three more "This device" readings (session 147): worked out here, sent nowhere
 // Section link (session 147): /portal/#s=<name>. Read once, kept in memory, removed from the address bar. It is applied
 // only after sign-in and the authenticator step, and only for a section the signed-in role already has.
@@ -117,7 +118,39 @@ function flagList(list) {
 }
 function flagsView() {
   const raise = !readOnly() && me.role === "szv" ? `<form class="portal-form panel" id="flag-form" style="margin-bottom:1rem"><h3>Raise a flag</h3><div class="form-grid"><label>Polling unit code<input id="f-pu" required pattern="\\d{2}-\\d{2}-\\d{2}-\\d{3}" placeholder="24-01-01-001" value="${esc(flagDraft?.pu ?? "")}"></label><label>Race<select id="f-race">${[["president", "President"], ["senate", "Senate"], ["house", "House"], ["governor", "Governor"], ["state-assembly", "State Assembly"]].map(([v, l]) => `<option value="${v}"${flagDraft?.race === v ? " selected" : ""}>${l}</option>`).join("")}</select></label><label class="wide">What doesn't add up?<textarea id="f-reason" required minlength="10" rows="3"></textarea></label></div><button class="btn btn-solid btn-sm" type="submit">Raise flag</button> <span class="form-status" id="f-status" role="status"></span></form>` : "";
-  return `<h2>Flags</h2>${raise}${flagList(flags.filter((f) => lensStates().includes(f.state_iso)))}`;
+  return `<h2>Flags</h2>${raise}${flagList(flags.filter((f) => lensStates().includes(f.state_iso)))}${correctionsToCheck()}`;
+}
+// Session 211 (build plan 8): BinchikAdmin only, read-only. Admins only by owner decision (D2); nothing here is public.
+// A conflict: a later recount disagrees with a standing correction; the correction stays until a person decides through
+// the normal three-seat flag chain. Unreconciled: a correction is on the ledger but its flag is not marked approved.
+function correctionsToCheck() {
+  if (me?.role !== "superadmin" || preview) return "";
+  const head = `<section class="panel" style="margin-top:1rem" aria-labelledby="cc-h"><h3 id="cc-h">Corrections to check</h3>`;
+  if (corrCheck.status !== "ready") {
+    const msg = corrCheck.status === "error" ? "Not available yet. This list starts working once the correction upgrade is in place." : "Checking…";
+    return `${head}<p class="source-note" role="status">${msg}</p></section>`;
+  }
+  const { conflicts = [], unreconciled = [] } = corrCheck.data ?? {};
+  const short = (h) => esc(String(h ?? "").slice(0, 12));
+  const c = conflicts.length
+    ? `<ul>${conflicts.map((x) => `<li><strong class="mono">${esc(x.pu_code)}</strong> · ${esc(x.race)} · recount says <b>${esc(x.recomputed_status)}</b>${x.recomputed ? ` (${esc(Object.entries(x.recomputed).map(([p, v]) => `${p} ${v}`).join(", "))})` : ""} · correction <span class="mono">${short(x.correction_hash)}</span> · ${esc(x.detected_at)}</li>`).join("")}</ul>`
+    : `<p class="muted">No recount disagrees with a standing correction.</p>`;
+  const u = unreconciled.length
+    ? `<ul>${unreconciled.map((x) => `<li><strong class="mono">${esc(x.pu_code)}</strong> · ${esc(x.race)} · flag <span class="mono">${esc(String(x.flag_id).slice(0, 8))}</span> is <b>${esc(x.flag_status ?? "missing")}</b> · ledger <span class="mono">${short(x.ledger_hash)}</span></li>`).join("")}</ul>`
+    : `<p class="muted">Every correction's flag is marked approved.</p>`;
+  return `${head}<p class="source-note">Admins only; not shown on any public page. A correction stays in place until you decide through the normal flag chain with a new correction.</p><h4>Recounts that disagree with a correction</h4>${c}<h4>Corrections whose flag is not marked approved</h4>${u}</section>`;
+}
+async function loadCorrectionsToCheck() {
+  corrCheck = { status: "loading", data: null };
+  try {
+    const r = await fetch("/api/admin/correction-conflicts", { headers: await authHeader(), cache: "no-store" });
+    corrCheck = r.ok ? { status: "ready", data: await r.json() } : { status: "error", data: null };
+  } catch { corrCheck = { status: "error", data: null }; }
+  if (section === "flags") render();
+}
+function wireCorrectionsToCheck() {
+  if (section !== "flags" || me?.role !== "superadmin" || preview) return;
+  if (corrCheck.status === "idle") loadCorrectionsToCheck();
 }
 // Evidence types (session 55): the posted result sheet, or an alternative accepted only after a verifier's audit.
 const EVIDENCE_LABEL = { ec8a: "Result sheet", video: "Video", handwritten: "Handwritten numbers", board: "Photo of the board" };
@@ -547,7 +580,7 @@ function render() {
   main.querySelectorAll("[data-review]").forEach((b) => b.addEventListener("click", () => openViewer(b.dataset.review)));
   main.querySelectorAll("[data-flagrow]").forEach((b) => b.addEventListener("click", () => flagFromRow(b.dataset.flagrow)));
   main.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => openViewer(b.dataset.view)));
-  wireMeetings(); wireViewAs(); wireAccount(); wireSeatAdmin(); wireMail(); wireCrm(); wireDiagnostics();
+  wireMeetings(); wireViewAs(); wireAccount(); wireSeatAdmin(); wireMail(); wireCrm(); wireDiagnostics(); wireCorrectionsToCheck();
 }
 function wireSignIn() {
   document.querySelectorAll("[data-prev]").forEach((b) => b.addEventListener("click", () => startPreview(b.dataset.prev)));
