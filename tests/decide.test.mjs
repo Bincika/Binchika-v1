@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { onRequestPost } from "../functions/api/admin/decide.js";
+import { appendEntry } from "../functions/_lib/pipeline.js";
 
 // Session 76: a correction needs three separate seats (raiser, a different NRV, the approving BinchikAdmin).
 // Supabase is stubbed at fetch level; D1 is a real SQLite database with the real migrations.
@@ -23,7 +24,7 @@ const FLAG_ID = "11111111-2222-3333-4444-555555555555";
 const ADMIN_EMAIL = "admin@example.org";
 const token = `x.${Buffer.from(JSON.stringify({ aal: "aal2" })).toString("base64url")}.y`;
 
-async function decide(flag, { approverId = "V0001", decision = "approve" } = {}) {
+async function decide(flag, { approverId = "V0001", decision = "approve", seed = posted } = {}) {
   const patches = [];
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url, init = {}) => {
@@ -37,6 +38,7 @@ async function decide(flag, { approverId = "V0001", decision = "approve" } = {})
   };
   try {
     const DB = sqliteD1();
+    if (seed) await seed(DB);
     const env = { SUPABASE_URL: "https://stub.supabase.co", SUPABASE_ANON_KEY: "a", SUPABASE_SERVICE_ROLE_KEY: "s", DB };
     const request = new Request("https://binchika.com/api/admin/decide", {
       method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
@@ -44,16 +46,56 @@ async function decide(flag, { approverId = "V0001", decision = "approve" } = {})
     });
     const r = await onRequestPost({ request, env });
     const ledger = DB.db.prepare("SELECT COUNT(*) AS c FROM ledger_entries WHERE kind = 'correction'").get().c;
-    return { status: r.status, body: await r.json(), patches, ledger };
+    const unit = DB.db.prepare("SELECT status, ledger_hash FROM unit_consensus WHERE pu_code = ?1 AND race = ?2").get("24-09-05-012", "president") ?? null;
+    const last = DB.db.prepare("SELECT body_json AS body FROM ledger_entries WHERE kind = 'correction' ORDER BY seq DESC LIMIT 1").get();
+    return { status: r.status, body: await r.json(), patches, ledger, unit, correction: last ? JSON.parse(last.body) : null };
   } finally { globalThis.fetch = realFetch; }
 }
+// Session 196 (build-plan-6): a correction may change only a posted result. "Posted" = status high with a ledger hash.
+const unitRow = (DB, status, hash) => DB.db.prepare(
+  "INSERT INTO unit_consensus (pu_code, race, status, share, reports, tally_json, ledger_hash) VALUES ('24-09-05-012', 'president', ?1, 0.9, 3, ?2, ?3)",
+).run(status, JSON.stringify({ PA: 95, PB: 90 }), hash);
+async function posted(DB) {
+  const e = await appendEntry(DB, { kind: "tally", pu_code: "24-09-05-012", race: "president", tally: { PA: 95, PB: 90 } });
+  unitRow(DB, "high", e.hash);
+  return e;
+}
+let postedHash = null;
+const postedRemember = async (DB) => { postedHash = (await posted(DB)).hash; };
 const flag = (o) => ({ id: FLAG_ID, pu_code: "24-09-05-012", race: "president", status: "escalated", proposed_tally: { PA: 90, PB: 95 }, raised_by_public_id: "V0042", nrv_public_id: "V0130", ...o });
 
 test("three separate seats: the correction is written", async () => {
-  const r = await decide(flag());
+  const r = await decide(flag(), { seed: postedRemember });
   assert.equal(r.status, 200);
   assert.equal(r.ledger, 1);
   assert.equal(r.patches[0].status, "approved");
+  assert.equal(r.unit.status, "high");
+  assert.ok(postedHash && r.correction.supersedes === postedHash, "the correction points at the posted entry it replaces");
+});
+
+test("a held unit cannot be posted by an approved correction", async () => {
+  const r = await decide(flag(), { seed: (DB) => unitRow(DB, "held", null) });
+  assert.equal(r.status, 409);
+  assert.match(r.body.error, /not on the ledger/);
+  assert.equal(r.ledger, 0);
+  assert.equal(r.patches.length, 0, "the flag is left as it was, so it can still be rejected");
+  assert.equal(r.unit.status, "held");
+  assert.equal(r.unit.ledger_hash, null);
+});
+
+test("a unit with no consensus row cannot be posted by a correction", async () => {
+  const r = await decide(flag(), { seed: null });
+  assert.equal(r.status, 409);
+  assert.equal(r.ledger, 0);
+  assert.equal(r.patches.length, 0);
+  assert.equal(r.unit, null);
+});
+
+test("a unit held after it was posted (old hash kept) cannot be re-posted by a correction", async () => {
+  const r = await decide(flag(), { seed: async (DB) => { await posted(DB); DB.db.exec("UPDATE unit_consensus SET status = 'held'"); } });
+  assert.equal(r.status, 409);
+  assert.equal(r.ledger, 0);
+  assert.equal(r.unit.status, "held");
 });
 
 test("no Regional Verifier on the flag (e.g. escalated by the admin alone): refused, nothing written", async () => {

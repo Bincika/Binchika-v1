@@ -30,7 +30,13 @@ export async function onRequestPost({ request, env }) {
     }
     const tally = body.tally ?? flag.proposed_tally;
     if (!tally || typeof tally !== "object") return json({ error: "approving needs a corrected tally (from AI re-investigation or supplied)" }, 422);
-    const prev = await env.DB.prepare("SELECT ledger_hash FROM unit_consensus WHERE pu_code = ?1 AND race = ?2").bind(flag.pu_code, flag.race).first();
+    // Session 196 (build-plan-6): a correction may change only a posted result. Posted = status high with a ledger hash;
+    // the hash alone is not enough, because pipeline.js keeps an old hash when a unit falls back to held. Nobody, the
+    // BinchikAdmin included, may post a unit past the posting gates (owner decision 1, session 188). Nothing is written.
+    const prev = await env.DB.prepare("SELECT status, ledger_hash FROM unit_consensus WHERE pu_code = ?1 AND race = ?2").bind(flag.pu_code, flag.race).first();
+    if (prev?.status !== "high" || !prev?.ledger_hash) {
+      return json({ error: "a correction can only change a posted result; this unit is not on the ledger" }, 409);
+    }
     entry = await recordCorrection(env.DB, {
       puCode: flag.pu_code, race: flag.race, tally, flagId: flag.id,
       reason: `${note} (raised by ${flag.raised_by_public_id ?? "?"}, reviewed by ${flag.nrv_public_id ?? "?"}, approved by ${me.public_id})`,
