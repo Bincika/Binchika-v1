@@ -4,6 +4,7 @@
 import { requireAdmin, json } from "../../../_lib/supa.js";
 import { updateTicket } from "../../../_lib/tickets.js";
 import { decideMedia } from "../../../_lib/media.js";
+import { methodNotAllowed } from "../../../_lib/http.js";
 
 export async function onRequestPost({ request, env, params }) {
   const gate = await requireAdmin(request, env);
@@ -17,3 +18,6 @@ export async function onRequestPost({ request, env, params }) {
     : await updateTicket(env.DB, String(params.ref), { status: b.status, resolution: b.resolution }, gate.me.public_id);
   return json(r.body, r.status);
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

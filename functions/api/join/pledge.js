@@ -2,6 +2,7 @@
 // POST /api/join/pledge { token, typedName, version, accept: true } → sign: confirms the email, activates the seat
 import { supaConfigured, json } from "../../_lib/supa.js";
 import { pledgePreview, signPledge } from "../../_lib/invites.js";
+import { methodNotAllowed } from "../../_lib/http.js";
 
 const MSG = {
   invalid: "This link has been used or has expired.",
@@ -24,3 +25,6 @@ export async function onRequestPost({ request, env }) {
   if (r.error) return json({ error: MSG[r.error] ?? MSG.invalid }, r.error === "invalid" ? 404 : 422);
   return json({ ok: true, seat: r.seat, publicId: r.publicId, emailed: r.emailed });
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

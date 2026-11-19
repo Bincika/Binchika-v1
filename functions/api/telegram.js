@@ -2,7 +2,7 @@
 // Register: https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://binchika.com/api/telegram&secret_token=<TELEGRAM_WEBHOOK_SECRET>
 import { parseTelegramUpdate, hashReporter } from "../_lib/report.js";
 import { TENANT } from "../_lib/tenant.generated.js";
-import { sameSecret, unauthorised } from "../_lib/http.js";
+import { sameSecret, unauthorised, methodNotAllowed } from "../_lib/http.js";
 
 const ok = () => new Response("ok");
 
@@ -37,3 +37,6 @@ export async function onRequestPost({ request, env }) {
   await reply(env, r.chatId, r.puCode ? `Received for polling unit ${r.puCode}. Thank you, mu bincika tare.` : "Received, thank you. Please also send the polling-unit code (e.g. 24-09-05-012) so we can match it.");
   return ok();
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

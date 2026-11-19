@@ -11,6 +11,7 @@ import { MAILBOXES } from "../_lib/mailbox.js";
 import { storeCopy, autoReply } from "../../workers/mailbox/src/index.js";
 import { nextRef, openTicket } from "../_lib/tickets.js";
 import { MEDIA_NATURE, validateMedia, mediaBlock, mediaAutoChecks } from "../_lib/media.js";
+import { methodNotAllowed } from "../_lib/http.js";
 
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 const b64 = (buf) => { let s = ""; const u = new Uint8Array(buf); for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000)); return btoa(s); };
@@ -49,13 +50,16 @@ export async function onRequestPost({ request, env }) {
     media = mediaBlock(mv.value, f.email, await mediaAutoChecks(mv.value, f.email));
   }
 
-  // rate limit: 5 per hour per salted IP hash
+  // rate limit: 5 per hour per peppered IP hash. Session 233 (closed-intake safety, Fix 9): the hash uses its own pepper,
+  // CONTACT_HASH_PEPPER (an HMAC), so it cannot be matched against reporter hashes; until that secret is set it keeps
+  // the earlier salted form. The row is written only after the mail provider accepts the message (below), so a failed
+  // send does not use up a person's allowance.
+  let ipHash = null;
   if (env.DB) {
     const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
-    const h = [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${env.REPORTER_HASH_SALT ?? ""}:contact:${ip}`)))].map((b) => b.toString(16).padStart(2, "0")).join("");
-    const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM contact_log WHERE ip_hash = ?1 AND at > strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 hour')").bind(h).first();
+    ipHash = await contactIpHash(env, ip);
+    const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM contact_log WHERE ip_hash = ?1 AND at > strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 hour')").bind(ipHash).first();
     if ((recent?.n ?? 0) >= 5) return json({ error: "Too many messages from this connection. Please try again later." }, 429);
-    await env.DB.prepare("INSERT INTO contact_log (ip_hash) VALUES (?1)").bind(h).run();
   }
 
   // Ticket reference (session 78): reserved before the owner copy so it is in every copy. If the counter fails, the
@@ -75,6 +79,10 @@ export async function onRequestPost({ request, env }) {
     body: JSON.stringify({ from: NATURES[f.nature].from, to: [env.EMAIL_FORWARD_TO], reply_to: f.email, subject: subjectFor(f, ref), text, attachments }),
   });
   if (!r.ok) return json({ error: "Your message could not be sent right now. Please try again shortly." }, 502);
+  if (ipHash) {
+    try { await env.DB.prepare("INSERT INTO contact_log (ip_hash) VALUES (?1)").bind(ipHash).run(); }
+    catch (e) { console.log(JSON.stringify({ event: "contact-rate-row-failed", error: String(e).slice(0, 160) })); }
+  }
 
   // Dashboard Inbox copy, then the automatic reply (the same rules as mail sent straight to the mailboxes).
   const mailbox = mailboxForNature(f.nature);
@@ -98,4 +106,18 @@ export async function onRequestPost({ request, env }) {
   const reply = await autoReply(env, { from: f.email, to, reference: ref, topic: f.nature, headers: { get: (n) => hdr[String(n).toLowerCase()] ?? null } });
   console.log(JSON.stringify({ event: "contact-delivered", mailbox, ticket: Boolean(ref), stored: Boolean(stored), autoReply: reply.sent, reason: reply.reason }));
   return json({ ok: true, reference: ref });
+}
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");
+
+/** Session 233 (Fix 9): HMAC-SHA256 of the IP under CONTACT_HASH_PEPPER; without it, the earlier salted SHA-256. */
+async function contactIpHash(env, ip) {
+  const enc = new TextEncoder();
+  const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  if (env.CONTACT_HASH_PEPPER) {
+    const k = await crypto.subtle.importKey("raw", enc.encode(env.CONTACT_HASH_PEPPER), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+    return hex(await crypto.subtle.sign("HMAC", k, enc.encode(`contact:${ip}`)));
+  }
+  return hex(await crypto.subtle.digest("SHA-256", enc.encode(`${env.REPORTER_HASH_SALT ?? ""}:contact:${ip}`)));
 }

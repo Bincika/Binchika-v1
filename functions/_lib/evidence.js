@@ -11,11 +11,13 @@ const no = (status, error) => ({ status, body: { error } });
 
 /**
  * @param {{ reportId: string, decision: string, note: string }} input
- * @param {{ role: string, public_id: string, states: string[] }} verifier  the signed-in, active verifier and the states in view
+ * @param {{ role: string, public_id: string, states: string[], aal?: string }} verifier  the signed-in, active verifier, the states in view and the session's authenticator level (aal2 required; session 233)
  * @returns {Promise<{ status: number, body: object }>}
  */
 export async function auditEvidence(db, input, verifier) {
   if (!verifier || !["szv", "nrv"].includes(verifier.role)) return no(403, "Only a State Zone Verifier or Regional Verifier can audit evidence.");
+  // Session 233 (Fix 1): checked here too, so no caller can skip it. Before any database read.
+  if (verifier.aal !== "aal2") return { status: 403, body: { error: "Auditing evidence needs your authenticator app: verify first.", mfa: true } };
   if (!AUDIT_DECISIONS.includes(input?.decision)) return no(422, "decision must be approved or rejected");
   const note = String(input?.note ?? "").replace(/\s+/g, " ").trim();
   if (note.length < 10 || note.length > 500) return no(422, "Give a reason someone else can check (10–500 characters).");

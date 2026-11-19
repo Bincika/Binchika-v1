@@ -3,6 +3,7 @@
 // append-only seat event records the reason (the public history omits reasons).
 import { requireAdmin, json } from "../../_lib/supa.js";
 import { releaseSeat, dbMessage } from "../../_lib/invites.js";
+import { methodNotAllowed } from "../../_lib/http.js";
 
 export async function onRequestPost({ request, env }) {
   const gate = await requireAdmin(request, env);
@@ -18,3 +19,6 @@ export async function onRequestPost({ request, env }) {
     return json({ error: dbMessage(e) }, 409);
   }
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

@@ -3,7 +3,7 @@
 // gone. No photo, no personal data; it does not open photo intake. Run with: node scripts/r2-check.mjs [base]
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 
-import { sameSecret, unauthorised } from "../_lib/http.js";
+import { sameSecret, unauthorised, methodNotAllowed } from "../_lib/http.js";
 
 export async function onRequestPost({ request, env }) {
   // Session 151: one refusal whether or not the token is set (functions/_lib/http.js).
@@ -28,3 +28,6 @@ export async function onRequestPost({ request, env }) {
   steps.ok = Boolean(steps.put && steps.readBack && steps.deleted);
   return json(steps, steps.ok ? 200 : 500);
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

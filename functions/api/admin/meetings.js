@@ -5,6 +5,7 @@
 import { TENANT } from "../../_lib/tenant.generated.js";   // time zone per country (session 98)
 import { requireAdmin, rest, json } from "../../_lib/supa.js";
 import { meetingInvite } from "../../_lib/emails.js";
+import { methodNotAllowed } from "../../_lib/http.js";
 
 export async function onRequestPost({ request, env }) {
   if (!env.RESEND_API_KEY) return json({ error: "not configured" }, 503);
@@ -50,3 +51,6 @@ export async function onRequestPost({ request, env }) {
   }
   return json({ ok: true, recipients: picked.length, sent });
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

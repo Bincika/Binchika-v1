@@ -3,6 +3,7 @@
 // and emails the confirmation + pledge link from noreply@mail.example.org. The link token is never returned here.
 import { supaConfigured, json } from "../../_lib/supa.js";
 import { claimSeat } from "../../_lib/invites.js";
+import { methodNotAllowed } from "../../_lib/http.js";
 
 const MSG = {
   invalid: "That code isn't valid or has expired.",
@@ -28,3 +29,6 @@ export async function onRequestPost({ request, env }) {
   if (r.error) return json({ error: r.message ?? MSG[r.error] ?? "Something went wrong. Please try again." }, r.error === "rate_limited" ? 429 : 422);
   return json({ ok: true, seat: r.seat, publicId: r.publicId, area: r.area, emailed: r.emailed });
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

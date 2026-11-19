@@ -4,6 +4,7 @@
 // records it for the Sent view. The "From" choices live in functions/_lib/mailbox.js (MAILBOXES).
 import { requireAdmin, json } from "../../../_lib/supa.js";
 import { sendFromDashboard } from "../../../_lib/mailsend.js";
+import { methodNotAllowed } from "../../../_lib/http.js";
 
 export async function onRequestPost({ request, env }) {
   const gate = await requireAdmin(request, env);
@@ -13,3 +14,6 @@ export async function onRequestPost({ request, env }) {
   const r = await sendFromDashboard(env, b, gate.me.public_id);
   return json(r.body, r.status);
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

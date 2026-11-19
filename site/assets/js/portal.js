@@ -22,7 +22,7 @@ const stateOfPu = (pu) => PU_STATE[String(pu ?? "").slice(0, 2)] ?? null;
 let supa = null, me = null, preview = false, viewAs = null, section = "overview";
 let flags = [], reports = [], seats = [];
 let linkNotice = "";                                      // shown on Account after a password-reset link
-let mfaNeeded = false;                                  // OpsAdmin/BinchikAdmin must reach aal2 (authenticator code) first
+let mfaNeeded = false;                                  // OpsAdmin/BinchikAdmin must reach aal2 (authenticator code) first; verifiers too when the report list asks (session 233)
 let diag = { status: "idle", data: null };   // BinchikAdmin diagnostics (session 143): loaded only when the section is opened
 let corrCheck = { status: "idle", data: null };   // BinchikAdmin "Corrections to check" (session 211, build plan 8): loaded only on the Flags section
 let diagDevice = { status: "idle", data: null };   // three more "This device" readings (session 147): worked out here, sent nowhere
@@ -1414,7 +1414,11 @@ async function loadReal() {
   const { data: rows } = await supa.from("verifier_flags_public").select("*").order("created_at", { ascending: false }).limit(200);
   flags = rows ?? [];
   const token = (await supa.auth.getSession()).data.session?.access_token;
-  reports = (await fetch("/api/portal/reports", { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()).catch(() => ({}))).reports ?? [];
+  const rj = await fetch("/api/portal/reports", { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()).catch(() => ({}));
+  // Session 233 (Fix 1): the report list needs the authenticator (aal2). The server says so with mfa: true; show the
+  // same authenticator step the admin roles use, then load again.
+  if (rj.mfa === true) { mfaNeeded = true; return render(); }
+  reports = rj.reports ?? [];
   if (me.role === "superadmin") {
     try { seats = (await fetch("/api/seats", { cache: "no-store" }).then((r) => r.json())).seats ?? seats; } catch {}
     const r = await fetch("/api/admin/invites", { headers: { Authorization: `Bearer ${token}` } }).catch(() => null);

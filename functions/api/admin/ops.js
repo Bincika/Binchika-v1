@@ -3,6 +3,7 @@
 // BinchikAdmin (database trigger + lock), and must use MFA before any admin power works.
 import { requireAdmin, json } from "../../_lib/supa.js";
 import { appointOps } from "../../_lib/invites.js";
+import { methodNotAllowed } from "../../_lib/http.js";
 
 export async function onRequestPost({ request, env }) {
   const gate = await requireAdmin(request, env);
@@ -14,3 +15,6 @@ export async function onRequestPost({ request, env }) {
   const { userId, ...out } = r;
   return json({ ...out, note: r.emailed ? `${r.seat} appointed as ${r.publicId}. A sign-in link was emailed to the appointee.` : `${r.seat} appointed as ${r.publicId}, but the email failed: ask them to use "Email me a sign-in link" on the portal.` });
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

@@ -1,6 +1,6 @@
 // GET /api/portal/reports — incoming citizen reports for the signed-in verifier's own area only.
 // Reporter identities are never returned (not even their hashes).
-import { userFromRequest, verifierFor, rest, supaConfigured, json } from "../../_lib/supa.js";
+import { userFromRequest, verifierFor, rest, supaConfigured, claimsOf, json } from "../../_lib/supa.js";
 import { STATE_CODE } from "../../_lib/results.js";
 import { mediaKeyOf } from "../../_lib/evidence.js";
 import { STATUS_LABEL } from "../../_lib/ec8a.js";
@@ -11,6 +11,9 @@ export async function onRequestGet({ request, env }) {
   if (!user) return json({ error: "sign in required" }, 401);
   const me = await verifierFor(env, user.id);
   if (!me) return json({ error: "not a verifier" }, 403);
+  // Session 233 (closed-intake safety, Fix 1): the list shows reporters' figures and evidence references, so it needs an
+  // MFA-verified (aal2) session, as review and evidence-media already do. Checked before any database read.
+  if (claimsOf(request).aal !== "aal2") return json({ error: "Viewing reports needs your authenticator app: verify first.", mfa: true }, 403);
 
   let states = [];
   if (me.role === "szv") states = [me.state_iso];

@@ -3,6 +3,7 @@
 // Wrong codes are counted per hashed IP (10 per 15 minutes, then a cool-down).
 import { supaConfigured, json } from "../../_lib/supa.js";
 import { checkCode } from "../../_lib/invites.js";
+import { methodNotAllowed } from "../../_lib/http.js";
 
 const MSG = { invalid: "That code isn't valid or has expired.", rate_limited: "Too many attempts. Please wait 15 minutes and try again." };
 
@@ -14,3 +15,6 @@ export async function onRequestPost({ request, env }) {
   if (r.result !== "ok") return json({ error: MSG[r.result] ?? MSG.invalid }, r.result === "rate_limited" ? 429 : 404);
   return json({ ok: true, kind: r.kind, seat: r.seat_code, role: r.role, area: r.area, expiresAt: r.expires_at, seats: r.seats ?? [] });
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");

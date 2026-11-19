@@ -2,6 +2,7 @@
 // Always the same answer whether or not the address has an account; 3 per email / 10 per IP per 15 minutes.
 import { supaConfigured, json } from "../../_lib/supa.js";
 import { sendSignInLink } from "../../_lib/authlink.js";
+import { methodNotAllowed } from "../../_lib/http.js";
 
 const SAME = "If that email belongs to an active verifier, a sign-in link is on its way. It works once.";
 
@@ -15,3 +16,6 @@ export async function onRequestPost({ request, env }) {
   if (r.error) return json({ error: "Could not send a link just now. Please try again shortly." }, 502);
   return json({ ok: true, message: SAME });
 }
+
+// GET is not a read here: 405 JSON with Allow: POST, not the site's 404 page (session 233, Fix 2; functions/_lib/http.js).
+export const onRequestGet = () => methodNotAllowed("POST");
